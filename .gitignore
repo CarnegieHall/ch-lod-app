@@ -7,7 +7,7 @@ venv
 *.pyc
 staticfiles
 .env
-
+.DS_Store
 # C extensions
 *.so
 
