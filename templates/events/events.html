@@ -1,0 +1,104 @@
+{% include "main/header.html" %} 
+
+
+<div class="container">
+
+
+  <div class="twelve columns">
+  <h3>Event: {{ data.rdfs_label_string }}</h3>
+  </div>
+
+  <table class="u-full-width prop-table">
+    <thead>
+      <tr>
+        <th>Property</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr>
+        <td>dcterms:date</td>
+        <td>
+        	<ul>
+				{% for values in data.dcterms_date %}
+				   <li>{{values}}</li>
+				{% endfor %}
+			</ul>
+		</td>
+      </tr>
+      <tr>
+        <td>rdf:type</td>
+        <td>
+        	<ul>
+				{% for values in data.rdf_type %}
+				   <li><a href="{{values}}">{{values}}</a></li>
+				{% endfor %}
+			</ul>
+		</td>
+      </tr>
+      <tr>
+        <td>rdfs:label</td>
+        <td>
+            	<ul>
+    				{% for values in data.rdfs_label %}
+    				   <li>{{values}}</li>
+    				{% endfor %}
+    			</ul>
+    		</td>
+      </tr>
+      <tr>
+        <td>event:product</td>
+        <td>
+              <ul>
+            {% for values in data.product %}
+              <li><a href="{{values}}">{{values}}</a></li>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <td>event:place</td>
+        <td>
+              <ul>
+            {% for values in data.venues %}
+              <li><a href="{{values.0}}">{{values.1}}</a></li>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
+
+      {% for values in data.people %}
+          <tr>
+            <td>{{values.2}}</td>
+            <td>
+              <ul>
+             <li><a href="{{values.0}}">{{values.1}}</a></li>
+          </ul>
+        </td>
+      </tr>
+      {% endfor %}
+
+
+      {% if data.unmapped %}
+	      	{% for values in data.unmapped %}
+	      	<tr>
+		        <td>{{values.0}}</td>
+		        <td>
+		        	<ul>
+						 <li><a href="{{values.1}}">{{values.1}}</a></li>
+					</ul>
+				</td>
+			</tr>
+			{% endfor %}
+      {% endif %}
+
+
+    </tbody>
+  </table>
+
+</div>
+
+
+
+{% include "main/footer.html" %} 
