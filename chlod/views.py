@@ -3,15 +3,30 @@ from django.template import loader
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 import requests
+import re
+
 
 from . import utils
+
+limit_re = re.compile('LIMIT\s([0-9]+)', re.IGNORECASE)
+
 
 @csrf_exempt
 def route_sparql_query(request):
 
-	r = requests.post(settings.SPARQL_ENDPOINT, headers={"Accept":"application/sparql-results+json"}, data = {'query':request.body.decode('utf-8')})
+	query = request.body.decode('utf-8')
 
-
+	# add a limit to it if ther is not one yet
+	re_match = limit_re.search(query)
+	
+	if re_match == None:
+		query = query + ' LIMIT 10000'
+	else:
+		if int(re_match.group(1)) > 10000:
+			query = query.replace(re_match.group(),'LIMIT 10000')
+		
+	
+	r = requests.post(settings.SPARQL_ENDPOINT, headers={"Accept":"application/sparql-results+json"}, data = {'query':query})
 	# print(request.body.decode('utf-8'))
 	return HttpResponse(content=r.text, status=200)
 
@@ -32,6 +47,10 @@ def route_sparql(request):
 
 
 
+def route_homepage(request):
+		response = HttpResponse(content="",status=302)
+		response["Location"] = '/sparql'
+		return response
 
 
 def route_works(request, id):

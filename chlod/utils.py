@@ -138,6 +138,9 @@ def format_events_dict(event_uri):
 		'venues' : venues
 	}
 
+
+
+
 	return event
 	
 

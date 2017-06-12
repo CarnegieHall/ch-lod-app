@@ -10,8 +10,7 @@
     <tr ng-repeat="binding in bindings">
         <td ng-repeat="name in headers">
             <div class="uri" ng-show="binding[name].type == 'uri'">
-                <span ng-click="selectURI(binding[name].value,name)">{{getDisplayName(binding[name].value)}}</span>
-                <a class="external-link" ng-href="{{binding[name].value}}" target="_blank"><i class="fa fa-external-link"></i></a>
+                <a class="uri" ng-href="{{binding[name].value}}" target="_blank">{{getDisplayName(binding[name].value)}}</a>
             </div>
             <span class="literal" ng-show="binding[name].type == 'literal'">{{binding[name].value}}
                 <img ng-src="{{transparent}}" ng-show="binding[name]['xml:lang'] && showFlags" class="flag flag-{{binding[name]['xml:lang']}}">

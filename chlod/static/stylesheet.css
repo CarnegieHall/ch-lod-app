@@ -1008,3 +1008,9 @@ there.
 .prop-table td{
     vertical-align:top;
 }
+
+.about-text{
+  padding-left: 15px;
+  padding-right: 15px;
+}
+

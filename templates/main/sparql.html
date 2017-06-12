@@ -61,32 +61,30 @@
       </div>
 
       <div class="nine columns">
-          <nav class="responsive-nav" id="js-responsive-nav">
 
-              <ul class="responsive-nav__list">
-                  <li class="responsive-nav__item">
-                      <a href="/" class="responsive-nav__link">Home</a>
-                  </li>
-                  <li class="responsive-nav__item">
-                      <a href="/about" class="responsive-nav__link">About</a>
-                  </li>
-                  <li class="responsive-nav__item">
-                      <a href="/sparql" class="responsive-nav__link">SPARQL</a>
-                  </li>
-
-                  <li class="responsive-nav__item">
-                      <a href="/map" class="responsive-nav__link">Map</a>
-                  </li>
-              </ul>
-          </nav>
       </div>
     </div>
   </div>
 </div>
+<div class="container">
+<div class="row">
+  <div class="twleve columns about-text">
+    <h4>Carnegie Hall's performance history as linked open data can be explored using this SPARQL endpoint.</h4>
+
+    <p>To learn more about the data, and to find resources related to its creation and maintenance, visit the <a href="https://github.com/CarnegieHall/linked-data">Carnegie Hall Linked Data repository on GitHub</a>.</p>
+    <p>We encourage you to share interesting queries and report issues on our <a href="https://github.com/CarnegieHall/linked-data/issues">Issues page on GitHub</a>.</p>
+
+
+  </div>
+</div>
+<hr>
+</div>
+
+
 
 
                 <div id="appLoader" style="margin-top: 100px; text-align: center;">
-                    <img src="static/img/img/ajax-loader-big.gif">
+                    <img src="static/img/ajax-loader-big.gif">
                 </div>
                 <div style="display: none" class="container" id="squebi">
                     <div ng-controller="SampleCtrl" class="header">
@@ -97,7 +95,7 @@
                         <ul class="nav nav-pills pull-right">
                             <li id="samples" class="menuitem dropdown">
                                 <a class="dropdown-toggle">
-                                    Samples
+                                    Sample Queries
                                 </a>
                                 <ul class="dropdown-menu">
                                     <li ng-repeat="sample in samples">
@@ -114,7 +112,6 @@
                                 <h3>Generic Parameters</h3>
                                 <table class="modal-table">
                                     <tr><td>Select Endpoint</td><td><input ng-model="data.selectService"></td></tr>
-                                    <tr><td>Update Endpoint</td><td><input ng-model="data.updateService"></td></tr>
                                 </table>
                                 <h3>Query Parameters</h3>
                                 <table class="modal-table">
@@ -132,8 +129,7 @@
                         </script>
                     </li>
                 </ul>
-                <h3 class="text-muted">Squebi</h3>
-                <h4 class="subtitle">The SPARQL Interface</h4>
+
             </div>
 
             <div style="position: relative" ng-controller="QueryCtrl" class="jumbotron">
@@ -167,11 +163,11 @@
             <div ng-show="showResults" ng-controller="ResultCtrl" class="row result">
                 <div ng-show="!loader" ng-include src="template"></div>
                 <div class="loader" ng-show="loader">
-                    <img src="squebi/img/ajax-loader.gif">
+                    <img src="/static/img/ajax-loader.gif">
                 </div>
             </div>
             <div class="footer">
-                <p>&copy; Salzburg Research 2014</p>
+                <p><a href="https://github.com/tkurz/squebi">Squebi SPARQL Interface</a> by &copy; Salzburg Research 2014</p>
                 <!--<p><button onclick="alertQuery()">alertCurrentQuery</button></p>-->
             </div>
 
