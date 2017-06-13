@@ -1,14 +1,12 @@
-from SPARQLWrapper import SPARQLWrapper, JSON
+from rdflib import Namespace, URIRef, Graph, Literal
 
-sparql = SPARQLWrapper("https://rdf.s4.ontotext.com/4038405949/carnegiehall_db/repositories/ch-lod")
-sparql.setQuery("""
-    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-    SELECT *
-    WHERE { ?s ?p ?o }
-    LIMIT 1000
-""")
-sparql.setReturnFormat(JSON)
-results = sparql.query().convert()
 
-for result in results["results"]["bindings"]:
-    print(result)
+g = Graph()
+
+
+
+g.add( (URIRef('http://data.carnegiehall.org/names/43009'), URIRef('http://www.w3.org/1999/02/22-rdf-syntax-ns#type') , URIRef('http://xmlns.com/foaf/0.1/Person')) )
+g.add( (URIRef('http://data.carnegiehall.org/names/43009'), URIRef('http://www.w3.org/1999/02/22-rdf-syntax-ns#type') , Literal('01', datatype=URIRef('http://xmlns.com/foaf/0.1/Person'))) )
+
+
+print(g.serialize(format='nt'))

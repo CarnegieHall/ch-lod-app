@@ -1,4 +1,6 @@
-from SPARQLWrapper import SPARQLWrapper, JSON, XML, TURTLE, RDF, JSONLD
+from SPARQLWrapper import SPARQLWrapper, JSON
+from rdflib import URIRef, Graph, Literal, plugin
+from rdflib.serializer import Serializer
 from django.conf import settings
 import operator
 
@@ -111,34 +113,49 @@ def return_serialized_subjects(uri,type):
 	sparql = SPARQLWrapper(settings.SPARQL_ENDPOINT)
 
 	if uri[0] != '<':
+		uri_no_bracket = uri
 		uri = '<' + uri + '>'
+	else:
+		uri_no_bracket = uri[1:]
+		uri_no_bracket = uri_no_bracket[:-1]
+
 
 	query = 'SELECT * WHERE{' 
 	query = query + uri + ' ?p ?o .' 
 	query = query + '}'
 
-	sparql.setQuery(query)
+	sparql.setQuery(query)	
+
+	g = Graph()
+
+	sparql.setReturnFormat(JSON)
+	results = sparql.query().convert()
+
+	for result in results["results"]["bindings"]:
+		print(result)
+		if (result['o']['type'] == 'uri'):
+			g.add( (URIRef(uri_no_bracket), URIRef(result['p']['value']) , URIRef(result['o']['value'])) )
+		else:
+			if 'datatype' in result['o']:
+				g.add( (URIRef(uri_no_bracket), URIRef(result['p']['value']) , Literal(result['o']['value'], datatype=URIRef(result['o']['datatype']))) )
+			else:
+				g.add( (URIRef(uri_no_bracket), URIRef(result['p']['value']) , Literal(result['o']['value'])) )
+
+
+	
 	if (type == 'xml'):
-		sparql.setReturnFormat(XML)
-		results = sparql.query().convert()
-		results = results.toxml('utf-8')
-	elif (type == 'rdf'):
-		sparql.setReturnFormat(TURTLE)
-		results = sparql.query().convert()
-		print (results)
-
-
-
+		return g.serialize(format="xml")
+	elif (type == 'n3'):
+		return g.serialize(format="n3")
+	elif (type == 'nt'):
+		return g.serialize(format="nt")
 	elif (type == 'turtle'):
-		sparql.setReturnFormat(TURTLE)
-		results = sparql.query().convert()
+		return g.serialize(format="turtle")
+	elif (type == 'jsonld'):
+		return g.serialize(format="json-ld")
+	else:	
+		return g.serialize(format="nt")
 
-	else:		
-		sparql.setReturnFormat(JSON)
-		results = sparql.query().convert()
-
-
-	return results
 
 
 def format_events_dict(event_uri):

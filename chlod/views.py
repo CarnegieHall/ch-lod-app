@@ -66,7 +66,7 @@ def route_works(request, id):
 
 def about_works(request,id,type):
 
-	if type == 'xml' or type == 'rdf' or type == 'turtle':
+	if type == 'xml' or type == 'rdf' or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
 		return HttpResponse(content=utils.return_serialized_subjects("<http://data.carnegiehall.org/works/%s>" % (id),type), status=200)
 	else:
 		data = utils.format_works_dict("<http://data.carnegiehall.org/works/%s>" % (id))
@@ -88,14 +88,17 @@ def route_events(request, id):
 		return response
 
 
-def about_events(request,id):
-	data = utils.format_events_dict("<http://data.carnegiehall.org/events/%s>" % (id))
+def about_events(request,id,type):
+	if type == 'xml' or type == 'rdf' or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
+		return HttpResponse(content=utils.return_serialized_subjects("<http://data.carnegiehall.org/events/%s>" % (id),type), status=200)
+	else:
+		data = utils.format_events_dict("<http://data.carnegiehall.org/events/%s>" % (id))
 
-	template = loader.get_template('events/events.html')
-	context = {
-	    'data': data,
-	}
-	return HttpResponse(template.render(context, request))
+		template = loader.get_template('events/events.html')
+		context = {
+		    'data': data,
+		}
+		return HttpResponse(template.render(context, request))
 
 
 def route_products(request, id,product_id):
@@ -109,14 +112,18 @@ def route_products(request, id,product_id):
 		return response
 
 
-def about_products(request,id,product_id):
-	data = utils.format_product_dict("<http://data.carnegiehall.org/events/%s/work_%s>" % (id,product_id))
+def about_products(request,id,product_id,type):
+	if type == 'xml' or type == 'rdf' or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
+		return HttpResponse(content=utils.return_serialized_subjects("<http://data.carnegiehall.org/events/%s/work_%s>" % (id,product_id),type), status=200)
+	else:
+		data = utils.format_product_dict("<http://data.carnegiehall.org/events/%s/work_%s>" % (id,product_id))
 
-	template = loader.get_template('events/products.html')
-	context = {
-	    'data': data,
-	}
-	return HttpResponse(template.render(context, request))
+		template = loader.get_template('events/products.html')
+		context = {
+		    'data': data,
+		}
+		return HttpResponse(template.render(context, request))
+
 
 
 
@@ -131,14 +138,19 @@ def route_venues(request, id):
 		return response
 
 
-def about_venues(request,id):
-	data = utils.format_venues_dict("<http://data.carnegiehall.org/venues/%s>" % (id))
+def about_venues(request,id,type):
+	if type == 'xml' or type == 'rdf' or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
+		return HttpResponse(content=utils.return_serialized_subjects("<http://data.carnegiehall.org/venues/%s>" % (id),type), status=200)
+	else:
+		data = utils.format_venues_dict("<http://data.carnegiehall.org/venues/%s>" % (id))
 
-	template = loader.get_template('venues/venues.html')
-	context = {
-	    'data': data,
-	}
-	return HttpResponse(template.render(context, request))
+		template = loader.get_template('venues/venues.html')
+		context = {
+		    'data': data,
+		}
+		return HttpResponse(template.render(context, request))
+
+
 
 def route_instruments(request, id):
 	if 'text/htm' in request.META.get('HTTP_ACCEPT'):
@@ -151,14 +163,19 @@ def route_instruments(request, id):
 		return response
 
 
-def about_instruments(request,id):
-	data = utils.format_instruments_dict("<http://data.carnegiehall.org/instruments/%s>" % (id))
+def about_instruments(request,id,type):
+	if type == 'xml' or type == 'rdf' or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
+		return HttpResponse(content=utils.return_serialized_subjects("<http://data.carnegiehall.org/instruments/%s>" % (id),type), status=200)
+	else:
+		data = utils.format_instruments_dict("<http://data.carnegiehall.org/instruments/%s>" % (id))
 
-	template = loader.get_template('instruments/instruments.html')
-	context = {
-	    'data': data,
-	}
-	return HttpResponse(template.render(context, request))
+		template = loader.get_template('instruments/instruments.html')
+		context = {
+		    'data': data,
+		}
+		return HttpResponse(template.render(context, request))
+
+
 
 def route_roles(request, id):
 	if 'text/htm' in request.META.get('HTTP_ACCEPT'):
@@ -171,14 +188,19 @@ def route_roles(request, id):
 		return response
 
 
-def about_roles(request,id):
-	data = utils.format_roles_dict("<http://data.carnegiehall.org/roles/%s>" % (id))
+def about_roles(request,id,type):
+	if type == 'xml' or type == 'rdf' or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
+		return HttpResponse(content=utils.return_serialized_subjects("<http://data.carnegiehall.org/roles/%s>" % (id),type), status=200)
+	else:
+		data = utils.format_roles_dict("<http://data.carnegiehall.org/roles/%s>" % (id))
 
-	template = loader.get_template('roles/roles.html')
-	context = {
-	    'data': data,
-	}
-	return HttpResponse(template.render(context, request))
+		template = loader.get_template('roles/roles.html')
+		context = {
+		    'data': data,
+		}
+		return HttpResponse(template.render(context, request))
+
+
 
 
 def route_names(request, id):
@@ -192,13 +214,18 @@ def route_names(request, id):
 		return response
 
 
-def about_names(request,id):
-	data = utils.format_names_dict("<http://data.carnegiehall.org/names/%s>" % (id))
+def about_names(request,id,type):
+	if type == 'xml' or type == 'rdf' or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
+		return HttpResponse(content=utils.return_serialized_subjects("<http://data.carnegiehall.org/names/%s>" % (id),type), status=200)
+	else:
+		data = utils.format_names_dict("<http://data.carnegiehall.org/names/%s>" % (id))
 
-	template = loader.get_template('names/names.html')
-	context = {
-	    'data': data,
-	}
-	return HttpResponse(template.render(context, request))
+		template = loader.get_template('names/names.html')
+		context = {
+		    'data': data,
+		}
+		return HttpResponse(template.render(context, request))
+
+
 
 
