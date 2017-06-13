@@ -24,6 +24,10 @@ def route_sparql_query(request):
 
 	query = request.body.decode('utf-8')
 
+	if (len(request.body.decode('utf-8')) == 0):
+		query = request.GET.get('query', '')
+
+
 	# add a limit to it if ther is not one yet
 	re_match = limit_re.search(query)
 	
@@ -33,7 +37,6 @@ def route_sparql_query(request):
 		if int(re_match.group(1)) > 10000:
 			query = query.replace(re_match.group(),'LIMIT 10000')
 		
-
 	r = requests.post(settings.SPARQL_ENDPOINT, headers={"Accept":"application/sparql-results+json"}, data = {'query':query})
 	# print(request.body.decode('utf-8'))
 	return HttpResponse(content=r.text, status=200)
