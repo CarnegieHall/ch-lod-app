@@ -25,7 +25,7 @@ def route_sparql_query(request):
 		if int(re_match.group(1)) > 10000:
 			query = query.replace(re_match.group(),'LIMIT 10000')
 		
-	
+
 	r = requests.post(settings.SPARQL_ENDPOINT, headers={"Accept":"application/sparql-results+json"}, data = {'query':query})
 	# print(request.body.decode('utf-8'))
 	return HttpResponse(content=r.text, status=200)
@@ -94,7 +94,107 @@ def about_events(request,id):
 	return HttpResponse(template.render(context, request))
 
 
+def route_products(request, id,product_id):
+	if 'text/htm' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/events/'+id+'/work_' + product_id + '/about'
+		return response
+	else:
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/events/'+id+'/about'
+		return response
 
 
+def about_products(request,id,product_id):
+	data = utils.format_product_dict("<http://data.carnegiehall.org/events/%s/work_%s>" % (id,product_id))
+
+	template = loader.get_template('events/products.html')
+	context = {
+	    'data': data,
+	}
+	return HttpResponse(template.render(context, request))
+
+
+
+def route_venues(request, id):
+	if 'text/htm' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/venues/'+id+'/about'
+		return response
+	else:
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/venues/'+id+'/about'
+		return response
+
+
+def about_venues(request,id):
+	data = utils.format_venues_dict("<http://data.carnegiehall.org/venues/%s>" % (id))
+
+	template = loader.get_template('venues/venues.html')
+	context = {
+	    'data': data,
+	}
+	return HttpResponse(template.render(context, request))
+
+def route_instruments(request, id):
+	if 'text/htm' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/instruments/'+id+'/about'
+		return response
+	else:
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/instruments/'+id+'/about'
+		return response
+
+
+def about_instruments(request,id):
+	data = utils.format_instruments_dict("<http://data.carnegiehall.org/instruments/%s>" % (id))
+
+	template = loader.get_template('instruments/instruments.html')
+	context = {
+	    'data': data,
+	}
+	return HttpResponse(template.render(context, request))
+
+def route_roles(request, id):
+	if 'text/htm' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/roles/'+id+'/about'
+		return response
+	else:
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/roles/'+id+'/about'
+		return response
+
+
+def about_roles(request,id):
+	data = utils.format_roles_dict("<http://data.carnegiehall.org/roles/%s>" % (id))
+
+	template = loader.get_template('roles/roles.html')
+	context = {
+	    'data': data,
+	}
+	return HttpResponse(template.render(context, request))
+
+
+def route_names(request, id):
+	if 'text/htm' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/names/'+id+'/about'
+		return response
+	else:
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/names/'+id+'/about'
+		return response
+
+
+def about_names(request,id):
+	data = utils.format_names_dict("<http://data.carnegiehall.org/names/%s>" % (id))
+
+	template = loader.get_template('names/names.html')
+	context = {
+	    'data': data,
+	}
+	return HttpResponse(template.render(context, request))
 
 

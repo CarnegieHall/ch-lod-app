@@ -16,7 +16,6 @@
       </tr>
     </thead>
     <tbody>
-
       <tr>
         <td>dcterms:date</td>
         <td>
@@ -52,7 +51,7 @@
         <td>
               <ul>
             {% for values in data.product %}
-              <li><a href="{{values}}">{{values}}</a></li>
+              <li><a href="{{values}}">{{values.0}}</a> ({{values.1}})</li>
             {% endfor %}
           </ul>
         </td>

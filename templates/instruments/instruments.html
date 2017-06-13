@@ -1,0 +1,81 @@
+{% include "main/header.html" %} 
+
+
+<div class="container">
+
+
+  <div class="twelve columns">
+  <h3>Instrument: {{ data.rdfs_label.0 }}</h3>
+  </div>
+
+  <table class="u-full-width prop-table">
+    <thead>
+      <tr>
+        <th>Property</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>rdf:type</td>
+        <td>
+          <ul>
+        {% for values in data.rdf_type %}
+           <li><a href="{{values}}">{{values}}</a></li>
+        {% endfor %}
+      </ul>
+    </td>
+      </tr>
+      
+
+      {% if data.comment %}
+      <tr>
+        <td>rdfs:comment</td>
+        <td>
+          <ul>
+            {% for values in data.comment %}
+              <li>{{values}}</li>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
+      {% endif %}
+
+      {% if data.rdfs_label %}
+      <tr>
+        <td>rdfs:label</td>
+        <td>
+          <ul>
+            {% for values in data.rdfs_label %}
+              <li>{{values}}</li>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
+      {% endif %}
+
+
+
+
+      {% if data.unmapped %}
+          {% for values in data.unmapped %}
+          <tr>
+            <td>{{values.0}}</td>
+            <td>
+              <ul>
+             <li><a href="{{values.1}}">{{values.1}}</a></li>
+          </ul>
+        </td>
+      </tr>
+      {% endfor %}
+      {% endif %}
+
+
+    </tbody>
+  </table>
+
+</div>
+
+
+
+{% include "main/footer.html" %} 

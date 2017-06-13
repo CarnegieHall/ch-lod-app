@@ -1,4 +1,4 @@
-from SPARQLWrapper import SPARQLWrapper, JSON
+from SPARQLWrapper import SPARQLWrapper, JSON, XML, TURTLE, RDF, JSONLD
 from django.conf import settings
 import operator
 
@@ -71,6 +71,37 @@ def return_name(uris):
 
 	return results
 
+"""
+Returns the work URIs for a work event id
+"""
+def return_works_from_event(uris):
+	sparql = SPARQLWrapper(settings.SPARQL_ENDPOINT)
+
+	query = 'PREFIX dcterms: <http://purl.org/dc/terms/>' 
+	query = query + 'SELECT * WHERE{' 
+	query = query + '?uri <http://purl.org/NET/c4dm/event.owl#product> ?o . ?uri ?p ?o .' 
+	query = query + 'FILTER (?uri IN ('+ ','.join(uris)  +'))' 
+	query = query + '}'
+
+	sparql.setQuery(query)
+	sparql.setReturnFormat(JSON)
+	results = sparql.query().convert()
+	event_work_map = {}
+	work_uris = []
+
+	for result in results["results"]["bindings"]:
+		work_uris.append('<' + result['o']['value'] + '>')
+		event_work_map[result['uri']['value']] = result['o']['value']
+
+	labels = return_label_date(work_uris)
+
+	for label in labels["results"]["bindings"]:
+		print(label)
+		for key in event_work_map:
+			if event_work_map[key] == label['uri']['value']:
+				event_work_map[key] = label['o']['value']
+
+	return event_work_map
 
 def format_events_dict(event_uri):
 
@@ -125,6 +156,15 @@ def format_events_dict(event_uri):
 	for v in venue["results"]["bindings"]:
 		venues.append([v['uri']['value'],v['o']['value']])
 
+	product_uris = []
+	for p in product:
+		product_uris.append('<'+p+'>')
+
+	event_work_map = return_works_from_event(product_uris)
+
+	product_with_labels = []
+	for p in product:
+		product_with_labels.append([p,event_work_map[p]])
 
 
 	event = {
@@ -134,7 +174,7 @@ def format_events_dict(event_uri):
 		'rdfs_label_string' : (',').join(labels),
 		'unmapped' : unmapped,
 		'people' : people,
-		'product': product,
+		'product': product_with_labels,
 		'venues' : venues
 	}
 
@@ -144,9 +184,280 @@ def format_events_dict(event_uri):
 	return event
 	
 
+def format_product_dict(product_uri):
+
+	o = return_objects(product_uri)
+	s = return_subjects(product_uri)
+
+	print(o)
+	print(s)
+
+	types = []
+	unmapped = []
+	events = []
+
+	for result in o["results"]["bindings"]:
+		if result['p']['value'] == 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type':
+			types.append(result['o']['value'])
+		else:
+			unmapped.append([result['p']['value'], result['o']['value']])
+
+
+	for result in s["results"]["bindings"]:
+		if result['p']['value'] == 'http://purl.org/NET/c4dm/event.owl#product':
+			events.append('<'+result['s']['value']+'>')
 
 
 
+	work_labels = return_works_from_event([product_uri])
+	for key in work_labels:
+		work_labels = [[key,work_labels[key]]]
+
+
+	events = return_label_date(events)
+
+	events_map = {}
+
+	for result in events["results"]["bindings"]:
+		uri = result['uri']['value']
+		if uri not in events_map:
+			events_map[uri] = { 'rdfs:label' : '', 'dcterms:date' : '' }
+
+		if result['p']['value'] == 'http://www.w3.org/2000/01/rdf-schema#label':
+			events_map[uri]['rdfs:label'] = result['o']['value']
+
+		if result['p']['value'] == 'http://purl.org/dc/terms/date':
+			events_map[uri]['dcterms:date'] = result['o']['value']
+
+	events = []
+
+	for key in events_map:
+		events.append([key,events_map[key]['rdfs:label'],events_map[key]['dcterms:date']])
+
+
+	product = {
+		'rdf_type': types,
+		'work_label' : work_labels[0][1],
+		'events' : events
+	}
+
+	return product
+
+
+
+def format_venues_dict(venue_uri):
+	o = return_objects(venue_uri)
+	s = return_subjects(venue_uri)
+
+	types = []
+	labels = []
+	unmapped = []
+	comment = []
+	parent = []
+	historical_name = []
+	contains_place = []
+
+	for result in o["results"]["bindings"]:
+		if result['p']['value'] == 'http://www.w3.org/2000/01/rdf-schema#comment':
+			comment.append(result['o']['value'])
+		elif result['p']['value'] == 'http://purl.org/dc/terms/date':
+			dates.append(result['o']['value'])
+		elif result['p']['value'] == 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type':
+			types.append(result['o']['value'])
+		elif result['p']['value'] == 'http://www.geonames.org/ontology#parentFeature':
+			parent.append(result['o']['value'])
+		elif result['p']['value'] == 'http://www.w3.org/2000/01/rdf-schema#label':
+			labels.append(result['o']['value'])
+		elif result['p']['value'] == 'http://www.geonames.org/ontology#historicalName':
+			historical_name.append(result['o']['value'])
+		elif result['p']['value'] == 'http://schema.org/containsPlace':
+			contains_place.append(result['o']['value'])
+		else:
+			unmapped.append([result['p']['value'], result['o']['value']])
+
+
+
+
+	venue = {
+		'rdf_type' : types,
+		'rdfs_label' : labels,
+		'unmapped' : unmapped,
+		'parent' : parent,
+		'comment': comment,
+		'historical_name' : historical_name,
+		'contains_place' : contains_place
+	}
+
+
+
+
+	return venue
+
+def format_roles_dict(role_uri):
+	o = return_objects(role_uri)
+	s = return_subjects(role_uri)
+
+	types = []
+	labels = []
+	unmapped = []
+	comment = []
+
+	for result in o["results"]["bindings"]:
+		if result['p']['value'] == 'http://www.w3.org/2000/01/rdf-schema#comment':
+			comment.append(result['o']['value'])
+		elif result['p']['value'] == 'http://purl.org/dc/terms/date':
+			dates.append(result['o']['value'])
+		elif result['p']['value'] == 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type':
+			types.append(result['o']['value'])
+		elif result['p']['value'] == 'http://www.w3.org/2000/01/rdf-schema#label':
+			labels.append(result['o']['value'])
+		else:
+			unmapped.append([result['p']['value'], result['o']['value']])
+
+
+	role = {
+		'rdf_type' : types,
+		'rdfs_label' : labels,
+		'unmapped' : unmapped,
+		'comment': comment
+	}
+	return role
+
+def format_instruments_dict(instrument_uri):
+	o = return_objects(instrument_uri)
+	s = return_subjects(instrument_uri)
+
+	types = []
+	labels = []
+	unmapped = []
+	comment = []
+
+	for result in o["results"]["bindings"]:
+		if result['p']['value'] == 'http://www.w3.org/2000/01/rdf-schema#comment':
+			comment.append(result['o']['value'])
+		elif result['p']['value'] == 'http://purl.org/dc/terms/date':
+			dates.append(result['o']['value'])
+		elif result['p']['value'] == 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type':
+			types.append(result['o']['value'])
+		elif result['p']['value'] == 'http://www.w3.org/2000/01/rdf-schema#label':
+			labels.append(result['o']['value'])
+		else:
+			unmapped.append([result['p']['value'], result['o']['value']])
+
+
+	instrument = {
+		'rdf_type' : types,
+		'rdfs_label' : labels,
+		'unmapped' : unmapped,
+		'comment': comment
+	}
+
+
+
+
+	return instrument
+
+def format_names_dict(name_uri):
+	o = return_objects(name_uri)
+	s = return_subjects(name_uri)
+
+	types = []
+	labels = []
+	name = []
+	unmapped = []
+	comment = []
+	parent = []
+	match = []
+	profession_or_occupation = []
+	labels_map = []
+	played_instrument = []
+	birth = []
+	death = []
+
+	for result in o["results"]["bindings"]:
+		if result['p']['value'] == 'http://www.w3.org/2000/01/rdf-schema#comment':
+			comment.append(result['o']['value'])
+		elif result['p']['value'] == 'http://purl.org/dc/terms/date':
+			dates.append(result['o']['value'])
+		elif result['p']['value'] == 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type':
+			types.append(result['o']['value'])
+		elif result['p']['value'] == 'http://www.geonames.org/ontology#parentFeature':
+			parent.append(result['o']['value'])
+		elif result['p']['value'] == 'http://www.w3.org/2000/01/rdf-schema#label':
+			labels.append(result['o']['value'])
+		elif result['p']['value'] == 'http://xmlns.com/foaf/0.1/name':
+			name.append(result['o']['value'])
+		elif result['p']['value'] == 'http://www.geonames.org/ontology#historicalName':
+			historical_name.append(result['o']['value'])
+		elif result['p']['value'] == 'http://schema.org/containsPlace':
+			contains_place.append(result['o']['value'])
+		elif result['p']['value'] == 'http://d-nb.info/standards/elementset/gnd#professionOrOccupation':
+			labels_map.append('<'+result['o']['value']+'>')
+			profession_or_occupation.append(result['o']['value'])
+		elif result['p']['value'] == 'http://d-nb.info/standards/elementset/gnd#playedInstrument':
+			played_instrument.append(result['o']['value'])
+			labels_map.append('<'+result['o']['value']+'>')
+
+		elif result['p']['value'] == 'http://xmlns.com/foaf/0.1/name':
+			name.append(result['o']['value'])
+		elif result['p']['value'] == 'http://www.w3.org/2004/02/skos/core#exactMatch':
+			match.append(result['o']['value'])
+
+		elif result['p']['value'] == 'http://schema.org/birthDate':
+			birth.append(result['o']['value'])
+		elif result['p']['value'] == 'http://schema.org/deathDate':
+			death.append(result['o']['value'])
+		else:
+			result['p']['value'] = result['p']['value'].replace('http://schema.org/','schema:')
+			result['p']['value'] = result['p']['value'].replace('http://dbpedia.org/ontology/','dbo:')
+
+
+
+			unmapped.append([result['p']['value'], result['o']['value']])
+
+
+	labels_map = return_name(labels_map)
+
+	played_instrument_with_labels = []
+	profession_or_occupation_with_labels = []
+	for p in played_instrument:
+		for result in labels_map["results"]["bindings"]:
+			if result['uri']['value'] in p:
+				played_instrument_with_labels.append([p,result['o']['value']])
+
+	for p in profession_or_occupation:
+		for result in labels_map["results"]["bindings"]:
+			if result['uri']['value'] in p:
+				profession_or_occupation_with_labels.append([p,result['o']['value']])
+
+
+
+
+
+	if len(name) > 0:
+		display_name = name[0] 
+
+	if len(labels) > 0:
+		display_name = labels[0] 
+	name = {
+		'rdf_type' : types,
+		'rdfs_label' : labels,
+		'display_name': display_name,
+		'name' : name,
+		'unmapped' : unmapped,
+		'parent' : parent,
+		'comment': comment,
+		'match' : match,
+		'birth' : birth,
+		'death' : death,
+		'profession_or_occupation': profession_or_occupation_with_labels,
+		'played_instrument': played_instrument_with_labels
+	}
+
+
+
+
+	return name
 def format_works_dict(work_uri):
 
 

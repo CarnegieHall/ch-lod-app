@@ -23,8 +23,19 @@ urlpatterns = [
     url(r'^$', views.route_homepage),
     url(r'^works/(?P<id>[0-9]+)/about', views.about_works),
     url(r'^works/(?P<id>[0-9]+)', views.route_works),
+    url(r'^events/(?P<id>[0-9]+)/work_(?P<product_id>[0-9]+)/about', views.about_products),
+    url(r'^events/(?P<id>[0-9]+)/work_(?P<product_id>[0-9]+)', views.route_products),
     url(r'^events/(?P<id>[0-9]+)/about', views.about_events),
     url(r'^events/(?P<id>[0-9]+)', views.route_events),
+    url(r'^venues/(?P<id>[0-9]+)/about', views.about_venues),
+    url(r'^venues/(?P<id>[0-9]+)', views.route_venues),    
+    url(r'^names/(?P<id>[0-9]+)/about', views.about_names),
+    url(r'^names/(?P<id>[0-9]+)', views.route_names), 
+    url(r'^instruments/(?P<id>[0-9]+)/about', views.about_instruments),
+    url(r'^instruments/(?P<id>[0-9]+)', views.route_instruments), 
+    url(r'^roles/(?P<id>[0-9]+)/about', views.about_roles),
+    url(r'^roles/(?P<id>[0-9]+)', views.route_roles), 
+
     url(r'^sparql/select', views.route_sparql_query),    
     url(r'^sparql/', views.route_sparql)    
 
