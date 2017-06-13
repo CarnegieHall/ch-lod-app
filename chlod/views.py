@@ -58,19 +58,23 @@ def route_works(request, id):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/works/'+id+'/about'
 		return response
+
 	else:
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/works/'+id+'/about'
 		return response
 
-def about_works(request,id):
-	data = utils.format_works_dict("<http://data.carnegiehall.org/works/%s>" % (id))
+def about_works(request,id,type):
 
-	template = loader.get_template('works/works.html')
-	context = {
-	    'data': data,
-	}
-	return HttpResponse(template.render(context, request))
+	if type == 'xml' or type == 'rdf' or type == 'turtle':
+		return HttpResponse(content=utils.return_serialized_subjects("<http://data.carnegiehall.org/works/%s>" % (id),type), status=200)
+	else:
+		data = utils.format_works_dict("<http://data.carnegiehall.org/works/%s>" % (id))
+		template = loader.get_template('works/works.html')
+		context = {
+		    'data': data,
+		}
+		return HttpResponse(template.render(context, request))
 
 
 def route_events(request, id):

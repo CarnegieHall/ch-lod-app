@@ -103,6 +103,44 @@ def return_works_from_event(uris):
 
 	return event_work_map
 
+
+"""
+Returns the work URIs for a work event id
+"""
+def return_serialized_subjects(uri,type):
+	sparql = SPARQLWrapper(settings.SPARQL_ENDPOINT)
+
+	if uri[0] != '<':
+		uri = '<' + uri + '>'
+
+	query = 'SELECT * WHERE{' 
+	query = query + uri + ' ?p ?o .' 
+	query = query + '}'
+
+	sparql.setQuery(query)
+	if (type == 'xml'):
+		sparql.setReturnFormat(XML)
+		results = sparql.query().convert()
+		results = results.toxml('utf-8')
+	elif (type == 'rdf'):
+		sparql.setReturnFormat(TURTLE)
+		results = sparql.query().convert()
+		print (results)
+
+
+
+	elif (type == 'turtle'):
+		sparql.setReturnFormat(TURTLE)
+		results = sparql.query().convert()
+
+	else:		
+		sparql.setReturnFormat(JSON)
+		results = sparql.query().convert()
+
+
+	return results
+
+
 def format_events_dict(event_uri):
 
 

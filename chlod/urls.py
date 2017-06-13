@@ -21,7 +21,7 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.route_homepage),
-    url(r'^works/(?P<id>[0-9]+)/about', views.about_works),
+    url(r'^works/(?P<id>[0-9]+)/(?P<type>about|xml|rdf|turtle|jsonld)', views.about_works),
     url(r'^works/(?P<id>[0-9]+)', views.route_works),
     url(r'^events/(?P<id>[0-9]+)/work_(?P<product_id>[0-9]+)/about', views.about_products),
     url(r'^events/(?P<id>[0-9]+)/work_(?P<product_id>[0-9]+)', views.route_products),
