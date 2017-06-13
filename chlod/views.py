@@ -11,6 +11,14 @@ from . import utils
 limit_re = re.compile('LIMIT\s([0-9]+)', re.IGNORECASE)
 
 
+content_type_map = {
+	'xml' : 'text/xml',
+	'turtle' : 'text/turtle',
+	'jsonld' : 'application/ld+json',
+	'n3' : 'text/n3',
+	'nt' : 'text/plain',
+}
+
 @csrf_exempt
 def route_sparql_query(request):
 
@@ -66,8 +74,8 @@ def route_works(request, id):
 
 def about_works(request,id,type):
 
-	if type == 'xml' or type == 'rdf' or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
-		return HttpResponse(content=utils.return_serialized_subjects("<http://data.carnegiehall.org/works/%s>" % (id),type), status=200)
+	if type == 'xml'  or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
+		return HttpResponse(content=utils.return_serialized_subjects("<http://data.carnegiehall.org/works/%s>" % (id),type), content_type=content_type_map[type], status=200)
 	else:
 		data = utils.format_works_dict("<http://data.carnegiehall.org/works/%s>" % (id))
 		template = loader.get_template('works/works.html')
@@ -89,8 +97,8 @@ def route_events(request, id):
 
 
 def about_events(request,id,type):
-	if type == 'xml' or type == 'rdf' or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
-		return HttpResponse(content=utils.return_serialized_subjects("<http://data.carnegiehall.org/events/%s>" % (id),type), status=200)
+	if type == 'xml'  or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
+		return HttpResponse(content=utils.return_serialized_subjects("<http://data.carnegiehall.org/events/%s>" % (id),type), content_type=content_type_map[type], status=200)
 	else:
 		data = utils.format_events_dict("<http://data.carnegiehall.org/events/%s>" % (id))
 
@@ -113,8 +121,8 @@ def route_products(request, id,product_id):
 
 
 def about_products(request,id,product_id,type):
-	if type == 'xml' or type == 'rdf' or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
-		return HttpResponse(content=utils.return_serialized_subjects("<http://data.carnegiehall.org/events/%s/work_%s>" % (id,product_id),type), status=200)
+	if type == 'xml'  or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
+		return HttpResponse(content=utils.return_serialized_subjects("<http://data.carnegiehall.org/events/%s/work_%s>" % (id,product_id),type),  content_type=content_type_map[type], status=200)
 	else:
 		data = utils.format_product_dict("<http://data.carnegiehall.org/events/%s/work_%s>" % (id,product_id))
 
@@ -139,8 +147,8 @@ def route_venues(request, id):
 
 
 def about_venues(request,id,type):
-	if type == 'xml' or type == 'rdf' or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
-		return HttpResponse(content=utils.return_serialized_subjects("<http://data.carnegiehall.org/venues/%s>" % (id),type), status=200)
+	if type == 'xml'  or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
+		return HttpResponse(content=utils.return_serialized_subjects("<http://data.carnegiehall.org/venues/%s>" % (id),type), content_type=content_type_map[type], status=200)
 	else:
 		data = utils.format_venues_dict("<http://data.carnegiehall.org/venues/%s>" % (id))
 
@@ -164,8 +172,8 @@ def route_instruments(request, id):
 
 
 def about_instruments(request,id,type):
-	if type == 'xml' or type == 'rdf' or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
-		return HttpResponse(content=utils.return_serialized_subjects("<http://data.carnegiehall.org/instruments/%s>" % (id),type), status=200)
+	if type == 'xml'  or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
+		return HttpResponse(content=utils.return_serialized_subjects("<http://data.carnegiehall.org/instruments/%s>" % (id),type), content_type=content_type_map[type], status=200)
 	else:
 		data = utils.format_instruments_dict("<http://data.carnegiehall.org/instruments/%s>" % (id))
 
@@ -189,8 +197,8 @@ def route_roles(request, id):
 
 
 def about_roles(request,id,type):
-	if type == 'xml' or type == 'rdf' or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
-		return HttpResponse(content=utils.return_serialized_subjects("<http://data.carnegiehall.org/roles/%s>" % (id),type), status=200)
+	if type == 'xml'  or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
+		return HttpResponse(content=utils.return_serialized_subjects("<http://data.carnegiehall.org/roles/%s>" % (id),type), content_type=content_type_map[type], status=200)
 	else:
 		data = utils.format_roles_dict("<http://data.carnegiehall.org/roles/%s>" % (id))
 
@@ -215,8 +223,8 @@ def route_names(request, id):
 
 
 def about_names(request,id,type):
-	if type == 'xml' or type == 'rdf' or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
-		return HttpResponse(content=utils.return_serialized_subjects("<http://data.carnegiehall.org/names/%s>" % (id),type), status=200)
+	if type == 'xml'  or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
+		return HttpResponse(content=utils.return_serialized_subjects("<http://data.carnegiehall.org/names/%s>" % (id),type), content_type=content_type_map[type], status=200)
 	else:
 		data = utils.format_names_dict("<http://data.carnegiehall.org/names/%s>" % (id))
 
