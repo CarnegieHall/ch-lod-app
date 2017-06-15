@@ -4,6 +4,11 @@ from rdflib.serializer import Serializer
 from django.conf import settings
 import operator
 
+def chunks(l, n):
+    """Yield successive n-sized chunks from l."""
+    for i in range(0, len(l), n):
+        yield l[i:i + n]
+
 
 def return_objects(uri):
 	sparql = SPARQLWrapper(settings.SPARQL_ENDPOINT)
@@ -36,42 +41,62 @@ def return_subjects(uri):
 Returns the label and date of uris given good for events
 """
 def return_label_date(uris):
-	sparql = SPARQLWrapper(settings.SPARQL_ENDPOINT)
 
-	query = 'PREFIX dcterms: <http://purl.org/dc/terms/>' 
-	query = query + 'SELECT * WHERE{' 
-	query = query + '{?uri rdfs:label ?o . ?uri ?p ?o .}' 
-	query = query + 'UNION' 
-	query = query + '{?uri dcterms:date ?o . ?uri ?p ?o .}' 
-	query = query + 'FILTER (?uri IN ('+ ','.join(uris)  +'))' 
-	query = query + '}'
+	uri_chunks = chunks(uris,100)
 
-	sparql.setQuery(query)
-	sparql.setReturnFormat(JSON)
-	results = sparql.query().convert()
+	all_results = {'head': {'vars': ['uri', 'o', 'p']}, 'results': {'bindings': [] } }
 
-	return results
+	for chunk in uri_chunks:
+		sparql = SPARQLWrapper(settings.SPARQL_ENDPOINT)
+
+		query = 'PREFIX dcterms: <http://purl.org/dc/terms/>' 
+		query = query + 'SELECT * WHERE{' 
+		query = query + '{?uri rdfs:label ?o . ?uri ?p ?o .}' 
+		query = query + 'UNION' 
+		query = query + '{?uri dcterms:date ?o . ?uri ?p ?o .}' 
+		query = query + 'FILTER (?uri IN ('+ ','.join(chunk)  +'))' 
+		query = query + '}'
+
+		sparql.setQuery(query)
+		sparql.setReturnFormat(JSON)
+		results = sparql.query().convert()
+
+		for result in results["results"]["bindings"]:
+			all_results['results']['bindings'].append(result)
+
+
+	return all_results
 
 
 """
 Returns the names of the URIs given, either as foaf name or label depending on how they were stored
 """
 def return_name(uris):
-	sparql = SPARQLWrapper(settings.SPARQL_ENDPOINT)
 
-	query = 'PREFIX foaf: <http://xmlns.com/foaf/0.1/>' 
-	query = query + 'SELECT * WHERE{' 
-	query = query + '{?uri rdfs:label ?o . ?uri ?p ?o .}' 
-	query = query + 'UNION' 
-	query = query + '{?uri foaf:name ?o . ?uri ?p ?o .}' 
-	query = query + 'FILTER (?uri IN ('+ ','.join(uris)  +'))' 
-	query = query + '}'
+	uri_chunks = chunks(uris,100)
 
-	sparql.setQuery(query)
-	sparql.setReturnFormat(JSON)
-	results = sparql.query().convert()
+	all_results = {'head': {'vars': ['uri', 'o', 'p']}, 'results': {'bindings': [] } }
+	for chunk in uri_chunks:
 
-	return results
+
+		sparql = SPARQLWrapper(settings.SPARQL_ENDPOINT)
+		query = 'PREFIX foaf: <http://xmlns.com/foaf/0.1/>' 
+		query = query + 'SELECT * WHERE{' 
+		query = query + '{?uri rdfs:label ?o . ?uri ?p ?o .}' 
+		query = query + 'UNION' 
+		query = query + '{?uri foaf:name ?o . ?uri ?p ?o .}' 
+		query = query + 'FILTER (?uri IN ('+ ','.join(chunk)  +'))' 
+		query = query + '}'
+
+		sparql.setQuery(query)
+		sparql.setReturnFormat(JSON)
+		results = sparql.query().convert()
+
+		for result in results["results"]["bindings"]:
+			all_results['results']['bindings'].append(result)
+
+
+	return all_results
 
 """
 Returns the work URIs for a work event id
