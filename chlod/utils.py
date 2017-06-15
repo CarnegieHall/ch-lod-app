@@ -98,7 +98,6 @@ def return_works_from_event(uris):
 	labels = return_label_date(work_uris)
 
 	for label in labels["results"]["bindings"]:
-		print(label)
 		for key in event_work_map:
 			if event_work_map[key] == label['uri']['value']:
 				event_work_map[key] = label['o']['value']
@@ -132,7 +131,6 @@ def return_serialized_subjects(uri,type):
 	results = sparql.query().convert()
 
 	for result in results["results"]["bindings"]:
-		print(result)
 		if (result['o']['type'] == 'uri'):
 			g.add( (URIRef(uri_no_bracket), URIRef(result['p']['value']) , URIRef(result['o']['value'])) )
 		else:
@@ -243,9 +241,6 @@ def format_product_dict(product_uri):
 
 	o = return_objects(product_uri)
 	s = return_subjects(product_uri)
-
-	print(o)
-	print(s)
 
 	types = []
 	unmapped = []

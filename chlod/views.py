@@ -69,7 +69,26 @@ def route_works(request, id):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/works/'+id+'/about'
 		return response
-
+	elif 'application/json+ld' in request.META.get('HTTP_ACCEPT') or 'application/json' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/works/'+id+'/jsonld'
+		return response		
+	elif 'text/plain' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/works/'+id+'/nt'
+		return response
+	elif 'application/x-turtle' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/works/'+id+'/turtle'
+		return response		
+	elif 'text/rdf+n3' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/works/'+id+'/n3'
+		return response				
+	elif 'application/rdf+xml' in request.META.get('HTTP_ACCEPT') or 'application/xml' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/works/'+id+'/xml'
+		return response
 	else:
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/works/'+id+'/about'
@@ -93,10 +112,32 @@ def route_events(request, id):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/events/'+id+'/about'
 		return response
+	elif 'application/json+ld' in request.META.get('HTTP_ACCEPT') or 'application/json' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/events/'+id+'/jsonld'
+		return response		
+	elif 'text/plain' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/events/'+id+'/nt'
+		return response
+	elif 'application/x-turtle' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/events/'+id+'/turtle'
+		return response		
+	elif 'text/rdf+n3' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/events/'+id+'/n3'
+		return response				
+	elif 'application/rdf+xml' in request.META.get('HTTP_ACCEPT') or 'application/xml' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/events/'+id+'/xml'
+		return response
 	else:
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/events/'+id+'/about'
 		return response
+
+
 
 
 def about_events(request,id,type):
@@ -117,10 +158,33 @@ def route_products(request, id,product_id):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/events/'+id+'/work_' + product_id + '/about'
 		return response
+	elif 'application/json+ld' in request.META.get('HTTP_ACCEPT') or 'application/json' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/events/'+id+'/work_' + product_id +'/jsonld'
+		return response		
+	elif 'text/plain' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/events/'+id+'/work_' + product_id +'/nt'
+		return response
+	elif 'application/x-turtle' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/events/'+id+'/work_' + product_id +'/turtle'
+		return response		
+	elif 'text/rdf+n3' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/events/'+id+'/work_' + product_id +'/n3'
+		return response				
+	elif 'application/rdf+xml' in request.META.get('HTTP_ACCEPT') or 'application/xml' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/events/'+id+'/work_' + product_id +'/xml'
+		return response
 	else:
 		response = HttpResponse(content="", status=303)
-		response["Location"] = '/events/'+id+'/about'
+		response["Location"] = '/events/'+id+'/work_' + product_id +'/about'
 		return response
+
+
+
 
 
 def about_products(request,id,product_id,type):
@@ -142,6 +206,26 @@ def route_venues(request, id):
 	if 'text/htm' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/venues/'+id+'/about'
+		return response
+	elif 'application/json+ld' in request.META.get('HTTP_ACCEPT') or 'application/json' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/venues/'+id+'/jsonld'
+		return response		
+	elif 'text/plain' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/venues/'+id+'/nt'
+		return response
+	elif 'application/x-turtle' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/venues/'+id+'/turtle'
+		return response		
+	elif 'text/rdf+n3' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/venues/'+id+'/n3'
+		return response				
+	elif 'application/rdf+xml' in request.META.get('HTTP_ACCEPT') or 'application/xml' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/venues/'+id+'/xml'
 		return response
 	else:
 		response = HttpResponse(content="", status=303)
@@ -168,6 +252,26 @@ def route_instruments(request, id):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/instruments/'+id+'/about'
 		return response
+	elif 'application/json+ld' in request.META.get('HTTP_ACCEPT') or 'application/json' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/instruments/'+id+'/jsonld'
+		return response		
+	elif 'text/plain' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/instruments/'+id+'/nt'
+		return response
+	elif 'application/x-turtle' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/instruments/'+id+'/turtle'
+		return response		
+	elif 'text/rdf+n3' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/instruments/'+id+'/n3'
+		return response				
+	elif 'application/rdf+xml' in request.META.get('HTTP_ACCEPT') or 'application/xml' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/instruments/'+id+'/xml'
+		return response
 	else:
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/instruments/'+id+'/about'
@@ -193,11 +297,30 @@ def route_roles(request, id):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/roles/'+id+'/about'
 		return response
+	elif 'application/json+ld' in request.META.get('HTTP_ACCEPT') or 'application/json' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/roles/'+id+'/jsonld'
+		return response		
+	elif 'text/plain' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/roles/'+id+'/nt'
+		return response
+	elif 'application/x-turtle' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/roles/'+id+'/turtle'
+		return response		
+	elif 'text/rdf+n3' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/roles/'+id+'/n3'
+		return response				
+	elif 'application/rdf+xml' in request.META.get('HTTP_ACCEPT') or 'application/xml' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/roles/'+id+'/xml'
+		return response
 	else:
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/roles/'+id+'/about'
 		return response
-
 
 def about_roles(request,id,type):
 	if type == 'xml'  or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
@@ -216,11 +339,30 @@ def route_ensembles(request, id):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/ensembles/'+id+'/about'
 		return response
+	elif 'application/json+ld' in request.META.get('HTTP_ACCEPT') or 'application/json' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/ensembles/'+id+'/jsonld'
+		return response		
+	elif 'text/plain' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/ensembles/'+id+'/nt'
+		return response
+	elif 'application/x-turtle' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/ensembles/'+id+'/turtle'
+		return response		
+	elif 'text/rdf+n3' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/ensembles/'+id+'/n3'
+		return response				
+	elif 'application/rdf+xml' in request.META.get('HTTP_ACCEPT') or 'application/xml' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/ensembles/'+id+'/xml'
+		return response
 	else:
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/ensembles/'+id+'/about'
 		return response
-
 
 def about_ensembles(request,id,type):
 	if type == 'xml'  or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
@@ -240,11 +382,30 @@ def route_names(request, id):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/names/'+id+'/about'
 		return response
+	elif 'application/json+ld' in request.META.get('HTTP_ACCEPT') or 'application/json' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/names/'+id+'/jsonld'
+		return response		
+	elif 'text/plain' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/names/'+id+'/nt'
+		return response
+	elif 'application/x-turtle' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/names/'+id+'/turtle'
+		return response		
+	elif 'text/rdf+n3' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/names/'+id+'/n3'
+		return response				
+	elif 'application/rdf+xml' in request.META.get('HTTP_ACCEPT') or 'application/xml' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/names/'+id+'/xml'
+		return response
 	else:
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/names/'+id+'/about'
 		return response
-
 
 def about_names(request,id,type):
 	if type == 'xml'  or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
