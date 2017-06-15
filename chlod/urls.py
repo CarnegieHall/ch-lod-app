@@ -35,6 +35,10 @@ urlpatterns = [
     url(r'^instruments/(?P<id>[0-9]+)', views.route_instruments), 
     url(r'^roles/(?P<id>[0-9]+)/(?P<type>about|xml|turtle|jsonld|nt|n3)', views.about_roles),
     url(r'^roles/(?P<id>[0-9]+)', views.route_roles), 
+    url(r'^ensembles/(?P<id>[0-9]+)/(?P<type>about|xml|turtle|jsonld|nt|n3)', views.about_ensembles),
+    url(r'^ensembles/(?P<id>[0-9]+)', views.route_ensembles), 
+
+    
 
     url(r'^sparql/select', views.route_sparql_query),    
     url(r'^sparql/', views.route_sparql)    

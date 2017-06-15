@@ -142,7 +142,7 @@ def return_serialized_subjects(uri,type):
 				g.add( (URIRef(uri_no_bracket), URIRef(result['p']['value']) , Literal(result['o']['value'])) )
 
 
-	
+
 	if (type == 'xml'):
 		return g.serialize(format="xml")
 	elif (type == 'n3'):
@@ -360,8 +360,6 @@ def format_roles_dict(role_uri):
 	for result in o["results"]["bindings"]:
 		if result['p']['value'] == 'http://www.w3.org/2000/01/rdf-schema#comment':
 			comment.append(result['o']['value'])
-		elif result['p']['value'] == 'http://purl.org/dc/terms/date':
-			dates.append(result['o']['value'])
 		elif result['p']['value'] == 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type':
 			types.append(result['o']['value'])
 		elif result['p']['value'] == 'http://www.w3.org/2000/01/rdf-schema#label':
@@ -377,6 +375,37 @@ def format_roles_dict(role_uri):
 		'comment': comment
 	}
 	return role
+
+def format_ensembles_dict(ensembles_uri):
+	o = return_objects(ensembles_uri)
+	s = return_subjects(ensembles_uri)
+
+	types = []
+	labels = []
+	unmapped = []
+	comment = []
+
+	for result in o["results"]["bindings"]:
+		if result['p']['value'] == 'http://www.w3.org/2000/01/rdf-schema#comment':
+			comment.append(result['o']['value'])
+		elif result['p']['value'] == 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type':
+			types.append(result['o']['value'])
+		elif result['p']['value'] == 'http://www.w3.org/2000/01/rdf-schema#label':
+			labels.append(result['o']['value'])
+		else:
+			unmapped.append([result['p']['value'], result['o']['value']])
+
+
+	role = {
+		'rdf_type' : types,
+		'rdfs_label' : labels,
+		'unmapped' : unmapped,
+		'comment': comment
+	}
+	return role
+
+
+
 
 def format_instruments_dict(instrument_uri):
 	o = return_objects(instrument_uri)

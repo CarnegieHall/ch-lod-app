@@ -211,7 +211,28 @@ def about_roles(request,id,type):
 		}
 		return HttpResponse(template.render(context, request))
 
+def route_ensembles(request, id):
+	if 'text/htm' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/ensembles/'+id+'/about'
+		return response
+	else:
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/ensembles/'+id+'/about'
+		return response
 
+
+def about_ensembles(request,id,type):
+	if type == 'xml'  or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
+		return HttpResponse(content=utils.return_serialized_subjects("<http://data.carnegiehall.org/ensembles/%s>" % (id),type), content_type=content_type_map[type], status=200)
+	else:
+		data = utils.format_ensembles_dict("<http://data.carnegiehall.org/ensembles/%s>" % (id))
+
+		template = loader.get_template('ensembles/ensembles.html')
+		context = {
+		    'data': data,
+		}
+		return HttpResponse(template.render(context, request))
 
 
 def route_names(request, id):
