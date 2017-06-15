@@ -16,26 +16,30 @@
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td>dcterms:creator</td>
-        <td>
-        	<ul>
-				{% for values in data.dcterms_creator %}
-				   <li><a href="{{values.0}}">{{values.1}}</a></li>
-				{% endfor %}
-			</ul>
-		</td>
-      </tr>
-      <tr>
-        <td>dcterms:created</td>
-        <td>
-        	<ul>
-				{% for values in data.dcterms_created %}
-				   <li>{{values}}</li>
-				{% endfor %}
-			</ul>
-		</td>
-      </tr>
+      {% if data.dcterms_creator %}
+        <tr>
+          <td>dcterms:creator</td>
+          <td>
+          	<ul>
+  				{% for values in data.dcterms_creator %}
+  				   <li><a href="{{values.0}}">{{values.1}}</a></li>
+  				{% endfor %}
+  			     </ul>
+		      </td>
+        </tr>
+      {% endif %}
+      {% if data.dcterms_created %}
+        <tr>
+          <td>dcterms:created</td>
+          <td>
+          	<ul>
+      				{% for values in data.dcterms_created %}
+      				   <li>{{values}}</li>
+      				{% endfor %}
+      			</ul>
+  		    </td>
+        </tr>
+      {% endif %}
       <tr>
         <td>rdf:type</td>
         <td>
