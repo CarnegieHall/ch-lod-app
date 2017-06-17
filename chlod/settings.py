@@ -25,7 +25,7 @@ SPARQL_ENDPOINT = "https://rdf.s4.ontotext.com/4038405949/carnegiehall_db/reposi
 SECRET_KEY = "is1*u_p6%b(foglz4a))wxnrq^4jwo6j*3p)sobwrgi@m7yhck"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 # Application definition
 
