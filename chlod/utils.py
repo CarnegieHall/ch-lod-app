@@ -165,6 +165,8 @@ def return_serialized_subjects(uri,type):
 				g.add( (URIRef(uri_no_bracket), URIRef(result['p']['value']) , Literal(result['o']['value'])) )
 
 
+	if len(g) == 0:
+		return '404'
 
 	if (type == 'xml'):
 		return g.serialize(format="xml")
@@ -186,6 +188,7 @@ def format_events_dict(event_uri):
 
 	o = return_objects(event_uri)
 	s = return_subjects(event_uri)
+	total_triples = len(o["results"]["bindings"]) + len(s["results"]["bindings"])
 
 	agents = []
 	dates = []
@@ -253,7 +256,8 @@ def format_events_dict(event_uri):
 		'unmapped' : unmapped,
 		'people' : people,
 		'product': product_with_labels,
-		'venues' : venues
+		'venues' : venues,
+		'total_triples' : total_triples
 	}
 
 
@@ -266,6 +270,7 @@ def format_product_dict(product_uri):
 
 	o = return_objects(product_uri)
 	s = return_subjects(product_uri)
+	total_triples = len(o["results"]["bindings"]) + len(s["results"]["bindings"])
 
 	types = []
 	unmapped = []
@@ -313,7 +318,8 @@ def format_product_dict(product_uri):
 	product = {
 		'rdf_type': types,
 		'work_label' : work_labels[0][1],
-		'events' : events
+		'events' : events,
+		'total_triples' : total_triples
 	}
 
 	return product
@@ -323,6 +329,7 @@ def format_product_dict(product_uri):
 def format_venues_dict(venue_uri):
 	o = return_objects(venue_uri)
 	s = return_subjects(venue_uri)
+	total_triples = len(o["results"]["bindings"]) + len(s["results"]["bindings"])
 
 	types = []
 	labels = []
@@ -360,7 +367,8 @@ def format_venues_dict(venue_uri):
 		'parent' : parent,
 		'comment': comment,
 		'historical_name' : historical_name,
-		'contains_place' : contains_place
+		'contains_place' : contains_place,
+		'total_triples' : total_triples
 	}
 
 
@@ -371,6 +379,7 @@ def format_venues_dict(venue_uri):
 def format_roles_dict(role_uri):
 	o = return_objects(role_uri)
 	s = return_subjects(role_uri)
+	total_triples = len(o["results"]["bindings"]) + len(s["results"]["bindings"])
 
 	types = []
 	labels = []
@@ -392,7 +401,8 @@ def format_roles_dict(role_uri):
 		'rdf_type' : types,
 		'rdfs_label' : labels,
 		'unmapped' : unmapped,
-		'comment': comment
+		'comment': comment,
+		'total_triples' : total_triples
 	}
 	return role
 
@@ -400,6 +410,9 @@ def format_ensembles_dict(ensembles_uri):
 	o = return_objects(ensembles_uri)
 	s = return_subjects(ensembles_uri)
 
+	total_triples = len(o["results"]["bindings"]) + len(s["results"]["bindings"])
+
+
 	types = []
 	labels = []
 	unmapped = []
@@ -420,7 +433,9 @@ def format_ensembles_dict(ensembles_uri):
 		'rdf_type' : types,
 		'rdfs_label' : labels,
 		'unmapped' : unmapped,
-		'comment': comment
+		'comment': comment,
+		'total_triples': total_triples,
+		'total_triples' : total_triples
 	}
 	return role
 
@@ -430,6 +445,7 @@ def format_ensembles_dict(ensembles_uri):
 def format_instruments_dict(instrument_uri):
 	o = return_objects(instrument_uri)
 	s = return_subjects(instrument_uri)
+	total_triples = len(o["results"]["bindings"]) + len(s["results"]["bindings"])
 
 	types = []
 	labels = []
@@ -453,7 +469,8 @@ def format_instruments_dict(instrument_uri):
 		'rdf_type' : types,
 		'rdfs_label' : labels,
 		'unmapped' : unmapped,
-		'comment': comment
+		'comment': comment,
+		'total_triples' : total_triples
 	}
 
 
@@ -464,6 +481,8 @@ def format_instruments_dict(instrument_uri):
 def format_names_dict(name_uri):
 	o = return_objects(name_uri)
 	s = return_subjects(name_uri)
+
+	total_triples = len(o["results"]["bindings"]) + len(s["results"]["bindings"])
 
 	types = []
 	labels = []
@@ -536,6 +555,7 @@ def format_names_dict(name_uri):
 
 
 
+	display_name = ''
 
 
 	if len(name) > 0:
@@ -555,7 +575,8 @@ def format_names_dict(name_uri):
 		'birth' : birth,
 		'death' : death,
 		'profession_or_occupation': profession_or_occupation_with_labels,
-		'played_instrument': played_instrument_with_labels
+		'played_instrument': played_instrument_with_labels,
+		'total_triples' : total_triples
 	}
 
 
@@ -567,6 +588,7 @@ def format_works_dict(work_uri):
 
 	o = return_objects(work_uri)
 	s = return_subjects(work_uri)
+	total_triples = len(o["results"]["bindings"]) + len(s["results"]["bindings"])
 
 	#these will be all the event works, so we just want to get the parent events
 	events = []
@@ -638,7 +660,8 @@ def format_works_dict(work_uri):
 		'rdfs_label_string' : (',').join(labels),
 		'events' : events,
 		'unmapped' : unmapped,
-		'skos_exact_match' : match
+		'skos_exact_match' : match,
+		'total_triples' : total_triples
 	}
 
 	return work

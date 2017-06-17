@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from django.template import loader
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
+from django.http import Http404
 import requests
 import re
 
@@ -97,9 +98,15 @@ def route_works(request, id):
 def about_works(request,id,type):
 
 	if type == 'xml'  or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
-		return HttpResponse(content=utils.return_serialized_subjects("<http://data.carnegiehall.org/works/%s>" % (id),type), content_type=content_type_map[type], status=200)
+		data = utils.return_serialized_subjects("<http://data.carnegiehall.org/works/%s>" % (id),type)
+		if data == '404':
+			raise Http404		
+		return HttpResponse(content=data, content_type=content_type_map[type], status=200)
 	else:
 		data = utils.format_works_dict("<http://data.carnegiehall.org/works/%s>" % (id))
+		if data['total_triples'] == 0:
+			raise Http404
+
 		template = loader.get_template('works/works.html')
 		context = {
 		    'data': data,
@@ -142,9 +149,15 @@ def route_events(request, id):
 
 def about_events(request,id,type):
 	if type == 'xml'  or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
-		return HttpResponse(content=utils.return_serialized_subjects("<http://data.carnegiehall.org/events/%s>" % (id),type), content_type=content_type_map[type], status=200)
+		data = utils.return_serialized_subjects("<http://data.carnegiehall.org/events/%s>" % (id),type)
+		if data == '404':
+			raise Http404	
+
+		return HttpResponse(content=data, content_type=content_type_map[type], status=200)
 	else:
 		data = utils.format_events_dict("<http://data.carnegiehall.org/events/%s>" % (id))
+		if data['total_triples'] == 0:
+			raise Http404
 
 		template = loader.get_template('events/events.html')
 		context = {
@@ -189,9 +202,15 @@ def route_products(request, id,product_id):
 
 def about_products(request,id,product_id,type):
 	if type == 'xml'  or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
-		return HttpResponse(content=utils.return_serialized_subjects("<http://data.carnegiehall.org/events/%s/work_%s>" % (id,product_id),type),  content_type=content_type_map[type], status=200)
+		data = utils.return_serialized_subjects("<http://data.carnegiehall.org/events/%s/work_%s>" % (id,product_id),type)
+		if data == '404':
+			raise Http404
+
+		return HttpResponse(content=data,  content_type=content_type_map[type], status=200)
 	else:
 		data = utils.format_product_dict("<http://data.carnegiehall.org/events/%s/work_%s>" % (id,product_id))
+		if data['total_triples'] == 0:
+			raise Http404
 
 		template = loader.get_template('events/products.html')
 		context = {
@@ -235,9 +254,15 @@ def route_venues(request, id):
 
 def about_venues(request,id,type):
 	if type == 'xml'  or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
-		return HttpResponse(content=utils.return_serialized_subjects("<http://data.carnegiehall.org/venues/%s>" % (id),type), content_type=content_type_map[type], status=200)
+		data = utils.return_serialized_subjects("<http://data.carnegiehall.org/venues/%s>" % (id),type)
+		if data == '404':
+			raise Http404
+
+		return HttpResponse(content=data, content_type=content_type_map[type], status=200)
 	else:
 		data = utils.format_venues_dict("<http://data.carnegiehall.org/venues/%s>" % (id))
+		if data['total_triples'] == 0:
+			raise Http404
 
 		template = loader.get_template('venues/venues.html')
 		context = {
@@ -280,9 +305,15 @@ def route_instruments(request, id):
 
 def about_instruments(request,id,type):
 	if type == 'xml'  or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
-		return HttpResponse(content=utils.return_serialized_subjects("<http://data.carnegiehall.org/instruments/%s>" % (id),type), content_type=content_type_map[type], status=200)
+		data = utils.return_serialized_subjects("<http://data.carnegiehall.org/instruments/%s>" % (id),type)
+		if data == '404':
+			raise Http404
+
+		return HttpResponse(content=data, content_type=content_type_map[type], status=200)
 	else:
 		data = utils.format_instruments_dict("<http://data.carnegiehall.org/instruments/%s>" % (id))
+		if data['total_triples'] == 0:
+			raise Http404
 
 		template = loader.get_template('instruments/instruments.html')
 		context = {
@@ -324,9 +355,15 @@ def route_roles(request, id):
 
 def about_roles(request,id,type):
 	if type == 'xml'  or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
-		return HttpResponse(content=utils.return_serialized_subjects("<http://data.carnegiehall.org/roles/%s>" % (id),type), content_type=content_type_map[type], status=200)
+		data = utils.return_serialized_subjects("<http://data.carnegiehall.org/roles/%s>" % (id),type)
+		if data == '404':
+			raise Http404
+
+		return HttpResponse(content=data, content_type=content_type_map[type], status=200)
 	else:
 		data = utils.format_roles_dict("<http://data.carnegiehall.org/roles/%s>" % (id))
+		if data['total_triples'] == 0:
+			raise Http404
 
 		template = loader.get_template('roles/roles.html')
 		context = {
@@ -366,9 +403,15 @@ def route_ensembles(request, id):
 
 def about_ensembles(request,id,type):
 	if type == 'xml'  or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
-		return HttpResponse(content=utils.return_serialized_subjects("<http://data.carnegiehall.org/ensembles/%s>" % (id),type), content_type=content_type_map[type], status=200)
+		data = utils.return_serialized_subjects("<http://data.carnegiehall.org/ensembles/%s>" % (id),type)
+		if data == '404':
+			raise Http404
+
+		return HttpResponse(content=data, content_type=content_type_map[type], status=200)
 	else:
 		data = utils.format_ensembles_dict("<http://data.carnegiehall.org/ensembles/%s>" % (id))
+		if data['total_triples'] == 0:
+			raise Http404
 
 		template = loader.get_template('ensembles/ensembles.html')
 		context = {
@@ -409,9 +452,15 @@ def route_names(request, id):
 
 def about_names(request,id,type):
 	if type == 'xml'  or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
-		return HttpResponse(content=utils.return_serialized_subjects("<http://data.carnegiehall.org/names/%s>" % (id),type), content_type=content_type_map[type], status=200)
+		data = utils.return_serialized_subjects("<http://data.carnegiehall.org/names/%s>" % (id),type)	
+		if data == '404':
+			raise Http404
+
+		return HttpResponse(content=data, content_type=content_type_map[type], status=200)
 	else:
 		data = utils.format_names_dict("<http://data.carnegiehall.org/names/%s>" % (id))
+		if data['total_triples'] == 0:
+			raise Http404
 
 		template = loader.get_template('names/names.html')
 		context = {

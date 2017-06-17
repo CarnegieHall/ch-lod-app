@@ -42,5 +42,4 @@ urlpatterns = [
     url(r'^sparql/', views.route_sparql)    
 ]
 
-if settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
