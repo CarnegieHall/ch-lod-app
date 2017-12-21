@@ -16,7 +16,7 @@ import dj_database_url
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
-SPARQL_ENDPOINT = "https://rdf.ontotext.com/4045401874/carnegiehall_db"
+SPARQL_ENDPOINT = "https://rdf.ontotext.com/4045401874/carnegiehall_db/repositories/ch-lod"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
