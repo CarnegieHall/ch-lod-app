@@ -43,6 +43,10 @@ See also, a [ready-made application](https://github.com/heroku/python-getting-st
 
 Just update `runtime.txt` to `python-2.7.13` (no trailing spaces or newlines!).
 
+## Configuration
+
+The ch-lod-app currently points to an instance of GraphDB on the Ontotext Cognitive Cloud. The repository needs to be set to "Public", and the endpoint path in settings.py must include the repository path, e.g. ".../repositories/[repository]".
+
 
 ## License: MIT
 
