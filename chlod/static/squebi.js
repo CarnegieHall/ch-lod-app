@@ -7730,7 +7730,7 @@ require([
             "updateAllowed": true,
             "responseMessage": {
                 "404": "The service was not found or requires payment. Check your path and key in configuration.",
-                "500": "The query did not work. Maybe you little SPARQL mistake... :)"
+                "500": "The query did not work. Check your SPARQL to make sure it shines!"
             },
             "writers":["browse","json"],
             "downloadEnabled":true,
