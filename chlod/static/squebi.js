@@ -7732,7 +7732,7 @@ require([
                 "404": "The service was not found or requires payment. Check your path and key in configuration.",
                 "500": "The query did not work. Check your SPARQL to make sure it shines!"
             },
-            "writers":["browse","json"],
+            "writers":["browse","json","xml"],
             "downloadEnabled":true,
             "outputQueryParam":"out"
         };
