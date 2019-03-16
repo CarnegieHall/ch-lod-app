@@ -451,6 +451,7 @@ def format_instruments_dict(instrument_uri):
 	labels = []
 	unmapped = []
 	comment = []
+	match = []
 
 	for result in o["results"]["bindings"]:
 		if result['p']['value'] == 'http://www.w3.org/2000/01/rdf-schema#comment':
@@ -461,6 +462,8 @@ def format_instruments_dict(instrument_uri):
 			types.append(result['o']['value'])
 		elif result['p']['value'] == 'http://www.w3.org/2000/01/rdf-schema#label':
 			labels.append(result['o']['value'])
+		elif result['p']['value'] == 'http://www.w3.org/2004/02/skos/core#exactMatch':
+			match.append(result['o']['value'])
 		else:
 			unmapped.append([result['p']['value'], result['o']['value']])
 
@@ -470,6 +473,7 @@ def format_instruments_dict(instrument_uri):
 		'rdfs_label' : labels,
 		'unmapped' : unmapped,
 		'comment': comment,
+		'match' : match,
 		'total_triples' : total_triples
 	}
 
