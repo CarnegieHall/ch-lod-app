@@ -54,7 +54,17 @@
       </tr>
       {% endif %}
 
-
+<tr>
+  <td>skos:exactMatch</td>
+  <td>
+    <ul>
+      {% for values in data.match %}
+        <li><a href="{{values}}">{{values}}</a></li>
+      {% endfor %}
+    </ul>
+  </td>
+</tr>
+{% endif %}
 
 
       {% if data.unmapped %}
