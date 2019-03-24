@@ -336,6 +336,7 @@ def format_venues_dict(venue_uri):
 	unmapped = []
 	comment = []
 	parent = []
+	match = []
 	historical_name = []
 	contains_place = []
 
@@ -354,6 +355,8 @@ def format_venues_dict(venue_uri):
 			historical_name.append(result['o']['value'])
 		elif result['p']['value'] == 'http://schema.org/containsPlace':
 			contains_place.append(result['o']['value'])
+		elif result['p']['value'] == 'http://www.w3.org/2004/02/skos/core#exactMatch':
+			match.append(result['o']['value'])
 		else:
 			unmapped.append([result['p']['value'], result['o']['value']])
 
@@ -368,6 +371,7 @@ def format_venues_dict(venue_uri):
 		'comment': comment,
 		'historical_name' : historical_name,
 		'contains_place' : contains_place,
+		'match' : match,
 		'total_triples' : total_triples
 	}
 
