@@ -3,6 +3,7 @@ from rdflib import URIRef, Graph, Literal, plugin
 from rdflib.serializer import Serializer
 from django.conf import settings
 import operator
+import sys
 
 def chunks(l, n):
     """Yield successive n-sized chunks from l."""
@@ -102,6 +103,7 @@ def return_name(uris):
 Returns the work URIs for a work event id
 """
 def return_works_from_event(uris):
+
 	sparql = SPARQLWrapper(settings.SPARQL_ENDPOINT)
 
 	query = 'PREFIX dcterms: <http://purl.org/dc/terms/>' 
@@ -109,6 +111,7 @@ def return_works_from_event(uris):
 	query = query + '?uri <http://purl.org/NET/c4dm/event.owl#product> ?o . ?uri ?p ?o .' 
 	query = query + 'FILTER (?uri IN ('+ ','.join(uris)  +'))' 
 	query = query + '}'
+
 
 	sparql.setQuery(query)
 	sparql.setReturnFormat(JSON)
@@ -243,10 +246,17 @@ def format_events_dict(event_uri):
 
 	event_work_map = return_works_from_event(product_uris)
 
+	print(event_work_map)
+	sys.stdout.flush()
+
+
 	product_with_labels = []
 	for p in product:
-		product_with_labels.append([p,event_work_map[p]])
 
+		if p in event_work_map:
+			product_with_labels.append([p,event_work_map[p]])
+		else:
+			product_with_labels.append([p,"???"])
 
 	event = {
 		'dcterms_date' : dates,
