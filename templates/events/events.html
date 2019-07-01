@@ -36,6 +36,33 @@
 			</ul>
 		</td>
       </tr>
+	
+      {% if data.description %}
+      <tr>
+        <td>schema:description</td>
+        <td>
+          <ul>
+        {% for values in data.description %}
+           <li>{{values}}">{{values}}</li>
+        {% endfor %}
+      </ul>
+    </td>
+      </tr>
+      {% endif %}
+
+      {% if data.genre %}
+      <tr>
+        <td>mo:genre</td>
+        <td>
+          <ul>
+        {% for values in data.genre %}
+           <li><a href="{{values}}">{{values}}</a></li>
+        {% endfor %}
+      </ul>
+    </td>
+      </tr>
+      {% endif %}
+
       <tr>
         <td>rdfs:label</td>
         <td>
