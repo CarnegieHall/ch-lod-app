@@ -37,12 +37,12 @@
 		</td>
       </tr>
 	
-      {% if data.description %}
+      {% if data.eventType %}
       <tr>
         <td>schema:description</td>
         <td>
           <ul>
-        {% for values in data.description %}
+        {% for values in data.eventType %}
            <li>{{values}}">{{values}}</li>
         {% endfor %}
       </ul>
