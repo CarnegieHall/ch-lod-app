@@ -365,6 +365,8 @@ def about_instruments(request,id,type):
 		return HttpResponse(content=data, content_type=content_type_map[type], status=200)
 	else:
 		data = utils.format_instruments_dict("<http://data.carnegiehall.org/instruments/%s>" % (id))
+		
+	
 		if data['total_triples'] == 0:
 			raise Http404
 

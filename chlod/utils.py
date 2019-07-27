@@ -497,6 +497,8 @@ def format_instruments_dict(instrument_uri):
 		'total_triples' : total_triples
 	}
 
+	return instrument
+
 def format_vocab_roles_dict(roles_uri):
 	o = return_objects(roles_uri)
 	s = return_subjects(roles_uri)
