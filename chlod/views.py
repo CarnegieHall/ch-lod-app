@@ -4,8 +4,9 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.http import Http404
 import requests
+from requests.auth import HTTPBasicAuth
 import re
-
+import os
 
 from . import utils
 
@@ -38,9 +39,12 @@ def route_sparql_query(request):
 		if int(re_match.group(1)) > 10000:
 			query = query.replace(re_match.group(),'LIMIT 10000')
 		
-	r = requests.post(settings.SPARQL_ENDPOINT, headers={"Accept":"application/sparql-results+json"}, data = {'query':query})
+	r = requests.post(settings.SPARQL_ENDPOINT, auth=HTTPBasicAuth(os.environ['SPARQL_USERNAME'], os.environ['SPARQL_PASSWORD']), headers={"Accept":"application/sparql-results+json"}, data = {'query':query})
 	# print(request.body.decode('utf-8'))
-	return HttpResponse(content=r.text, status=200)
+	if "MALFORMED QUERY: Encountered " in r.text:
+		return HttpResponse(content=r.text, status=500)
+	else:
+		return HttpResponse(content=r.text, status=200)
 
 @csrf_exempt
 def route_sparql(request):
@@ -108,6 +112,55 @@ def about_works(request,id,type):
 			raise Http404
 
 		template = loader.get_template('works/works.html')
+		context = {
+		    'data': data,
+		}
+		return HttpResponse(template.render(context, request))
+
+
+def route_vocab_role(request):
+	if 'text/htm' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/vocabulary/roles/about'
+		return response
+	elif 'application/json+ld' in request.META.get('HTTP_ACCEPT') or 'application/json' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/vocabulary/roles/jsonld'
+		return response		
+	elif 'text/plain' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/vocabulary/roles/nt'
+		return response
+	elif 'application/x-turtle' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/vocabulary/roles/turtle'
+		return response		
+	elif 'text/rdf+n3' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/vocabulary/roles/n3'
+		return response				
+	elif 'application/rdf+xml' in request.META.get('HTTP_ACCEPT') or 'application/xml' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/vocabulary/roles/xml'
+		return response
+	else:
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/vocabulary/roles/about'
+		return response
+
+def about_vocab_role(request,type):
+
+	if type == 'xml'  or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
+		data = utils.return_serialized_vocabulary_role(type)
+		if data == '404':
+			raise Http404		
+		return HttpResponse(content=data, content_type=content_type_map[type], status=200)
+	else:
+		data = utils.format_vocabulary_role_dict()
+		# if data['total_triples'] == 0:
+		# 	raise Http404
+
+		template = loader.get_template('vocabulary/role.html')
 		context = {
 		    'data': data,
 		}
@@ -322,6 +375,56 @@ def about_instruments(request,id,type):
 		return HttpResponse(template.render(context, request))
 
 
+def route_vocab_roles(request, id):
+	if 'text/htm' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/vocabulary/roles/'+id+'/about'
+		return response
+	elif 'application/json+ld' in request.META.get('HTTP_ACCEPT') or 'application/json' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/vocabulary/roles/'+id+'/jsonld'
+		return response		
+	elif 'text/plain' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/vocabulary/roles/'+id+'/nt'
+		return response
+	elif 'application/x-turtle' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/vocabulary/roles/'+id+'/turtle'
+		return response		
+	elif 'text/rdf+n3' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/vocabulary/roles/'+id+'/n3'
+		return response				
+	elif 'application/rdf+xml' in request.META.get('HTTP_ACCEPT') or 'application/xml' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/vocabulary/roles/'+id+'/xml'
+		return response
+	else:
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/vocabulary/roles/'+id+'/about'
+		return response
+
+
+def about_vocab_roles(request,id,type):
+	if type == 'xml'  or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
+		data = utils.return_serialized_subjects("<http://data.carnegiehall.org/vocabulary/roles/%s>" % (id),type)
+		if data == '404':
+			raise Http404
+
+		return HttpResponse(content=data, content_type=content_type_map[type], status=200)
+	else:
+		data = utils.format_vocab_roles_dict("<http://data.carnegiehall.org/vocabulary/roles/%s>" % (id))
+		if data['total_triples'] == 0:
+			raise Http404
+
+		template = loader.get_template('roles/role.html')
+		context = {
+		    'data': data,
+		}
+		return HttpResponse(template.render(context, request))
+
+
 
 def route_roles(request, id):
 	if 'text/htm' in request.META.get('HTTP_ACCEPT'):
@@ -469,5 +572,42 @@ def about_names(request,id,type):
 		return HttpResponse(template.render(context, request))
 
 
+
+def route_void(request):
+	if 'text/htm' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/void/turtle'
+		return response
+	elif 'application/json+ld' in request.META.get('HTTP_ACCEPT') or 'application/json' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/void/jsonld'
+		return response		
+	elif 'text/plain' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/void/nt'
+		return response
+	elif 'application/x-turtle' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/void/turtle'
+		return response		
+	elif 'text/rdf+n3' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/void/n3'
+		return response				
+	elif 'application/rdf+xml' in request.META.get('HTTP_ACCEPT') or 'application/xml' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/void/xml'
+		return response
+	else:
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/void/turtle'
+		return response
+
+def about_void(request,type):
+
+	data = utils.return_serialized_void(type)
+	if data == '404':
+		raise Http404		
+	return HttpResponse(content=data, content_type=content_type_map[type], status=200)
 
 

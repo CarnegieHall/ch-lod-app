@@ -16,7 +16,7 @@ import dj_database_url
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
-SPARQL_ENDPOINT = "https://rdf.ontotext.com/4045401874/carnegiehall_db/repositories/ch-lod"
+SPARQL_ENDPOINT = os.environ['SPARQL_ENDPOINT']
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
@@ -25,7 +25,7 @@ SPARQL_ENDPOINT = "https://rdf.ontotext.com/4045401874/carnegiehall_db/repositor
 SECRET_KEY = "is1*u_p6%b(foglz4a))wxnrq^4jwo6j*3p)sobwrgi@m7yhck"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 # Application definition
 

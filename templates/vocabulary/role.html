@@ -1,0 +1,51 @@
+{% include "main/header.html" %} 
+
+
+<div class="container">
+  <h3>Role Vocabulary</h3>
+
+  <div>{{data.vocab.desc}}</div>
+  <br>
+  <div><strong>Type:</strong> {{data.vocab.type}}</div>
+  <div><strong>Creator:</strong> {{data.vocab.creator}}</div>
+  <div><strong>Issued:</strong> {{data.vocab.issued}}</div>
+  <div><strong>Prefered Prefix:</strong> {{data.vocab.prefix}}</div>
+  <div><strong>Namespace:</strong> {{data.vocab.namespace}}</div>
+  <br>
+  <span>View Data As: <a href="./jsonld">JSON-LD</a> | <a href="./nt">N-Triples</a> | <a href="./turtle">Turtle</a> | <a href="./n3">N3</a> | <a href="./xml">XML</a></span>
+  <br><br><br>
+  
+
+  
+
+
+  <table class="u-full-width prop-table">
+    <thead>
+      <tr>
+        <th>Label</th>
+        <th>Data</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for x in data.roles %}
+        <tr>
+          <td>{{x.label}}</td>
+          <td>
+            <ul>
+              <li>URI: <a href="{{x.uri}}">{{x.uri}}</a></li>
+              {% if x.seealso %}
+                <li>See Also: <a href="{{x.seealso}}">{{x.seealso}}</a></li>
+              {% endif %}
+            </ul>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+
+</div>
+
+
+
+{% include "main/footer.html" %} 

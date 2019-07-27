@@ -39,7 +39,14 @@ urlpatterns = [
     url(r'^ensembles/(?P<id>[0-9]+)/(?P<type>about|xml|turtle|jsonld|nt|n3)', views.about_ensembles),
     url(r'^ensembles/(?P<id>[0-9]+)', views.route_ensembles),   
     url(r'^sparql/select', views.route_sparql_query),    
-    url(r'^sparql/', views.route_sparql)    
+    url(r'^sparql/', views.route_sparql),    
+    url(r'^void/(?P<type>about|xml|turtle|jsonld|nt|n3)', views.about_void),
+    url(r'^void/', views.route_void),
+    url(r'^vocabulary/roles/$', views.route_vocab_role),
+    url(r'^vocabulary/roles/(?P<type>about|xml|turtle|jsonld|nt|n3)$', views.about_vocab_role),
+    url(r'^vocabulary/roles/(?P<id>(?!(about|xml|turtle|jsonld|nt|n3))\w+)/(?P<type>about|xml|turtle|jsonld|nt|n3)', views.about_vocab_roles),
+    url(r'^vocabulary/roles/(?P<id>(?!(about|xml|turtle|jsonld|nt|n3))\w+)', views.route_vocab_roles)
+
 ]
 
 

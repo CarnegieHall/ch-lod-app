@@ -7064,7 +7064,8 @@ squebi.controller( 'QueryCtrl', [ 'SQUEBI', '$rootScope', '$sparql', '$http', '$
                     }, function(data, status, headers, config){
                         var m = data instanceof Object ? data.message : data;
                         if(SQUEBI.responseMessage && SQUEBI.responseMessage[status]) {
-                            m = SQUEBI.responseMessage[status];
+                            
+                            m = SQUEBI.responseMessage[status] + "\n\n\n" + data;
                         }
                         $rootScope.$emit('queryFailure',{type: 'danger', msg: m});
                     }
@@ -7731,7 +7732,7 @@ require([
             "updateAllowed": true,
             "responseMessage": {
                 "404": "The service was not found or requires payment. Check your path and key in configuration.",
-                "500": "The query did not work. Check your SPARQL to make sure it shines!"
+                "500": "The query did not work. "
             },
             "writers":["browse","json"],
             "downloadEnabled":true,

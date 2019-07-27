@@ -1,9 +1,10 @@
 from SPARQLWrapper import SPARQLWrapper, JSON
-from rdflib import URIRef, Graph, Literal, plugin
+from rdflib import URIRef, Graph, Literal, plugin, Namespace
 from rdflib.serializer import Serializer
 from django.conf import settings
 import operator
 import sys
+import os
 
 def chunks(l, n):
     """Yield successive n-sized chunks from l."""
@@ -13,6 +14,7 @@ def chunks(l, n):
 
 def return_objects(uri):
 	sparql = SPARQLWrapper(settings.SPARQL_ENDPOINT)
+	sparql.setCredentials(os.environ['SPARQL_USERNAME'], os.environ['SPARQL_PASSWORD'])
 	sparql.setQuery("""
 	    SELECT *
 	    WHERE { %s ?p ?o }
@@ -27,6 +29,7 @@ def return_objects(uri):
 
 def return_subjects(uri):
 	sparql = SPARQLWrapper(settings.SPARQL_ENDPOINT)
+	sparql.setCredentials(os.environ['SPARQL_USERNAME'], os.environ['SPARQL_PASSWORD'])
 	sparql.setQuery("""
 	    SELECT *
 	    WHERE { ?s ?p %s }
@@ -49,6 +52,7 @@ def return_label_date(uris):
 
 	for chunk in uri_chunks:
 		sparql = SPARQLWrapper(settings.SPARQL_ENDPOINT)
+		sparql.setCredentials(os.environ['SPARQL_USERNAME'], os.environ['SPARQL_PASSWORD'])
 
 		query = 'PREFIX dcterms: <http://purl.org/dc/terms/>' 
 		query = query + 'SELECT * WHERE{' 
@@ -81,6 +85,7 @@ def return_name(uris):
 
 
 		sparql = SPARQLWrapper(settings.SPARQL_ENDPOINT)
+		sparql.setCredentials(os.environ['SPARQL_USERNAME'], os.environ['SPARQL_PASSWORD'])
 		query = 'PREFIX foaf: <http://xmlns.com/foaf/0.1/>' 
 		query = query + 'SELECT * WHERE{' 
 		query = query + '{?uri rdfs:label ?o . ?uri ?p ?o .}' 
@@ -105,6 +110,7 @@ Returns the work URIs for a work event id
 def return_works_from_event(uris):
 
 	sparql = SPARQLWrapper(settings.SPARQL_ENDPOINT)
+	sparql.setCredentials(os.environ['SPARQL_USERNAME'], os.environ['SPARQL_PASSWORD'])
 
 	query = 'PREFIX dcterms: <http://purl.org/dc/terms/>' 
 	query = query + 'SELECT * WHERE{' 
@@ -138,6 +144,7 @@ Returns the work URIs for a work event id
 """
 def return_serialized_subjects(uri,type):
 	sparql = SPARQLWrapper(settings.SPARQL_ENDPOINT)
+	sparql.setCredentials(os.environ['SPARQL_USERNAME'], os.environ['SPARQL_PASSWORD'])
 
 	if uri[0] != '<':
 		uri_no_bracket = uri
@@ -246,8 +253,7 @@ def format_events_dict(event_uri):
 
 	event_work_map = return_works_from_event(product_uris)
 
-	print(event_work_map)
-	sys.stdout.flush()
+
 
 
 	product_with_labels = []
@@ -491,10 +497,52 @@ def format_instruments_dict(instrument_uri):
 		'total_triples' : total_triples
 	}
 
+def format_vocab_roles_dict(roles_uri):
+	o = return_objects(roles_uri)
+	s = return_subjects(roles_uri)
+	total_triples = len(o["results"]["bindings"]) + len(s["results"]["bindings"])
+
+	types = []
+	labels = []
+	unmapped = []
+	seealso = []
+	domain = []
+	isdefinedby = []
+
+
+	for result in o["results"]["bindings"]:
+		if result['p']['value'] == 'http://purl.org/dc/terms/date':
+			dates.append(result['o']['value'])
+		elif result['p']['value'] == 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type':
+			types.append(result['o']['value'])
+		elif result['p']['value'] == 'http://www.w3.org/2000/01/rdf-schema#label':
+			labels.append(result['o']['value'])
+		elif result['p']['value'] == 'http://www.w3.org/2000/01/rdf-schema#seeAlso':
+			seealso.append(result['o']['value'])
+		elif result['p']['value'] == 'http://www.w3.org/2000/01/rdf-schema#domain':
+			domain.append(result['o']['value'])
+		elif result['p']['value'] == 'http://www.w3.org/2000/01/rdf-schema#isDefinedBy':
+			isdefinedby.append(result['o']['value'])
+		elif result['p']['value'] == 'http://www.w3.org/2000/01/rdf-schema#subPropertyOf':
+			pass
+		else:
+			unmapped.append([result['p']['value'], result['o']['value']])
+
+
+	role = {
+		'rdf_type' : types,
+		'rdfs_label' : labels,
+		'unmapped' : unmapped,
+		'seealso' : seealso,
+		'domain' : domain,
+		'isdefinedby' : isdefinedby,
+		'total_triples' : total_triples
+	}
 
 
 
-	return instrument
+
+	return role
 
 def format_names_dict(name_uri):
 	o = return_objects(name_uri)
@@ -683,4 +731,231 @@ def format_works_dict(work_uri):
 	}
 
 	return work
+
+
+
+def format_vocabulary_role_dict():
+
+	data = return_serialized_vocabulary_role('data')
+	data_dict = {}
+	onto_dict = {}
+	for x in data['roles']:
+		if 's' in x:
+			if x['s']['value'] not in data_dict:
+				data_dict[x['s']['value']] = {'label':None,'seealso':None}
+
+		if 'p' in x:
+			if x['p']['value'] == 'http://www.w3.org/2000/01/rdf-schema#label':
+				data_dict[x['s']['value']]['label'] = x['oo']['value']
+			elif x['p']['value'] == 'http://www.w3.org/2000/01/rdf-schema#seeAlso':
+				if '/instruments/' in x['oo']['value']:
+					data_dict[x['s']['value']]['seealso'] = x['oo']['value']
+
+	for x in data['vocab']:
+		if x['p']['value'] == 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type':
+			onto_dict['type'] = x['o']['value']
+		if x['p']['value'] == 'http://purl.org/dc/elements/1.1/creator':
+			onto_dict['creator'] = x['o']['value']
+		if x['p']['value'] == 'http://purl.org/dc/elements/1.1/description':
+			onto_dict['desc'] = x['o']['value']
+		if x['p']['value'] == 'http://purl.org/dc/terms/issued':
+			onto_dict['issued'] = x['o']['value']
+		if x['p']['value'] == 'http://purl.org/vocab/vann/preferredNamespacePrefix':
+			onto_dict['prefix'] = x['o']['value']
+		if x['p']['value'] == 'http://purl.org/vocab/vann/preferredNamespaceUri':
+			onto_dict['namespace'] = x['o']['value']
+
+	data_ary = []
+
+	for x in data_dict:
+		data_dict[x]['uri'] = x
+		data_ary.append(data_dict[x])
+
+	return {'roles':data_ary,'vocab':onto_dict}
+
+	
+
+
+
+"""
+Returns the void
+"""
+def return_serialized_void(type):
+	sparql = SPARQLWrapper(settings.SPARQL_ENDPOINT)
+	sparql.setCredentials(os.environ['SPARQL_USERNAME'], os.environ['SPARQL_PASSWORD'])
+
+	query = """
+	    SELECT * WHERE 
+	    {
+	        <http://data.carnegiehall.org/> ?p ?o .
+	    }
+	"""
+
+
+	sparql.setQuery(query)	
+
+	g = Graph()
+	dcterms = Namespace('http://purl.org/dc/terms/')
+	foaf = Namespace('http://xmlns.com/foaf/0.1/')
+
+
+	g.bind('dcterms', dcterms)
+	g.bind('foaf', foaf)
+
+	sparql.setReturnFormat(JSON)
+	results = sparql.query().convert()
+
+	for result in results["results"]["bindings"]:
+		if (result['o']['type'] == 'uri'):
+			g.add( (URIRef("http://data.carnegiehall.org/"), URIRef(result['p']['value']) , URIRef(result['o']['value'])) )
+		else:
+			if 'datatype' in result['o']:
+				g.add( (URIRef("http://data.carnegiehall.org/"), URIRef(result['p']['value']) , Literal(result['o']['value'], datatype=URIRef(result['o']['datatype']))) )
+			else:
+				g.add( (URIRef("http://data.carnegiehall.org/"), URIRef(result['p']['value']) , Literal(result['o']['value'])) )
+
+
+
+	query = """
+	    SELECT * WHERE 
+	    {
+	        <http://carnegiehall.org/> ?p ?o .
+	    }
+
+	"""
+	sparql.setQuery(query)	
+	sparql.setReturnFormat(JSON)
+	results = sparql.query().convert()
+
+	
+
+	for result in results["results"]["bindings"]:
+		if (result['o']['type'] == 'uri'):
+			g.add( (URIRef("http://carnegiehall.org/"), URIRef(result['p']['value']) , URIRef(result['o']['value'])) )
+		else:
+			if 'datatype' in result['o']:
+				g.add( (URIRef("http://carnegiehall.org/"), URIRef(result['p']['value']) , Literal(result['o']['value'], datatype=URIRef(result['o']['datatype']))) )
+			else:
+				g.add( (URIRef("http://carnegiehall.org/"), URIRef(result['p']['value']) , Literal(result['o']['value'])) )
+
+
+
+
+
+
+	if len(g) == 0:
+		return '404'
+
+	if (type == 'xml'):
+		return g.serialize(format="xml")
+	elif (type == 'n3'):
+		return g.serialize(format="n3")
+	elif (type == 'nt'):
+		return g.serialize(format="nt")
+	elif (type == 'turtle'):
+		return g.serialize(format="turtle")
+	elif (type == 'jsonld'):
+		return g.serialize(format="json-ld")
+	else:	
+		return g.serialize(format="nt")
+
+
+"""
+Returns entire roles vocab
+"""
+def return_serialized_vocabulary_role(type):
+
+	sparql = SPARQLWrapper(settings.SPARQL_ENDPOINT)
+	sparql.setCredentials(os.environ['SPARQL_USERNAME'], os.environ['SPARQL_PASSWORD'])
+
+
+	object_data = {'roles':[],'vocab':[]}
+
+	g = Graph()
+	dcterms = Namespace('http://purl.org/dc/terms/')
+	foaf = Namespace('http://xmlns.com/foaf/0.1/')
+	vann = Namespace('http://purl.org/vocab/vann/')
+	dc = Namespace('http://purl.org/dc/elements/1.1/')
+	g.bind('dcterms', dcterms)
+	g.bind('foaf', foaf)
+	g.bind('vann', vann)
+	g.bind('dc', dc)
+
+	query = """
+		SELECT * WHERE{
+		  {
+		    SELECT ?s WHERE{
+		        ?s <http://www.w3.org/2000/01/rdf-schema#isDefinedBy> ?o .
+		    }
+		  }
+		  ?s ?p ?oo .
+		}
+		ORDER BY ?s
+
+	"""
+	sparql.setQuery(query)	
+	sparql.setReturnFormat(JSON)
+	results = sparql.query().convert()
+
+	object_data['roles'] = results["results"]["bindings"]
+	for result in results["results"]["bindings"]:
+		if (result['oo']['type'] == 'uri'):
+			g.add( (URIRef(result['s']['value']), URIRef(result['p']['value']) , URIRef(result['oo']['value'])) )
+		else:
+			if 'datatype' in result['oo']:
+				g.add( (URIRef(result['s']['value']), URIRef(result['p']['value']) , Literal(result['oo']['value'], datatype=URIRef(result['oo']['datatype']))) )
+			else:
+				g.add( (URIRef(result['s']['value']), URIRef(result['p']['value']) , Literal(result['oo']['value'])) )
+
+
+
+
+
+
+	query = """
+		SELECT * WHERE{
+			<http://data.carnegiehall.org/vocabulary/roles/> ?p ?o.
+		}
+
+	"""
+
+
+
+	sparql.setQuery(query)	
+	sparql.setReturnFormat(JSON)
+	results = sparql.query().convert()
+
+	object_data['vocab'] = results["results"]["bindings"]
+
+	for result in results["results"]["bindings"]:
+		if (result['o']['type'] == 'uri'):
+			g.add( (URIRef("http://data.carnegiehall.org/vocabulary/roles/"), URIRef(result['p']['value']) , URIRef(result['o']['value'])) )
+		else:
+			if 'datatype' in result['o']:
+				g.add( (URIRef("http://data.carnegiehall.org/vocabulary/roles/"), URIRef(result['p']['value']) , Literal(result['o']['value'], datatype=URIRef(result['o']['datatype']))) )
+			else:
+				g.add( (URIRef("http://data.carnegiehall.org/vocabulary/roles/"), URIRef(result['p']['value']) , Literal(result['o']['value'])) )
+
+
+
+
+
+	if len(g) == 0:
+		return '404'
+
+	if (type == 'xml'):
+		return g.serialize(format="xml")
+	elif (type == 'n3'):
+		return g.serialize(format="n3")
+	elif (type == 'nt'):
+		return g.serialize(format="nt")
+	elif (type == 'turtle'):
+		return g.serialize(format="turtle")
+	elif (type == 'jsonld'):
+		return g.serialize(format="json-ld")
+	elif (type == 'data'):
+		return object_data
+	else:	
+		return g.serialize(format="nt")
+
 
