@@ -25,7 +25,7 @@ SPARQL_ENDPOINT = os.environ['SPARQL_ENDPOINT']
 SECRET_KEY = "is1*u_p6%b(foglz4a))wxnrq^4jwo6j*3p)sobwrgi@m7yhck"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 # Application definition
 
