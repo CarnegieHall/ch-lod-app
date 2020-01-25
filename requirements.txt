@@ -7,3 +7,4 @@ sparqlwrapper==1.8.0
 requests==2.20.0
 psycopg2==2.7.1
 rdflib-jsonld==0.4.0
+django-cors-headers==3.2.1
