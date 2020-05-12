@@ -30,14 +30,14 @@ def route_sparql_query(request):
 		query = request.GET.get('query', '')
 
 
-	# add a limit to it if there is not one yet
-	re_match = limit_re.search(query)
+# 	# add a limit to it if there is not one yet
+# 	re_match = limit_re.search(query)
 	
-	if re_match == None:
-		query = query + ' LIMIT 10000'
-	else:
-		if int(re_match.group(1)) > 10000:
-			query = query.replace(re_match.group(),'LIMIT 10000')
+# 	if re_match == None:
+# 		query = query + ' LIMIT 10000'
+# 	else:
+# 		if int(re_match.group(1)) > 10000:
+# 			query = query.replace(re_match.group(),'LIMIT 10000')
 		
 	r = requests.post(settings.SPARQL_ENDPOINT, auth=HTTPBasicAuth(os.environ['SPARQL_USERNAME'], os.environ['SPARQL_PASSWORD']), headers={"Accept":"application/sparql-results+json"}, data = {'query':query})
 	# print(request.body.decode('utf-8'))
