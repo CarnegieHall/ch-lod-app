@@ -30,7 +30,7 @@ def route_sparql_query(request):
 		query = request.GET.get('query', '')
 
 
-	# add a limit to it if ther is not one yet
+	# add a limit to it if there is not one yet
 	re_match = limit_re.search(query)
 	
 	if re_match == None:
