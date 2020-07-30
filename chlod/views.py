@@ -527,7 +527,7 @@ def about_ensembles(request,id,type):
 
 def route_names(request, id):
 
-	if 'google.com/search' in request.META.get('HTTP_REFERER'):
+	if 'https://www.google.com/' in request.META.get('HTTP_REFERER'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/names/'+id+'/about'
 		return response		
