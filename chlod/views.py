@@ -32,13 +32,13 @@ def route_sparql_query(request):
 
 	# add a limit to it if there is not one yet
 	re_match = limit_re.search(query)
-	
+
 	if re_match == None:
 		query = query + ' LIMIT 10000'
 	else:
 		if int(re_match.group(1)) > 10000:
 			query = query.replace(re_match.group(),'LIMIT 10000')
-		
+
 	r = requests.post(settings.SPARQL_ENDPOINT, auth=HTTPBasicAuth(os.environ['SPARQL_USERNAME'], os.environ['SPARQL_PASSWORD']), headers={"Accept":"application/sparql-results+json"}, data = {'query':query})
 	# print(request.body.decode('utf-8'))
 	if "MALFORMED QUERY: Encountered " in r.text:
@@ -77,7 +77,7 @@ def route_works(request, id):
 	elif 'application/json+ld' in request.META.get('HTTP_ACCEPT') or 'application/json' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/works/'+id+'/jsonld'
-		return response		
+		return response
 	elif 'text/plain' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/works/'+id+'/nt'
@@ -85,11 +85,11 @@ def route_works(request, id):
 	elif 'application/x-turtle' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/works/'+id+'/turtle'
-		return response		
+		return response
 	elif 'text/rdf+n3' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/works/'+id+'/n3'
-		return response				
+		return response
 	elif 'application/rdf+xml' in request.META.get('HTTP_ACCEPT') or 'application/xml' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/works/'+id+'/xml'
@@ -104,7 +104,7 @@ def about_works(request,id,type):
 	if type == 'xml'  or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
 		data = utils.return_serialized_subjects("<http://data.carnegiehall.org/works/%s>" % (id),type)
 		if data == '404':
-			raise Http404		
+			raise Http404
 		return HttpResponse(content=data, content_type=content_type_map[type], status=200)
 	else:
 		data = utils.format_works_dict("<http://data.carnegiehall.org/works/%s>" % (id))
@@ -126,7 +126,7 @@ def route_vocab_role(request):
 	elif 'application/json+ld' in request.META.get('HTTP_ACCEPT') or 'application/json' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/vocabulary/roles/jsonld'
-		return response		
+		return response
 	elif 'text/plain' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/vocabulary/roles/nt'
@@ -134,11 +134,11 @@ def route_vocab_role(request):
 	elif 'application/x-turtle' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/vocabulary/roles/turtle'
-		return response		
+		return response
 	elif 'text/rdf+n3' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/vocabulary/roles/n3'
-		return response				
+		return response
 	elif 'application/rdf+xml' in request.META.get('HTTP_ACCEPT') or 'application/xml' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/vocabulary/roles/xml'
@@ -153,7 +153,7 @@ def about_vocab_role(request,type):
 	if type == 'xml'  or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
 		data = utils.return_serialized_vocabulary_role(type)
 		if data == '404':
-			raise Http404		
+			raise Http404
 		return HttpResponse(content=data, content_type=content_type_map[type], status=200)
 	else:
 		data = utils.format_vocabulary_role_dict()
@@ -175,7 +175,7 @@ def route_events(request, id):
 	elif 'application/json+ld' in request.META.get('HTTP_ACCEPT') or 'application/json' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/events/'+id+'/jsonld'
-		return response		
+		return response
 	elif 'text/plain' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/events/'+id+'/nt'
@@ -183,11 +183,11 @@ def route_events(request, id):
 	elif 'application/x-turtle' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/events/'+id+'/turtle'
-		return response		
+		return response
 	elif 'text/rdf+n3' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/events/'+id+'/n3'
-		return response				
+		return response
 	elif 'application/rdf+xml' in request.META.get('HTTP_ACCEPT') or 'application/xml' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/events/'+id+'/xml'
@@ -204,7 +204,7 @@ def about_events(request,id,type):
 	if type == 'xml'  or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
 		data = utils.return_serialized_subjects("<http://data.carnegiehall.org/events/%s>" % (id),type)
 		if data == '404':
-			raise Http404	
+			raise Http404
 
 		return HttpResponse(content=data, content_type=content_type_map[type], status=200)
 	else:
@@ -227,7 +227,7 @@ def route_products(request, id,product_id):
 	elif 'application/json+ld' in request.META.get('HTTP_ACCEPT') or 'application/json' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/events/'+id+'/work_' + product_id +'/jsonld'
-		return response		
+		return response
 	elif 'text/plain' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/events/'+id+'/work_' + product_id +'/nt'
@@ -235,11 +235,11 @@ def route_products(request, id,product_id):
 	elif 'application/x-turtle' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/events/'+id+'/work_' + product_id +'/turtle'
-		return response		
+		return response
 	elif 'text/rdf+n3' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/events/'+id+'/work_' + product_id +'/n3'
-		return response				
+		return response
 	elif 'application/rdf+xml' in request.META.get('HTTP_ACCEPT') or 'application/xml' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/events/'+id+'/work_' + product_id +'/xml'
@@ -282,7 +282,7 @@ def route_venues(request, id):
 	elif 'application/json+ld' in request.META.get('HTTP_ACCEPT') or 'application/json' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/venues/'+id+'/jsonld'
-		return response		
+		return response
 	elif 'text/plain' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/venues/'+id+'/nt'
@@ -290,11 +290,11 @@ def route_venues(request, id):
 	elif 'application/x-turtle' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/venues/'+id+'/turtle'
-		return response		
+		return response
 	elif 'text/rdf+n3' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/venues/'+id+'/n3'
-		return response				
+		return response
 	elif 'application/rdf+xml' in request.META.get('HTTP_ACCEPT') or 'application/xml' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/venues/'+id+'/xml'
@@ -333,7 +333,7 @@ def route_instruments(request, id):
 	elif 'application/json+ld' in request.META.get('HTTP_ACCEPT') or 'application/json' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/instruments/'+id+'/jsonld'
-		return response		
+		return response
 	elif 'text/plain' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/instruments/'+id+'/nt'
@@ -341,11 +341,11 @@ def route_instruments(request, id):
 	elif 'application/x-turtle' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/instruments/'+id+'/turtle'
-		return response		
+		return response
 	elif 'text/rdf+n3' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/instruments/'+id+'/n3'
-		return response				
+		return response
 	elif 'application/rdf+xml' in request.META.get('HTTP_ACCEPT') or 'application/xml' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/instruments/'+id+'/xml'
@@ -365,12 +365,63 @@ def about_instruments(request,id,type):
 		return HttpResponse(content=data, content_type=content_type_map[type], status=200)
 	else:
 		data = utils.format_instruments_dict("<http://data.carnegiehall.org/instruments/%s>" % (id))
-		
-	
+
+
 		if data['total_triples'] == 0:
 			raise Http404
 
 		template = loader.get_template('instruments/instruments.html')
+		context = {
+		    'data': data,
+		}
+		return HttpResponse(template.render(context, request))
+
+def route_genres(request, id):
+	if 'text/htm' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/genres/'+id+'/about'
+		return response
+	elif 'application/json+ld' in request.META.get('HTTP_ACCEPT') or 'application/json' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/genres/'+id+'/jsonld'
+		return response
+	elif 'text/plain' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/genres/'+id+'/nt'
+		return response
+	elif 'application/x-turtle' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/genres/'+id+'/turtle'
+		return response
+	elif 'text/rdf+n3' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/genres/'+id+'/n3'
+		return response
+	elif 'application/rdf+xml' in request.META.get('HTTP_ACCEPT') or 'application/xml' in request.META.get('HTTP_ACCEPT'):
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/genres/'+id+'/xml'
+		return response
+	else:
+		response = HttpResponse(content="", status=303)
+		response["Location"] = '/genres/'+id+'/about'
+		return response
+
+
+def about_genres(request,id,type):
+	if type == 'xml'  or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
+		data = utils.return_serialized_subjects("<http://data.carnegiehall.org/genres/%s>" % (id),type)
+		if data == '404':
+			raise Http404
+
+		return HttpResponse(content=data, content_type=content_type_map[type], status=200)
+	else:
+		data = utils.format_genres_dict("<http://data.carnegiehall.org/genres/%s>" % (id))
+
+
+		if data['total_triples'] == 0:
+			raise Http404
+
+		template = loader.get_template('genres/genres.html')
 		context = {
 		    'data': data,
 		}
@@ -385,7 +436,7 @@ def route_vocab_roles(request, id):
 	elif 'application/json+ld' in request.META.get('HTTP_ACCEPT') or 'application/json' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/vocabulary/roles/'+id+'/jsonld'
-		return response		
+		return response
 	elif 'text/plain' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/vocabulary/roles/'+id+'/nt'
@@ -393,11 +444,11 @@ def route_vocab_roles(request, id):
 	elif 'application/x-turtle' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/vocabulary/roles/'+id+'/turtle'
-		return response		
+		return response
 	elif 'text/rdf+n3' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/vocabulary/roles/'+id+'/n3'
-		return response				
+		return response
 	elif 'application/rdf+xml' in request.META.get('HTTP_ACCEPT') or 'application/xml' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/vocabulary/roles/'+id+'/xml'
@@ -436,7 +487,7 @@ def route_roles(request, id):
 	elif 'application/json+ld' in request.META.get('HTTP_ACCEPT') or 'application/json' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/roles/'+id+'/jsonld'
-		return response		
+		return response
 	elif 'text/plain' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/roles/'+id+'/nt'
@@ -444,11 +495,11 @@ def route_roles(request, id):
 	elif 'application/x-turtle' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/roles/'+id+'/turtle'
-		return response		
+		return response
 	elif 'text/rdf+n3' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/roles/'+id+'/n3'
-		return response				
+		return response
 	elif 'application/rdf+xml' in request.META.get('HTTP_ACCEPT') or 'application/xml' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/roles/'+id+'/xml'
@@ -484,7 +535,7 @@ def route_ensembles(request, id):
 	elif 'application/json+ld' in request.META.get('HTTP_ACCEPT') or 'application/json' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/ensembles/'+id+'/jsonld'
-		return response		
+		return response
 	elif 'text/plain' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/ensembles/'+id+'/nt'
@@ -492,11 +543,11 @@ def route_ensembles(request, id):
 	elif 'application/x-turtle' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/ensembles/'+id+'/turtle'
-		return response		
+		return response
 	elif 'text/rdf+n3' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/ensembles/'+id+'/n3'
-		return response				
+		return response
 	elif 'application/rdf+xml' in request.META.get('HTTP_ACCEPT') or 'application/xml' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/ensembles/'+id+'/xml'
@@ -535,7 +586,7 @@ def route_names(request, id):
 	elif 'application/json+ld' in request.META.get('HTTP_ACCEPT') or 'application/json' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/names/'+id+'/jsonld'
-		return response		
+		return response
 	elif 'text/plain' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/names/'+id+'/nt'
@@ -543,11 +594,11 @@ def route_names(request, id):
 	elif 'application/x-turtle' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/names/'+id+'/turtle'
-		return response		
+		return response
 	elif 'text/rdf+n3' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/names/'+id+'/n3'
-		return response				
+		return response
 	elif 'application/rdf+xml' in request.META.get('HTTP_ACCEPT') or 'application/xml' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/names/'+id+'/xml'
@@ -559,7 +610,7 @@ def route_names(request, id):
 
 def about_names(request,id,type):
 	if type == 'xml'  or type == 'turtle' or type == 'jsonld' or type == 'n3' or type == 'nt':
-		data = utils.return_serialized_subjects("<http://data.carnegiehall.org/names/%s>" % (id),type)	
+		data = utils.return_serialized_subjects("<http://data.carnegiehall.org/names/%s>" % (id),type)
 		if data == '404':
 			raise Http404
 
@@ -585,7 +636,7 @@ def route_void(request):
 	elif 'application/json+ld' in request.META.get('HTTP_ACCEPT') or 'application/json' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/void/jsonld'
-		return response		
+		return response
 	elif 'text/plain' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/void/nt'
@@ -593,11 +644,11 @@ def route_void(request):
 	elif 'application/x-turtle' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/void/turtle'
-		return response		
+		return response
 	elif 'text/rdf+n3' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/void/n3'
-		return response				
+		return response
 	elif 'application/rdf+xml' in request.META.get('HTTP_ACCEPT') or 'application/xml' in request.META.get('HTTP_ACCEPT'):
 		response = HttpResponse(content="", status=303)
 		response["Location"] = '/void/xml'
@@ -611,7 +662,5 @@ def about_void(request,type):
 
 	data = utils.return_serialized_void(type)
 	if data == '404':
-		raise Http404		
+		raise Http404
 	return HttpResponse(content=data, content_type=content_type_map[type], status=200)
-
-

@@ -54,12 +54,12 @@ def return_label_date(uris):
 		sparql = SPARQLWrapper(settings.SPARQL_ENDPOINT)
 		sparql.setCredentials(os.environ['SPARQL_USERNAME'], os.environ['SPARQL_PASSWORD'])
 
-		query = 'PREFIX dcterms: <http://purl.org/dc/terms/>' 
-		query = query + 'SELECT * WHERE{' 
-		query = query + '{?uri rdfs:label ?o . ?uri ?p ?o .}' 
-		query = query + 'UNION' 
-		query = query + '{?uri dcterms:date ?o . ?uri ?p ?o .}' 
-		query = query + 'FILTER (?uri IN ('+ ','.join(chunk)  +'))' 
+		query = 'PREFIX dcterms: <http://purl.org/dc/terms/>'
+		query = query + 'SELECT * WHERE{'
+		query = query + '{?uri rdfs:label ?o . ?uri ?p ?o .}'
+		query = query + 'UNION'
+		query = query + '{?uri dcterms:date ?o . ?uri ?p ?o .}'
+		query = query + 'FILTER (?uri IN ('+ ','.join(chunk)  +'))'
 		query = query + '}'
 
 		sparql.setQuery(query)
@@ -86,12 +86,12 @@ def return_name(uris):
 
 		sparql = SPARQLWrapper(settings.SPARQL_ENDPOINT)
 		sparql.setCredentials(os.environ['SPARQL_USERNAME'], os.environ['SPARQL_PASSWORD'])
-		query = 'PREFIX foaf: <http://xmlns.com/foaf/0.1/>' 
-		query = query + 'SELECT * WHERE{' 
-		query = query + '{?uri rdfs:label ?o . ?uri ?p ?o .}' 
-		query = query + 'UNION' 
-		query = query + '{?uri foaf:name ?o . ?uri ?p ?o .}' 
-		query = query + 'FILTER (?uri IN ('+ ','.join(chunk)  +'))' 
+		query = 'PREFIX foaf: <http://xmlns.com/foaf/0.1/>'
+		query = query + 'SELECT * WHERE{'
+		query = query + '{?uri rdfs:label ?o . ?uri ?p ?o .}'
+		query = query + 'UNION'
+		query = query + '{?uri foaf:name ?o . ?uri ?p ?o .}'
+		query = query + 'FILTER (?uri IN ('+ ','.join(chunk)  +'))'
 		query = query + '}'
 
 		sparql.setQuery(query)
@@ -112,10 +112,10 @@ def return_works_from_event(uris):
 	sparql = SPARQLWrapper(settings.SPARQL_ENDPOINT)
 	sparql.setCredentials(os.environ['SPARQL_USERNAME'], os.environ['SPARQL_PASSWORD'])
 
-	query = 'PREFIX dcterms: <http://purl.org/dc/terms/>' 
-	query = query + 'SELECT * WHERE{' 
-	query = query + '?uri <http://purl.org/NET/c4dm/event.owl#product> ?o . ?uri ?p ?o .' 
-	query = query + 'FILTER (?uri IN ('+ ','.join(uris)  +'))' 
+	query = 'PREFIX dcterms: <http://purl.org/dc/terms/>'
+	query = query + 'SELECT * WHERE{'
+	query = query + '?uri <http://purl.org/NET/c4dm/event.owl#product> ?o . ?uri ?p ?o .'
+	query = query + 'FILTER (?uri IN ('+ ','.join(uris)  +'))'
 	query = query + '}'
 
 
@@ -154,11 +154,11 @@ def return_serialized_subjects(uri,type):
 		uri_no_bracket = uri_no_bracket[:-1]
 
 
-	query = 'SELECT * WHERE{' 
-	query = query + uri + ' ?p ?o .' 
+	query = 'SELECT * WHERE{'
+	query = query + uri + ' ?p ?o .'
 	query = query + '}'
 
-	sparql.setQuery(query)	
+	sparql.setQuery(query)
 
 	g = Graph()
 
@@ -188,7 +188,7 @@ def return_serialized_subjects(uri,type):
 		return g.serialize(format="turtle")
 	elif (type == 'jsonld'):
 		return g.serialize(format="json-ld")
-	else:	
+	else:
 		return g.serialize(format="nt")
 
 
@@ -280,7 +280,7 @@ def format_events_dict(event_uri):
 
 
 	return event
-	
+
 
 def format_product_dict(product_uri):
 
@@ -499,6 +499,44 @@ def format_instruments_dict(instrument_uri):
 
 	return instrument
 
+def format_genres_dict(genre_uri):
+	o = return_objects(genre_uri)
+	s = return_subjects(genre_uri)
+	total_triples = len(o["results"]["bindings"]) + len(s["results"]["bindings"])
+
+	types = []
+	labels = []
+	unmapped = []
+	comment = []
+	match = []
+
+	for result in o["results"]["bindings"]:
+		if result['p']['value'] == 'http://www.w3.org/2000/01/rdf-schema#comment':
+			comment.append(result['o']['value'])
+		elif result['p']['value'] == 'http://purl.org/dc/terms/date':
+			dates.append(result['o']['value'])
+		elif result['p']['value'] == 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type':
+			types.append(result['o']['value'])
+		elif result['p']['value'] == 'http://www.w3.org/2000/01/rdf-schema#label':
+			labels.append(result['o']['value'])
+		elif result['p']['value'] == 'http://www.w3.org/2004/02/skos/core#exactMatch':
+			match.append(result['o']['value'])
+		else:
+			unmapped.append([result['p']['value'], result['o']['value']])
+
+
+	genre = {
+		'rdf_type' : types,
+		'rdfs_label' : labels,
+		'unmapped' : unmapped,
+		'comment': comment,
+		'match' : match,
+		'total_triples' : total_triples
+	}
+
+	return genre
+
+
 def format_vocab_roles_dict(roles_uri):
 	o = return_objects(roles_uri)
 	s = return_subjects(roles_uri)
@@ -627,10 +665,10 @@ def format_names_dict(name_uri):
 
 
 	if len(name) > 0:
-		display_name = name[0] 
+		display_name = name[0]
 
 	if len(labels) > 0:
-		display_name = labels[0] 
+		display_name = labels[0]
 	name = {
 		'rdf_type' : types,
 		'rdfs_label' : labels,
@@ -664,7 +702,7 @@ def format_works_dict(work_uri):
 		if 'http://data.carnegiehall.org/events/' in result['s']['value']:
 
 			uri = result['s']['value'].split('/work_')[0]
-			
+
 			if uri not in events:
 				events.append('<' + uri + '>')
 
@@ -775,7 +813,7 @@ def format_vocabulary_role_dict():
 
 	return {'roles':data_ary,'vocab':onto_dict}
 
-	
+
 
 
 
@@ -787,14 +825,14 @@ def return_serialized_void(type):
 	sparql.setCredentials(os.environ['SPARQL_USERNAME'], os.environ['SPARQL_PASSWORD'])
 
 	query = """
-	    SELECT * WHERE 
+	    SELECT * WHERE
 	    {
 	        <http://data.carnegiehall.org/> ?p ?o .
 	    }
 	"""
 
 
-	sparql.setQuery(query)	
+	sparql.setQuery(query)
 
 	g = Graph()
 	dcterms = Namespace('http://purl.org/dc/terms/')
@@ -819,17 +857,17 @@ def return_serialized_void(type):
 
 
 	query = """
-	    SELECT * WHERE 
+	    SELECT * WHERE
 	    {
 	        <http://carnegiehall.org/> ?p ?o .
 	    }
 
 	"""
-	sparql.setQuery(query)	
+	sparql.setQuery(query)
 	sparql.setReturnFormat(JSON)
 	results = sparql.query().convert()
 
-	
+
 
 	for result in results["results"]["bindings"]:
 		if (result['o']['type'] == 'uri'):
@@ -858,7 +896,7 @@ def return_serialized_void(type):
 		return g.serialize(format="turtle")
 	elif (type == 'jsonld'):
 		return g.serialize(format="json-ld")
-	else:	
+	else:
 		return g.serialize(format="nt")
 
 
@@ -895,7 +933,7 @@ def return_serialized_vocabulary_role(type):
 		ORDER BY ?s
 
 	"""
-	sparql.setQuery(query)	
+	sparql.setQuery(query)
 	sparql.setReturnFormat(JSON)
 	results = sparql.query().convert()
 
@@ -923,7 +961,7 @@ def return_serialized_vocabulary_role(type):
 
 
 
-	sparql.setQuery(query)	
+	sparql.setQuery(query)
 	sparql.setReturnFormat(JSON)
 	results = sparql.query().convert()
 
@@ -957,7 +995,5 @@ def return_serialized_vocabulary_role(type):
 		return g.serialize(format="json-ld")
 	elif (type == 'data'):
 		return object_data
-	else:	
+	else:
 		return g.serialize(format="nt")
-
-

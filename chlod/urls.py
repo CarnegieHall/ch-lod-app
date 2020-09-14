@@ -29,17 +29,19 @@ urlpatterns = [
     url(r'^events/(?P<id>[0-9]+)/(?P<type>about|xml|turtle|jsonld|nt|n3)', views.about_events),
     url(r'^events/(?P<id>[0-9]+)', views.route_events),
     url(r'^venues/(?P<id>[0-9]+)/(?P<type>about|xml|turtle|jsonld|nt|n3)', views.about_venues),
-    url(r'^venues/(?P<id>[0-9]+)', views.route_venues),    
+    url(r'^venues/(?P<id>[0-9]+)', views.route_venues),
     url(r'^names/(?P<id>[0-9]+)/(?P<type>about|xml|turtle|jsonld|nt|n3)', views.about_names),
-    url(r'^names/(?P<id>[0-9]+)', views.route_names), 
+    url(r'^names/(?P<id>[0-9]+)', views.route_names),
     url(r'^instruments/(?P<id>[0-9]+)/(?P<type>about|xml|turtle|jsonld|nt|n3)', views.about_instruments),
-    url(r'^instruments/(?P<id>[0-9]+)', views.route_instruments), 
+    url(r'^instruments/(?P<id>[0-9]+)', views.route_instruments),
     url(r'^roles/(?P<id>[0-9]+)/(?P<type>about|xml|turtle|jsonld|nt|n3)', views.about_roles),
-    url(r'^roles/(?P<id>[0-9]+)', views.route_roles), 
+    url(r'^roles/(?P<id>[0-9]+)', views.route_roles),
     url(r'^ensembles/(?P<id>[0-9]+)/(?P<type>about|xml|turtle|jsonld|nt|n3)', views.about_ensembles),
-    url(r'^ensembles/(?P<id>[0-9]+)', views.route_ensembles),   
-    url(r'^sparql/select', views.route_sparql_query),    
-    url(r'^sparql/', views.route_sparql),    
+    url(r'^ensembles/(?P<id>[0-9]+)', views.route_ensembles),
+    url(r'^genres/(?P<id>[0-9]+)/(?P<type>about|xml|turtle|jsonld|nt|n3)', views.about_genres),
+    url(r'^genres/(?P<id>[0-9]+)', views.route_genres),
+    url(r'^sparql/select', views.route_sparql_query),
+    url(r'^sparql/', views.route_sparql),
     url(r'^void/(?P<type>about|xml|turtle|jsonld|nt|n3)', views.about_void),
     url(r'^void/', views.route_void),
     url(r'^vocabulary/roles/$', views.route_vocab_role),
@@ -48,5 +50,3 @@ urlpatterns = [
     url(r'^vocabulary/roles/(?P<id>(?!(about|xml|turtle|jsonld|nt|n3))\w+)', views.route_vocab_roles)
 
 ]
-
-
