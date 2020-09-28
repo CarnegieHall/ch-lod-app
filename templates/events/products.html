@@ -1,4 +1,4 @@
-{% include "main/header.html" %} 
+{% include "main/header.html" %}
 
 
 <div class="container">
@@ -26,17 +26,17 @@
 			</ul>
 		</td>
       </tr>
-      
+      <tr>
         <td>Event</td>
         <td>
-              <ul>
+          <ul>
             {% for values in data.events %}
               <li><a href="{{values.0}}">{{values.1}}</a> ({{values.2}})</li>
             {% endfor %}
           </ul>
         </td>
       </tr>
-      
+
 
       {% if data.unmapped %}
 	      	{% for values in data.unmapped %}
@@ -44,10 +44,10 @@
 		        <td>{{values.0}}</td>
 		        <td>
 		        	<ul>
-						 <li><a href="{{values.1}}">{{values.1}}</a></li>
-					</ul>
-				</td>
-			</tr>
+                <li><a href="{{values.1}}">{{values.1}}</a></li>
+              </ul>
+            </td>
+          </tr>
 			{% endfor %}
       {% endif %}
 
@@ -60,4 +60,4 @@
 
 
 
-{% include "main/footer.html" %} 
+{% include "main/footer.html" %}
