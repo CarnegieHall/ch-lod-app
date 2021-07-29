@@ -1,0 +1,39 @@
+
+/* add some margin for the header */
+.data-display{
+	margin-top: 5em;
+	margin-bottom: 5em;
+}
+
+.data-display tbody tr{
+	border-top:  1px solid #dcdcdc;
+
+}
+
+.data-display ul{
+	padding-left: 1em;
+}
+.data-display .table td, .data-display  .table th{
+	border: none;
+}
+.prop-table{
+	margin-bottom: 2em;
+}
+
+body{
+	margin-bottom: 150px;
+}
+
+html{
+  position:relative; 
+  min-height: 100%;
+}
+
+footer{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height:100px;
+
+}

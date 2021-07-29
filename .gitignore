@@ -10,6 +10,14 @@ staticfiles
 .DS_Store
 # C extensions
 *.so
+*.pyc
+.DS_Store
+*.swp
+/venv/
+/static/
+/media/
+.env
+db.sqlite3
 
 # Distribution / packaging
 .Python
