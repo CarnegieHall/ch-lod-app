@@ -4,7 +4,7 @@
 
     <div style="margin-bottom: 2em;">
         <form action="{% url 'search-blog' %}" method="get">
-            <input type="text" name="query" autofocus value="{{ search_query }}">
+            <input type="text" name="query" autofocus value="{{ search_query }}" placeholder="Search our blog">
             <input type="submit" value="Search">
         </form>
     </div>
@@ -21,9 +21,10 @@
             {% endfor %}
         </ul>
     {% elif search_query %}
-        No results found
+        <h5>No results found.</h5>
     {% else %}
-        Please type something into the search box
+        <h5 class="my-3">To search blog posts (titles and body text), please type something into the search box.</h5>
+        <h6><em>To query performance data please click <a href="/sparql">SPARQL</a> in the toolbar.</em></h6>
     {% endif %}
 
 
