@@ -1,4 +1,5 @@
 {% extends "blog/base.html" %}
+{% block title %}About: {{ data.display_name }}{% endblock %}
 {% block content %}
 
 <div class="container data-display">
@@ -26,7 +27,7 @@
 			</ul>
 		</td>
       </tr>
-      
+
 
       {% if data.name %}
       <tr>
