@@ -1,5 +1,5 @@
 {% extends "blog/base.html" %}
-{% block title %}About: {{ data.rdfs_label_string }}, {{ data.dcterms_date|date:"M d, Y" }}{% endblock %}
+{% block title %}About: {{ data.rdfs_label_string }}, {% for values in data.dcterms_date %} {{ values|date:"M d, Y" }} {% endfor %}{% endblock %}
 {% block content %}
 
 <div class="container data-display">
