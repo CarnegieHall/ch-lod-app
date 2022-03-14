@@ -104,7 +104,6 @@
           <div  class="bg-light text-dark" id="lab_report-query">
             <pre><code>
               PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
-              PREFIX dbo: &lt;http://dbpedia.org/ontology/#&gt;
               PREFIX schema: &lt;http://schema.org/##&gt;
               PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/##&gt;
               PREFIX geo-pos: &lt;http://www.w3.org/2003/01/geo/wgs84_pos##&gt;
@@ -121,7 +120,7 @@
 
                   ?personID schema:birthDate ?date ;
                           foaf:name ?personName ;
-                          dbo:birthPlace ?birthPlace .
+                          schema:birthPlace ?birthPlace .
                   ?birthPlace rdfs:label ?birthPlaceLabel ;
                               geo-pos:lat ?lat ;
                               geo-pos:long ?long .
