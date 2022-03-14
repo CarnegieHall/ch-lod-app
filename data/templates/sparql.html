@@ -376,8 +376,6 @@ ORDER BY ?date`,
 'Whose birthday is today?':
 `#Whose birthday is today?
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX dbo: <http://dbpedia.org/ontology/>
-
 PREFIX schema: <http://schema.org/>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 SELECT ?personID ?personName ?birthPlaceLabel (YEAR(?date) as ?year)
@@ -388,7 +386,7 @@ WHERE
 
     ?personID schema:birthDate ?date ;
             foaf:name ?personName ;
-            dbo:birthPlace ?birthPlace .
+            schema:birthPlace ?birthPlace .
     ?birthPlace rdfs:label ?birthPlaceLabel .
     FILTER (MONTH(?date) = ?nowMonth && DAY(?date) = ?nowDay)
 
@@ -399,8 +397,6 @@ LIMIT 100`,
 'Whose birthday is this month?':
 `#Whose birthday this month?
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX dbo: <http://dbpedia.org/ontology/>
-
 PREFIX schema: <http://schema.org/>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 SELECT ?personID ?personName ?birthPlaceLabel (CONCAT(STR(MONTH(?date)),
@@ -414,7 +410,7 @@ WHERE
 
     ?personID schema:birthDate ?date ;
             foaf:name ?personName ;
-            dbo:birthPlace ?birthPlace .
+            schema:birthPlace ?birthPlace .
     ?birthPlace rdfs:label ?birthPlaceLabel .
     FILTER (MONTH(?date) = ?nowMonth)
 
