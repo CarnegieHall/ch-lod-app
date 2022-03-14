@@ -90,7 +90,7 @@ def yearForm(request):
 
 
         if form.is_valid():
-            cd = form.cleaned_data               
+            cd = form.cleaned_data
             # assert False
             return HttpResponseRedirect('/datalab/experiments/chdl-0007?submitted=True')
     else:
@@ -132,7 +132,6 @@ def chdl0001d(request):
     sparql.setQuery("""
         #Whose birthday is today? (for map)
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-        PREFIX dbo: <http://dbpedia.org/ontology/>
         PREFIX schema: <http://schema.org/>
         PREFIX foaf: <http://xmlns.com/foaf/0.1/>
         PREFIX geo-pos: <http://www.w3.org/2003/01/geo/wgs84_pos#>
@@ -149,7 +148,7 @@ def chdl0001d(request):
 
             ?personID schema:birthDate ?date ;
                     foaf:name ?personName ;
-                    dbo:birthPlace ?birthPlace .
+                    schema:birthPlace ?birthPlace .
             ?birthPlace rdfs:label ?birthPlaceLabel ;
                         geo-pos:lat ?lat ;
                         geo-pos:long ?long .
@@ -248,7 +247,6 @@ def chdl0001c(request):
     sparql.setCredentials(env['SPARQL_USERNAME'], env['SPARQL_PASSWORD'])
     sparql.setQuery("""
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-        PREFIX dbo: <http://dbpedia.org/ontology/>
         PREFIX schema: <http://schema.org/>
         PREFIX foaf: <http://xmlns.com/foaf/0.1/>
         PREFIX geo-pos: <http://www.w3.org/2003/01/geo/wgs84_pos#>
@@ -265,7 +263,7 @@ def chdl0001c(request):
 
             ?personID schema:birthDate ?date ;
                     foaf:name ?personName ;
-                    dbo:birthPlace ?birthPlace .
+                    schema:birthPlace ?birthPlace .
             ?birthPlace rdfs:label ?birthPlaceLabel ;
                         geo-pos:lat ?lat ;
                         geo-pos:long ?long .
