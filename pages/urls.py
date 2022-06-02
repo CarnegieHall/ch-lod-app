@@ -22,6 +22,7 @@ urlpatterns = [
     path('datalab/experiments/chdl-0009/', views.top25, name='top25'),
     path('datalab/experiments/chdl-0010/', views.leschetizky, name='leschetizky'),
     path('datalab/experiments/chdl-0011/', views.chdl0011, name='chdl-0011'),
+    path('datalab/experiments/chdl-0012/', views.suffrage, name='suffrage'),
     path('datalab/experiments/', views.experiments, name='experiments'),
     path('datalab/labReport_create/', views.LabReportCreateView.as_view(),
          name='labReport_create'),

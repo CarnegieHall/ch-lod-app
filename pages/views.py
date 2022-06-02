@@ -121,6 +121,8 @@ def leschetizky(request):
     return render(request, 'pages/experiments/chdl-0010.html')
 def button_chdl0011(request):
     return render(request, 'pages/experiments/chdl-0011.html')
+def suffrage(request):
+    return render(request, 'pages/experiments/chdl-0012.html')
 
 
 @xframe_options_sameorigin
