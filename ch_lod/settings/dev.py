@@ -7,7 +7,7 @@ DEBUG = True
 SECRET_KEY = '1wkgdvpvsoe#$mhru0i6@482_te#!6w_4+3-r8!ojkav24-w8j'
 
 # SECURITY WARNING: define the correct hosts in production!
-ALLOWED_HOSTS = ['*'] 
+ALLOWED_HOSTS = ['*']
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
@@ -42,7 +42,7 @@ DATABASES = {
 
 
 # you will probably need to run
-#  python3 manage.py migrate  
+#  python3 manage.py migrate
 #  python3 manage.py createsuperuser
 # if you switch between or create a clean slate (like delete the sqlite file)
 
