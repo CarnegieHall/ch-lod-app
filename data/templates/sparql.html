@@ -225,7 +225,7 @@ LIMIT 25`,
 
  select ?performer ?name ?birthPlace ?birthDate where {
      ?performer foaf:name ?name ;
-                dbpedia-owl:birthPlace ?birthPlace ;
+                schema:birthPlace ?birthPlace ;
                 schema:birthDate ?birthDate ;
                 gndo:playedInstrument ?instrument .
      ?instrument rdfs:label "alto saxophone" .
