@@ -86,15 +86,15 @@ class PostPage(Page):
         context = super(PostPage, self).get_context(request, *args, **kwargs)
         context['blog_page'] = self.blog_page
         context['post'] = self
-        if request.user:
-            if not request.user.is_staff and not request.user.is_superuser:
+        #if request.user:
+            #if not request.user.is_staff and not request.user.is_superuser:
                 
-                try:
-                    self.page_views = self.page_views + 1
-                except AttributeError:
-                    self.page_views = 1
+                #try:
+                #    self.page_views = self.page_views + 1
+                #except AttributeError:
+                #    self.page_views = 1
                 
-                self.save()
+                #self.save()
         return context
 
 

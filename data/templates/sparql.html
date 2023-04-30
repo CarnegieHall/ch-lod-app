@@ -158,6 +158,7 @@ PREFIX schema: <http://schema.org/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 SELECT DISTINCT ?composerName ?workTitle (COUNT(DISTINCT ?workPerf) AS ?numberOfPerformances)
 WHERE {
+?work a schema:MusicComposition .
 ?work dcterms:creator ?composer ;
   rdfs:label ?workTitle .
 ?composer schema:name ?composerName .
