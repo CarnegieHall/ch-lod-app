@@ -279,11 +279,10 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX schema: <http://schema.org/>
 SELECT ?yearOfEvent (COUNT(?event) AS ?numberOfWorks)
 WHERE {
-?work dcterms:creator chnames:1003166 .
-?event schema:startDate ?date
- BIND (str(YEAR(?date)) AS ?yearOfEvent)
 ?event schema:subEvent ?workPerf .
-?workPerf schema:workPerformed ?work
+?event schema:startDate ?date BIND (str(YEAR(?date)) AS ?yearOfEvent)
+?workPerf schema:workPerformed ?work .
+?work dcterms:creator chnames:1003166 .
 }
 GROUP BY ?yearOfEvent
 ORDER BY ?yearOfEvent`,
