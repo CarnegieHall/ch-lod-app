@@ -86,6 +86,8 @@ class PostPage(Page):
         context = super(PostPage, self).get_context(request, *args, **kwargs)
         context['blog_page'] = self.blog_page
         context['post'] = self
+
+        # temporarily removed page counter due to wagtail incompatibilities Gabe Mangiante 4/30/2023
         #if request.user:
             #if not request.user.is_staff and not request.user.is_superuser:
                 
