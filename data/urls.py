@@ -47,6 +47,7 @@ urlpatterns = [
     url(r'^vocabulary/roles/$', views.route_vocab_role),
     url(r'^vocabulary/roles/(?P<type>about|xml|turtle|jsonld|nt|n3)$', views.about_vocab_role),
     url(r'^vocabulary/roles/(?P<id>(?!(about|xml|turtle|jsonld|nt|n3))\w+)/(?P<type>about|xml|turtle|jsonld|nt|n3)', views.about_vocab_roles),
-    url(r'^vocabulary/roles/(?P<id>(?!(about|xml|turtle|jsonld|nt|n3))\w+)', views.route_vocab_roles)
-
+    url(r'^vocabulary/roles/(?P<id>(?!(about|xml|turtle|jsonld|nt|n3))\w+)', views.route_vocab_roles),
+    url(r'^model/Entity', views.about_model_entity),
+    url(r'^model/WorkPerformance', views.about_model_workperformance)
 ]

@@ -29,12 +29,12 @@
 		      </td>
         </tr>
       {% endif %}
-      {% if data.dcterms_created %}
+      {% if data.dateCreated %}
         <tr>
-          <td>dcterms:created</td>
+          <td>schema:dateCreated</td>
           <td>
           	<ul>
-      				{% for values in data.dcterms_created %}
+      				{% for values in data.dateCreated %}
       				   <li>{{values}}</li>
       				{% endfor %}
       			</ul>

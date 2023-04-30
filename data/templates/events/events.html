@@ -18,10 +18,10 @@
     </thead>
     <tbody>
       <tr>
-        <td>dcterms:date</td>
+        <td>schema:startDate</td>
         <td>
         	<ul>
-				{% for values in data.dcterms_date %}
+				{% for values in data.start_date %}
 				   <li>{{values}}</li>
 				{% endfor %}
 			</ul>
@@ -49,7 +49,7 @@
     		</td>
       </tr>
       <tr>
-        <td>event:product</td>
+        <td>schema:subEvent</td>
         <td>
               <ul>
             {% for values in data.product %}
@@ -59,7 +59,7 @@
         </td>
       </tr>
       <tr>
-        <td>event:place</td>
+        <td>schema:location</td>
         <td>
               <ul>
             {% for values in data.venues %}

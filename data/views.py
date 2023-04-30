@@ -682,3 +682,13 @@ def about_void(request,type):
 	if data == '404':
 		raise Http404
 	return HttpResponse(content=data, content_type=content_type_map[type], status=200)
+
+def about_model_entity(request):
+	template = loader.get_template('model/Entity.html')
+	context = {}
+	return HttpResponse(template.render(context, request))
+
+def about_model_workperformance(request):
+	template = loader.get_template('model/WorkPerformance.html')
+	context = {}
+	return HttpResponse(template.render(context, request))

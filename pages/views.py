@@ -135,7 +135,6 @@ def chdl0001d(request):
         #Whose birthday is today? (for map)
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
         PREFIX schema: <http://schema.org/>
-        PREFIX foaf: <http://xmlns.com/foaf/0.1/>
         PREFIX geo-pos: <http://www.w3.org/2003/01/geo/wgs84_pos#>
         PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
         SELECT ?personName ?birthPlaceLabel ?lat ?long ?opasID ?wikidataLink (YEAR(?date) as ?year)
@@ -149,7 +148,7 @@ def chdl0001d(request):
             BIND(DAY(NOW()) AS ?nowDay)
 
             ?personID schema:birthDate ?date ;
-                    foaf:name ?personName ;
+                    schema:name ?personName ;
                     schema:birthPlace ?birthPlace .
             ?birthPlace rdfs:label ?birthPlaceLabel ;
                         geo-pos:lat ?lat ;
@@ -250,7 +249,6 @@ def chdl0001c(request):
     sparql.setQuery("""
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
         PREFIX schema: <http://schema.org/>
-        PREFIX foaf: <http://xmlns.com/foaf/0.1/>
         PREFIX geo-pos: <http://www.w3.org/2003/01/geo/wgs84_pos#>
         PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
         SELECT ?personName ?birthPlace ?birthPlaceLabel ?lat ?long ?opasID ?wikidataLink (YEAR(?date) as ?year)
@@ -264,7 +262,7 @@ def chdl0001c(request):
             BIND(DAY(NOW()) AS ?nowDay)
 
             ?personID schema:birthDate ?date ;
-                    foaf:name ?personName ;
+                    schema:name ?personName ;
                     schema:birthPlace ?birthPlace .
             ?birthPlace rdfs:label ?birthPlaceLabel ;
                         geo-pos:lat ?lat ;
@@ -328,16 +326,15 @@ def chdl0007(request):
         # t = timedelta((7 + weekday - d.weekday()) % 7)
         return (d + t).strftime('%Y-%m-%d')
 
-    query = 'PREFIX dcterms: <http://purl.org/dc/terms/>'
-    query = query + 'PREFIX event: <http://purl.org/NET/c4dm/event.owl#>'
+    query = 'PREFIX schema: <http://schema.org/>'
     query = query + 'PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>'
     query = query + 'select ?event ?title ?date ?venueName ?eventURL where {'
     query = query + 'BIND(YEAR(NOW()) AS ?nowYear)'
     query = query + 'BIND(MONTH(NOW()) AS ?nowMonth)'
     query = query + 'BIND(DAY(NOW()) AS ?nowDay)'
-    query = query + '?event a event:Event ;'
-    query = query + 'dcterms:date ?date ;'
-    query = query + 'event:place ?venue ;'
+    query = query + '?event a schema:Event ;'
+    query = query + 'schema:startDate ?date ;'
+    query = query + 'schema:location ?venue ;'
     query = query + 'rdfs:label ?title .'
     query = query + '?venue rdfs:label ?venueName .'
     query = query + 'FILTER (YEAR(?date) = ' + year + ' && MONTH(?date) = ?nowMonth && DAY(?date) = ?nowDay)'
@@ -394,18 +391,15 @@ def chdl0011(request):
           return (d + t).strftime('%Y-%m-%d')
 
     query = 'PREFIX chgenres: <http://data.carnegiehall.org/genres/>'
-    query = query + 'PREFIX dcterms: <http://purl.org/dc/terms/>'
-    query = query + 'PREFIX event: <http://purl.org/NET/c4dm/event.owl#>'
-    query = query + 'PREFIX foaf: <http://xmlns.com/foaf/0.1/>'
     query = query + 'PREFIX mo: <http://purl.org/ontology/mo/>'
     query = query + 'PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>'
-    query = query + 'PREFIX skos: <http://www.w3.org/2004/02/skos/core#>'
     query = query + 'PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>'
+    query = query + 'PREFIX schema: <http://schema.org/>'
     query = query + 'select distinct ?event (str(?label) AS ?eventTitle) ?date ?phsLink where {'
     query = query + '?event rdfs:label ?label ;'
     query = query + 'mo:genre chgenres:39 ;'
-    query = query + 'dcterms:date ?date ;'
-    query = query + 'event:place ?place .'
+    query = query + 'schema:startDate ?date ;'
+    query = query + 'schema:location ?place .'
     query = query + '?place rdfs:label ?venueLabel .'
     query = query + '''BIND(IRI(REPLACE(str(?event), "http://data.carnegiehall.org/events/", "https://www.carnegiehall.org/About/History/Performance-History-Search?q=&dex=prod_PHS&event=")) AS ?phsLink).'''
     query = query + '''FILTER(?date >= xsd:dateTime("1971-09-01T00:00:00") && ?date <= xsd:dateTime("1972-09-01T00:00:00"))}'''

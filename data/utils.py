@@ -54,11 +54,11 @@ def return_label_date(uris):
 		sparql = SPARQLWrapper(settings.SPARQL_ENDPOINT)
 		sparql.setCredentials(os.environ['SPARQL_USERNAME'], os.environ['SPARQL_PASSWORD'])
 
-		query = 'PREFIX dcterms: <http://purl.org/dc/terms/>'
+		query = 'PREFIX schema: <http://schema.org/>'
 		query = query + 'SELECT * WHERE{'
 		query = query + '{?uri rdfs:label ?o . ?uri ?p ?o .}'
 		query = query + 'UNION'
-		query = query + '{?uri dcterms:date ?o . ?uri ?p ?o .}'
+		query = query + '{?uri schema:startDate ?o . ?uri ?p ?o .}'
 		query = query + 'FILTER (?uri IN ('+ ','.join(chunk)  +'))'
 		query = query + '}'
 
@@ -77,7 +77,6 @@ def return_label_date(uris):
 Returns the names of the URIs given, either as foaf name or label depending on how they were stored
 """
 def return_name(uris):
-
 	uri_chunks = chunks(uris,100)
 
 	all_results = {'head': {'vars': ['uri', 'o', 'p']}, 'results': {'bindings': [] } }
@@ -86,11 +85,9 @@ def return_name(uris):
 
 		sparql = SPARQLWrapper(settings.SPARQL_ENDPOINT)
 		sparql.setCredentials(os.environ['SPARQL_USERNAME'], os.environ['SPARQL_PASSWORD'])
-		query = 'PREFIX foaf: <http://xmlns.com/foaf/0.1/>'
+		query = 'PREFIX schema: <http://schema.org/>'
 		query = query + 'SELECT * WHERE{'
-		query = query + '{?uri rdfs:label ?o . ?uri ?p ?o .}'
-		query = query + 'UNION'
-		query = query + '{?uri foaf:name ?o . ?uri ?p ?o .}'
+		query = query + '{?uri rdfs:label ?o .}'
 		query = query + 'FILTER (?uri IN ('+ ','.join(chunk)  +'))'
 		query = query + '}'
 
@@ -114,7 +111,7 @@ def return_works_from_event(uris):
 
 	query = 'PREFIX dcterms: <http://purl.org/dc/terms/>'
 	query = query + 'SELECT * WHERE{'
-	query = query + '?uri <http://purl.org/NET/c4dm/event.owl#product> ?o . ?uri ?p ?o .'
+	query = query + '?uri <http://schema.org/workPerformed> ?o . ?uri ?p ?o .'
 	query = query + 'FILTER (?uri IN ('+ ','.join(uris)  +'))'
 	query = query + '}'
 
@@ -212,13 +209,13 @@ def format_events_dict(event_uri):
 		if '/names/' in result['o']['value']:
 			agents.append('<'+result['o']['value']+'>')
 
-		if result['p']['value'] == 'http://purl.org/NET/c4dm/event.owl#product':
+		if result['p']['value'] == 'http://schema.org/subEvent':
 			product.append(result['o']['value'])
-		elif result['p']['value'] == 'http://purl.org/dc/terms/date':
+		elif result['p']['value'] == 'http://schema.org/startDate':
 			dates.append(result['o']['value'])
 		elif result['p']['value'] == 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type':
 			types.append(result['o']['value'])
-		elif result['p']['value'] == 'http://purl.org/NET/c4dm/event.owl#place':
+		elif result['p']['value'] == 'http://schema.org/location':
 			venue.append('<'+result['o']['value']+'>')
 
 
@@ -235,6 +232,7 @@ def format_events_dict(event_uri):
 	people = []
 
 	agents = return_name(agents)
+	
 	for agent in agents["results"]["bindings"]:
 
 		#look for the triple in the main set
@@ -265,7 +263,7 @@ def format_events_dict(event_uri):
 			product_with_labels.append([p,"???"])
 
 	event = {
-		'dcterms_date' : dates,
+		'start_date' : dates,
 		'rdf_type' : types,
 		'rdfs_label' : labels,
 		'rdfs_label_string' : (',').join(labels),
@@ -300,7 +298,7 @@ def format_product_dict(product_uri):
 
 
 	for result in s["results"]["bindings"]:
-		if result['p']['value'] == 'http://purl.org/NET/c4dm/event.owl#product':
+		if result['p']['value'] == 'http://schema.org/subEvent':
 			events.append('<'+result['s']['value']+'>')
 
 
@@ -317,18 +315,18 @@ def format_product_dict(product_uri):
 	for result in events["results"]["bindings"]:
 		uri = result['uri']['value']
 		if uri not in events_map:
-			events_map[uri] = { 'rdfs:label' : '', 'dcterms:date' : '' }
+			events_map[uri] = { 'rdfs:label' : '', 'schema:startDate' : '' }
 
 		if result['p']['value'] == 'http://www.w3.org/2000/01/rdf-schema#label':
 			events_map[uri]['rdfs:label'] = result['o']['value']
 
-		if result['p']['value'] == 'http://purl.org/dc/terms/date':
-			events_map[uri]['dcterms:date'] = result['o']['value']
+		if result['p']['value'] == 'http://schema.org/startDate':
+			events_map[uri]['schema:startDate'] = result['o']['value']
 
 	events = []
 
 	for key in events_map:
-		events.append([key,events_map[key]['rdfs:label'],events_map[key]['dcterms:date']])
+		events.append([key,events_map[key]['rdfs:label'],events_map[key]['schema:startDate']])
 
 
 	product = {
@@ -363,7 +361,7 @@ def format_venues_dict(venue_uri):
 			dates.append(result['o']['value'])
 		elif result['p']['value'] == 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type':
 			types.append(result['o']['value'])
-		elif result['p']['value'] == 'http://www.geonames.org/ontology#parentFeature':
+		elif result['p']['value'] == 'http://schema.org/containedInPlace':
 			parent.append(result['o']['value'])
 		elif result['p']['value'] == 'http://www.w3.org/2000/01/rdf-schema#label':
 			labels.append(result['o']['value'])
@@ -614,20 +612,20 @@ def format_names_dict(name_uri):
 			parent.append(result['o']['value'])
 		elif result['p']['value'] == 'http://www.w3.org/2000/01/rdf-schema#label':
 			labels.append(result['o']['value'])
-		elif result['p']['value'] == 'http://xmlns.com/foaf/0.1/name':
+		elif result['p']['value'] == 'http://schema.org/name':
 			name.append(result['o']['value'])
 		elif result['p']['value'] == 'http://www.geonames.org/ontology#historicalName':
 			historical_name.append(result['o']['value'])
 		elif result['p']['value'] == 'http://schema.org/containsPlace':
 			contains_place.append(result['o']['value'])
-		elif result['p']['value'] == 'http://d-nb.info/standards/elementset/gnd#professionOrOccupation':
+		elif result['p']['value'] == 'http://schema.org/hasOccupation':
 			labels_map.append('<'+result['o']['value']+'>')
 			profession_or_occupation.append(result['o']['value'])
 		elif result['p']['value'] == 'http://d-nb.info/standards/elementset/gnd#playedInstrument':
 			played_instrument.append(result['o']['value'])
 			labels_map.append('<'+result['o']['value']+'>')
 
-		elif result['p']['value'] == 'http://xmlns.com/foaf/0.1/name':
+		elif result['p']['value'] == 'http://schema.org/name':
 			name.append(result['o']['value'])
 		elif result['p']['value'] == 'http://www.w3.org/2004/02/skos/core#exactMatch':
 			match.append(result['o']['value'])
@@ -718,8 +716,8 @@ def format_works_dict(work_uri):
 		if result['p']['value'] == 'http://www.w3.org/2000/01/rdf-schema#label':
 			events_map[uri]['rdfs:label'] = result['o']['value']
 
-		if result['p']['value'] == 'http://purl.org/dc/terms/date':
-			events_map[uri]['dcterms:date'] = result['o']['value']
+		if result['p']['value'] == 'http://schema.org/startDate':
+			events_map[uri]['schema:startDate'] = result['o']['value']
 
 
 
@@ -734,7 +732,7 @@ def format_works_dict(work_uri):
 	for result in o["results"]["bindings"]:
 		if result['p']['value'] == 'http://purl.org/dc/terms/creator':
 			creators.append('<' + result['o']['value'] + '>')
-		elif result['p']['value'] == 'http://purl.org/dc/terms/created':
+		elif result['p']['value'] == 'http://schema.org/dateCreated':
 			dates.append(result['o']['value'])
 		elif result['p']['value'] == 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type':
 			types.append(result['o']['value'])
@@ -754,13 +752,13 @@ def format_works_dict(work_uri):
 
 	events = []
 	for key, value in events_map.items():
-		events.append([key,value['rdfs:label'],value['dcterms:date']])
+		events.append([key,value['rdfs:label'],value['schema:startDate']])
 
 	events.sort(key=lambda x: x[2], reverse=True)
 
 	work = {
 		'dcterms_creator' : creators_map,
-		'dcterms_created' : dates,
+		'dateCreated' : dates,
 		'rdf_type' : types,
 		'rdfs_label' : labels,
 		'rdfs_label_string' : (',').join(labels),
@@ -867,7 +865,6 @@ def return_serialized_void(type):
 	sparql.setQuery(query)
 	sparql.setReturnFormat(JSON)
 	results = sparql.query().convert()
-
 
 
 	for result in results["results"]["bindings"]:

@@ -31,7 +31,7 @@
 
       {% if data.name %}
       <tr>
-        <td>foaf:name</td>
+        <td>schema:name</td>
         <td>
           <ul>
             {% for values in data.name %}
@@ -72,7 +72,7 @@
 
       {% if data.profession_or_occupation %}
       <tr>
-        <td>gndo:professionOrOccupation</td>
+        <td>schema:hasOccupation</td>
         <td>
           <ul>
             {% for values in data.profession_or_occupation %}
