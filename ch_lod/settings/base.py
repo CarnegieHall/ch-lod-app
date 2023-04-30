@@ -50,7 +50,8 @@ INSTALLED_APPS = [
 
     # Comment this out if doing local development using sqlite
     # make sure to put it back before deploying to prod
-    'wagtail.contrib.postgres_search',
+    # 'wagtail.contrib.postgres_search', has been deprecated
+    'wagtail.search.backends.database',
 
 
     'storages',
@@ -94,7 +95,8 @@ MIDDLEWARE = [
 # make sure to put it back before deploying to prod
 WAGTAILSEARCH_BACKENDS = {
     'default': {
-        'BACKEND': 'wagtail.contrib.postgres_search.backend',
+        # 'BACKEND': 'wagtail.contrib.postgres_search.backend',  has been deprecated
+        'BACKEND': 'wagtail.search.backends.database'
     },
 }
 
