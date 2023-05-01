@@ -295,10 +295,13 @@ def format_product_dict(product_uri):
 	types = []
 	unmapped = []
 	events = []
+	work = []
 
 	for result in o["results"]["bindings"]:
 		if result['p']['value'] == 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type':
 			types.append(result['o']['value'])
+		elif result['p']['value'] == 'http://schema.org/workPerformed':
+			work.append(result['o']['value'])
 		else:
 			unmapped.append([result['p']['value'], result['o']['value']])
 
@@ -339,6 +342,7 @@ def format_product_dict(product_uri):
 		'rdf_type': types,
 		'work_label' : work_labels[0][1],
 		'events' : events,
+		'work': work,
 		'total_triples' : total_triples
 	}
 

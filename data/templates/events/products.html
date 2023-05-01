@@ -37,7 +37,16 @@
           </ul>
         </td>
       </tr>
-
+      <tr>
+        <td>Work</td>
+        <td>
+          <ul>
+            {% for values in data.work %}
+              <li><a href="{{values.0}}">{{values.0}}</a></li>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
 
       {% if data.unmapped %}
 	      	{% for values in data.unmapped %}
