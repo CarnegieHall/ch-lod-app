@@ -204,6 +204,8 @@ def format_events_dict(event_uri):
 	unmapped = []
 	product = []
 	venue = []
+	description = []
+	comment = []
 
 	for result in o["results"]["bindings"]:
 		if '/names/' in result['o']['value']:
@@ -217,8 +219,10 @@ def format_events_dict(event_uri):
 			types.append(result['o']['value'])
 		elif result['p']['value'] == 'http://schema.org/location':
 			venue.append('<'+result['o']['value']+'>')
-
-
+		elif result['p']['value'] == 'http://schema.org/description':
+			description.append(result['o']['value'])
+		elif result['p']['value'] == 'http://www.w3.org/2000/01/rdf-schema#comment':
+			comment.append(result['o']['value'])
 		elif result['p']['value'] == 'http://www.w3.org/2000/01/rdf-schema#label':
 			labels.append(result['o']['value'])
 		elif '/names/' in result['o']['value']:
@@ -271,6 +275,8 @@ def format_events_dict(event_uri):
 		'people' : people,
 		'product': product_with_labels,
 		'venues' : venues,
+		'description': description,
+		'comment': comment,
 		'total_triples' : total_triples
 	}
 
