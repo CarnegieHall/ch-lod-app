@@ -221,7 +221,8 @@
               PREFIX skos: &lt;http://www.w3.org/2004/02/skos/core#&gt;
               SELECT DISTINCT ?composerName ?wikidataLink ?workTitle (COUNT(DISTINCT ?workPerf) AS ?numberOfPerformances)
               WHERE {
-                ?work dcterms:creator ?composer ;
+                ?work a schema:MusicComposition ;
+                dcterms:creator ?composer ;
                 rdfs:label ?workTitle .
                 ?composer schema:name ?composerName .
                 ?event schema:subEvent ?workPerf .
