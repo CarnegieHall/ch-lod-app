@@ -105,7 +105,6 @@
             <pre><code>
               PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
               PREFIX schema: &lt;http://schema.org/##&gt;
-              PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/##&gt;
               PREFIX geo-pos: &lt;http://www.w3.org/2003/01/geo/wgs84_pos##&gt;
               PREFIX skos: &lt;http://www.w3.org/2004/02/skos/core##&gt;
               SELECT ?personName ?birthPlace ?birthPlaceLabel ?lat ?long ?opasID ?wikidataLink (YEAR(?date) as ?year)
@@ -119,7 +118,7 @@
                   BIND(DAY(NOW()) AS ?nowDay)
 
                   ?personID schema:birthDate ?date ;
-                          foaf:name ?personName ;
+                          schema:name ?personName ;
                           schema:birthPlace ?birthPlace .
                   ?birthPlace rdfs:label ?birthPlaceLabel ;
                               geo-pos:lat ?lat ;

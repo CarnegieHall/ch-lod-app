@@ -131,8 +131,7 @@
             <pre><code>
               PREFIX chgenres: <http://data.carnegiehall.org/genres/>
               PREFIX dcterms: <http://purl.org/dc/terms/>
-              PREFIX event: <http://purl.org/NET/c4dm/event.owl#>
-              PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+              PREFIX schema: <http://schema.org/>
               PREFIX mo: <http://purl.org/ontology/mo/>
               PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
               PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
@@ -142,8 +141,8 @@
               WHERE {
                 ?event rdfs:label ?label ;
                 mo:genre chgenres:39 ;
-                dcterms:date ?date ;
-                event:place ?place .
+                schema:startDate ?date ;
+                schema:location ?place .
                 ?place rdfs:label ?venueLabel .
                 BIND(IRI(REPLACE(str(?event), "http://data.carnegiehall.org/events/", "https://www.carnegiehall.org/About/History/Performance-History-Search?q=&dex=prod_PHS&event=")) AS ?phsLink).
                 FILTER(?date >= xsd:dateTime("1971-09-01T00:00:00") && ?date <= xsd:dateTime("1972-09-01T00:00:00"))
@@ -179,8 +178,7 @@
 
               query = 'PREFIX chgenres: <http://data.carnegiehall.org/genres/>'
               query = query + 'PREFIX dcterms: <http://purl.org/dc/terms/>'
-              query = query + 'PREFIX event: <http://purl.org/NET/c4dm/event.owl#>'
-              query = query + 'PREFIX foaf: <http://xmlns.com/foaf/0.1/>'
+              query = query + 'PREFIX schema: <http://schema.org/>'
               query = query + 'PREFIX mo: <http://purl.org/ontology/mo/>'
               query = query + 'PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>'
               query = query + 'PREFIX skos: <http://www.w3.org/2004/02/skos/core#>'
@@ -188,8 +186,8 @@
               query = query + 'select distinct ?event (str(?label) AS ?eventTitle) ?date ?phsLink where {'
               query = query + '?event rdfs:label ?label ;'
               query = query + 'mo:genre chgenres:39 ;'
-              query = query + 'dcterms:date ?date ;'
-              query = query + 'event:place ?place .'
+              query = query + 'schema:startDate ?date ;'
+              query = query + 'schema:location ?place .'
               query = query + '?place rdfs:label ?venueLabel .'
               query = query + '''BIND(IRI(REPLACE(str(?event), "http://data.carnegiehall.org/events/", "https://www.carnegiehall.org/About/History/Performance-History-Search?q=&dex=prod_PHS&event=")) AS ?phsLink).'''
               query = query + '''FILTER(?date >= xsd:dateTime("1971-09-01T00:00:00") && ?date <= xsd:dateTime("1972-09-01T00:00:00"))}'''
