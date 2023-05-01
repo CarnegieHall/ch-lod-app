@@ -38,7 +38,7 @@
         </td>
       </tr>
       <tr>
-        <td>Work</td>
+        <td>schema:workPerformed</td>
         <td>
           <ul>
             {% for values in data.work %}
@@ -47,6 +47,18 @@
           </ul>
         </td>
       </tr>
+      {% if data.performers %}
+      {% for values in data.performers %}
+          <tr>
+            <td>{{values.2}}</td>
+            <td>
+              <ul>
+             <li><a href="{{values.0}}">{{values.1}}</a></li>
+          </ul>
+        </td>
+      </tr>
+      {% endfor %}
+      {% endif %}
 
       {% if data.unmapped %}
 	      	{% for values in data.unmapped %}

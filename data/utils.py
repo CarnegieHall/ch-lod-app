@@ -296,12 +296,16 @@ def format_product_dict(product_uri):
 	unmapped = []
 	events = []
 	work = []
+	roles = []
+	performers = []
 
 	for result in o["results"]["bindings"]:
 		if result['p']['value'] == 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type':
 			types.append(result['o']['value'])
 		elif result['p']['value'] == 'http://schema.org/workPerformed':
 			work.append(result['o']['value'])
+		elif '/vocabulary/roles' in result['p']['value']:
+			roles.append(result['o']['value'])
 		else:
 			unmapped.append([result['p']['value'], result['o']['value']])
 
@@ -310,6 +314,14 @@ def format_product_dict(product_uri):
 		if result['p']['value'] == 'http://schema.org/subEvent':
 			events.append('<'+result['s']['value']+'>')
 
+	roles = return_name(roles)
+	
+	for role in roles["results"]["bindings"]:
+
+		#look for the triple in the main set
+		for result in o["results"]["bindings"]:
+			if result['o']['value'] == role['uri']['value']:
+				performers.append([role['uri']['value'], role['o']['value'],result['p']['value']])
 
 
 	work_labels = return_works_from_event([product_uri])
@@ -343,6 +355,7 @@ def format_product_dict(product_uri):
 		'work_label' : work_labels[0][1],
 		'events' : events,
 		'work': work,
+		'performers': performers,
 		'total_triples' : total_triples
 	}
 
