@@ -320,7 +320,7 @@ def format_product_dict(product_uri):
 
 		#look for the triple in the main set
 		for result in o["results"]["bindings"]:
-			if result['o']['value'] == role['uri']['value']:
+			if result['o']['value'] == role['uri']['value'] and '/vocabulary/roles' in result['p']['value']:
 				performers.append([role['uri']['value'], role['o']['value'],result['p']['value']])
 
 
