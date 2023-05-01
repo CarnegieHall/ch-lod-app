@@ -305,7 +305,7 @@ def format_product_dict(product_uri):
 		elif result['p']['value'] == 'http://schema.org/workPerformed':
 			work.append(result['o']['value'])
 		elif '/vocabulary/roles' in result['p']['value']:
-			roles.append(result['o']['value'])
+			roles.append('<' + result['o']['value'] + '>')
 		else:
 			unmapped.append([result['p']['value'], result['o']['value']])
 
