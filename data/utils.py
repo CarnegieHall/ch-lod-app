@@ -86,7 +86,7 @@ def return_name(uris):
 		sparql = SPARQLWrapper(settings.SPARQL_ENDPOINT)
 		sparql.setCredentials(os.environ['SPARQL_USERNAME'], os.environ['SPARQL_PASSWORD'])
 		query = 'PREFIX schema: <http://schema.org/>'
-		query = query + 'SELECT * WHERE{'
+		query = query + 'SELECT DISTINCT * WHERE{'
 		query = query + '{?uri rdfs:label ?o .}'
 		query = query + 'FILTER (?uri IN ('+ ','.join(chunk)  +'))'
 		query = query + '}'
