@@ -59,13 +59,13 @@
             <!-- Be careful, "<" and ">" may need to be escaped with "&lt;" and "&gt;" -->
             <!-- Quotes may also need to be escaped with "&quot;" -->
             <pre><code>
-            PREFIX event: &lt;http://purl.org/NET/c4dm/event.owl#&gt;
+            PREFIX schema: &lt;http://schema.org/&gt;
             PREFIX mo: &lt;http://purl.org/ontology/mo/&gt;
             PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
             PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
             SELECT ?genreLabel (COUNT (DISTINCT?event) AS ?numberOfEvents)
             WHERE {
-              ?event rdf:type event:Event ;
+              ?event rdf:type schema:Event ;
                      mo:genre ?genre .
               ?genre rdfs:label ?genreLabel .
             }

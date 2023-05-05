@@ -98,7 +98,7 @@
           <div  class="bg-light text-dark" id="lab_report-query">
             <pre><code>
             PREFIX dcterms: &lt;http://purl.org/dc/terms/>
-            PREFIX event: &lt;http://purl.org/NET/c4dm/event.owl#>
+            PREFIX schema: &lt;http://schema.org/>
             PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#>
             SELECT ?event ?title ?date ?eventURL WHERE
             {
@@ -106,8 +106,8 @@
               BIND(MONTH(NOW()) AS ?nowMonth)
               BIND(DAY(NOW()) AS ?nowDay)
 
-              ?event a event:Event ;
-                    dcterms:date ?date ;
+              ?event a schema:Event ;
+                    schema:startDate ?date ;
                     rdfs:label ?title .
               FILTER (YEAR(?date) = ' + year + ' && MONTH(?date) = ?nowMonth && DAY(?date) = ?nowDay)
               BIND(IRI(REPLACE(str(?event), 'http://data.carnegiehall.org/events/', 'https://www.carnegiehall.org/About/History/Performance-History-Search?q=&dex=prod_PHS&event=')) AS ?eventURL).

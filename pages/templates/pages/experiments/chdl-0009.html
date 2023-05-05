@@ -216,18 +216,18 @@
             <!-- Quotes may also need to be escaped with "&quot;" -->
             <pre><code>
               PREFIX dcterms: &lt;http://purl.org/dc/terms/&gt;
-              PREFIX event: &lt;http://purl.org/NET/c4dm/event.owl#&gt;
-              PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+              PREFIX schema: &lt;http://schema.org/&gt;
               PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
               PREFIX skos: &lt;http://www.w3.org/2004/02/skos/core#&gt;
               SELECT DISTINCT ?composerName ?wikidataLink ?workTitle (COUNT(DISTINCT ?workPerf) AS ?numberOfPerformances)
               WHERE {
-                ?work dcterms:creator ?composer ;
+                ?work a schema:MusicComposition ;
+                dcterms:creator ?composer ;
                 rdfs:label ?workTitle .
-                ?composer foaf:name ?composerName .
-                ?event event:product ?workPerf .
-                ?workPerf event:product ?work .
-                MINUS { ?composer foaf:name "Anonymous" . }
+                ?composer schema:name ?composerName .
+                ?event schema:subEvent ?workPerf .
+                ?workPerf schema:workPerformed ?work .
+                MINUS { ?composer schema:name "Anonymous" . }
                 OPTIONAL { ?composer skos:exactMatch ?wikidataLink .
                   filter contains(str(?wikidataLink), "wikidata")}
                 }
