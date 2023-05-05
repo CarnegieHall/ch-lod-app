@@ -31,8 +31,7 @@ INSTALLED_APPS = [
     'pages',
     'search',
     'blog',
-
-
+    'wagtail',
     'wagtail.contrib.forms',
     'wagtail.contrib.redirects',
     'wagtail.embeds',
@@ -43,7 +42,6 @@ INSTALLED_APPS = [
     'wagtail.images',
     'wagtail.search',
     'wagtail.admin',
-    'wagtail.core',
     'wagtail.contrib.routable_page',
     'wagtailmenus',
     'wagtailcodeblock',
@@ -62,7 +60,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-
     # 'el_pagination',
     'modelcluster',
     'taggit',
@@ -71,8 +68,8 @@ INSTALLED_APPS = [
     'django_tables2',
     'leaflet',
 
-    'crispy_forms'
-
+    'crispy_forms',
+    'crispy_bootstrap4'
 
 
 ]

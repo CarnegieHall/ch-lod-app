@@ -13,9 +13,9 @@ from django.views.generic.edit import CreateView
 from django.conf import settings
 from django.views.decorators.clickjacking import xframe_options_sameorigin
 
-from wagtail.core.models import Page
-from wagtail.search.models import Query
-
+from wagtail.models import Page
+#from wagtail.search.models import Query
+from wagtail.contrib.search_promotions.models import Query
 
 from datetime import datetime, timedelta
 import dateutil.parser
