@@ -1,5 +1,6 @@
 asgiref>=3.2.10
 boto3>=1.26.125
+crispy-bootstrap4>=2022.1
 Django>=4.0
 django-geojson>=4.0.0
 django-leaflet>=0.29.0

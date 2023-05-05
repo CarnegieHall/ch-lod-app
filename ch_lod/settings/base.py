@@ -68,7 +68,8 @@ INSTALLED_APPS = [
     'django_tables2',
     'leaflet',
 
-    'crispy_forms'
+    'crispy_forms',
+    'crispy_bootstrap4'
 ]
 
 MIDDLEWARE = [
