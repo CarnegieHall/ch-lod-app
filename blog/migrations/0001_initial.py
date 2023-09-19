@@ -7,7 +7,7 @@ import django.db.models.deletion
 import modelcluster.contrib.taggit
 import modelcluster.fields
 import wagtail.contrib.routable_page.models
-import wagtail.core.fields
+import wagtail.fields
 
 
 class Migration(migrations.Migration):
@@ -68,7 +68,7 @@ class Migration(migrations.Migration):
             name='PostPage',
             fields=[
                 ('page_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('body', wagtail.core.fields.RichTextField()),
+                ('body', wagtail.fields.RichTextField()),
                 ('date', models.DateTimeField(default=datetime.datetime.today, verbose_name='Post date')),
                 ('excerpt', blog.utils.MarkdownField(blank=True, verbose_name='excerpt')),
                 ('categories', modelcluster.fields.ParentalManyToManyField(blank=True, to='blog.BlogCategory')),

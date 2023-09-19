@@ -20,7 +20,6 @@ SPARQL_ENDPOINT = env['SPARQL_ENDPOINT']
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
@@ -31,8 +30,7 @@ INSTALLED_APPS = [
     'pages',
     'search',
     'blog',
-
-
+    'wagtail',
     'wagtail.contrib.forms',
     'wagtail.contrib.redirects',
     'wagtail.embeds',
@@ -43,7 +41,6 @@ INSTALLED_APPS = [
     'wagtail.images',
     'wagtail.search',
     'wagtail.admin',
-    'wagtail.core',
     'wagtail.contrib.routable_page',
     'wagtailmenus',
     'wagtailcodeblock',
@@ -62,7 +59,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-
     # 'el_pagination',
     'modelcluster',
     'taggit',
@@ -71,10 +67,8 @@ INSTALLED_APPS = [
     'django_tables2',
     'leaflet',
 
-    'crispy_forms'
-
-
-
+    'crispy_forms',
+    'crispy_bootstrap4'
 ]
 
 MIDDLEWARE = [
@@ -206,3 +200,18 @@ SITE_ID = 1
 # Base URL to use when referring to full URLs within the Wagtail admin backend -
 # e.g. in notification emails. Don't include '/admin' or a trailing slash
 BASE_URL = 'http://example.com'
+
+# added GPM 5/5/23
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "WARNING",
+    },
+}

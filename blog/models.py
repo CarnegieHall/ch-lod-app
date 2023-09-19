@@ -6,12 +6,12 @@ from django.db.models import Q
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from modelcluster.tags import ClusterTaggableManager
 from taggit.models import TaggedItemBase, Tag as TaggitTag
-from wagtail.admin.edit_handlers import FieldPanel
+from wagtail.admin.panels import FieldPanel
 from wagtail.contrib.forms.models import AbstractEmailForm, AbstractFormField
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
-from wagtail.core.fields import RichTextField
-from wagtail.core.models import Page
-from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.fields import RichTextField
+from wagtail.models import Page
+# from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.snippets.models import register_snippet
 from wagtail.search import index
 
@@ -64,7 +64,7 @@ class PostPage(Page):
     categories = ParentalManyToManyField('blog.BlogCategory', blank=True)
     tags = ClusterTaggableManager(through='blog.BlogPageTag', blank=True)
     content_panels = Page.content_panels + [
-        ImageChooserPanel('header_image'),
+        FieldPanel('header_image'),
         MarkdownPanel("body"),
         MarkdownPanel("excerpt"),
         FieldPanel('categories', widget=forms.CheckboxSelectMultiple),
@@ -87,16 +87,15 @@ class PostPage(Page):
         context['blog_page'] = self.blog_page
         context['post'] = self
 
-        # temporarily removed page counter due to wagtail incompatibilities Gabe Mangiante 4/30/2023
-        #if request.user:
-            #if not request.user.is_staff and not request.user.is_superuser:
+        if request.user:
+            if not request.user.is_staff and not request.user.is_superuser:
                 
-                #try:
-                #    self.page_views = self.page_views + 1
-                #except AttributeError:
-                #    self.page_views = 1
+                try:
+                    self.page_views = self.page_views + 1
+                except AttributeError:
+                    self.page_views = 1
                 
-                #self.save()
+                self.save()
         return context
 
 

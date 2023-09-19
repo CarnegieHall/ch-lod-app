@@ -1,5 +1,5 @@
 from django.db.models import TextField
-from wagtail.admin.edit_handlers import FieldPanel
+from wagtail.admin.panels import FieldPanel
 
 class MarkdownField(TextField):
     def __init__(self, **kwargs):
