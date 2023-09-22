@@ -6,13 +6,13 @@
   <div class="container-fluid pt-3 my-3">
     <h1 class="display-3 p-3 my-3 bg-warning text-white">Experiments</h1><hr>
   </div>
-  <!-- Temporary maintenance warning – remove lines 10-15 when service is restored -->
-  <div class="container-fluid pt-3 my-3">
+  <!-- Temporary maintenance warning – uncomment lines 10-15 if service is down -->
+  <!-- <div class="container-fluid pt-3 my-3">
     <div class="alert alert-warning" role="alert">
     <h2>Our SPARQL endpoint is currently offline for maintenance.</h2>
     <h4>Some pages or features may not be available. Please check back later.</h4>
     </div>
-  </div>
+  </div> -->
   <div class="card text-white bg-dark mx-2 mb-3">
     <div class="card-body">
       <h3 class="card-title">Discover and learn about the people and events that have shaped Carnegie Hall's history through fun data experiments and visualizations.</h3></br>
@@ -21,14 +21,12 @@
     </div>
   </div>
   <div class="container-fluid p-3 my-3">
-    <!-- Temporarily remove experiments that won't function due to endpoint outage by commenting out the buttons -->
-    <!-- Remove lines 24–25 and uncomment lines 26–31 when endpoint is restored -->
-    <!-- <div class="btn-group pt-2">
+    <div class="btn-group pt-2">
       <a class="btn btn-outline-secondary btn-lg" href="{% url 'chdl-0001-c' %}">Whose Birthday is Today?</a>
     </div>
     <div class="btn-group pt-2">
       <a class="btn btn-outline-secondary btn-lg" href="{% url 'yearForm' %}">This Day in CH History / Billboard Hot 100</a>
-    </div> -->
+    </div>
     <div class="btn-group pt-2">
       <a class="btn btn-outline-secondary btn-lg" href="{% url 'may5' %}">May 5, 1891 Across America</a>
     </div>
