@@ -178,25 +178,25 @@ LIMIT 25`,
 
 'Performers with the most CH performances':
 `#Performers with the most CH performances
+PREFIX chRoles: <http://data.carnegiehall.org/vocabulary/roles/>
 PREFIX schema: <http://schema.org/>
-PREFIX mo: <http://purl.org/ontology/mo/>
 
-SELECT ?performerName (COUNT (DISTINCT(?event)) AS ?numberOfPerformances)
+SELECT ?performerID ?performerName (COUNT (DISTINCT(?event)) AS ?numberOfPerformances)
 WHERE {
-{
-?event mo:performer ?performerID .
-?performerID schema:name ?performerName .
+  {
+    ?event chRoles:conductor ?performerID .
+    ?performerID schema:name ?performerName .
+  }
+  UNION
+  {
+    ?event schema:subEvent ?workPerformance .
+    ?workPerformance ?performerRole ?performerID .
+    ?performerID schema:name ?performerName .
+  }
 }
-UNION
-{
-?event schema:subEvent ?workPerformance .
-?workPerformance mo:performer ?performerID .
-?performerID schema:name ?performerName .
-}
-}
-GROUP BY ?performerName
+GROUP BY ?performerID ?performerName
 ORDER BY DESC(?numberOfPerformances)
-LIMIT 25`,
+LIMIT 50`,
 
 'Pianists with the most CH performances':
 `#Pianists with the most CH performances
