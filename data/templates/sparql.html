@@ -202,13 +202,13 @@ LIMIT 50`,
 `#Pianists with the most CH performances
 PREFIX chroles: <http://data.carnegiehall.org/vocabulary/roles/>
 PREFIX schema: <http://schema.org/>
-SELECT ?performerName (COUNT (DISTINCT(?event)) AS ?numberOfPerformances)
+SELECT ?performerID ?performerName (COUNT (DISTINCT(?event)) AS ?numberOfPerformances)
 WHERE {
-?event schema:subEvent ?workPerformance .
-?workPerformance chroles:piano ?performerID .
-?performerID schema:name ?performerName .
+  ?event schema:subEvent ?workPerformance .
+  ?workPerformance chroles:piano ?performerID .
+  ?performerID schema:name ?performerName .
 }
-GROUP BY ?performerName
+GROUP BY ?performerID ?performerName
 ORDER BY DESC(?numberOfPerformances)
 LIMIT 25`,
 
