@@ -27,19 +27,20 @@ let examples = {
 'Select first 100 triples':
 
 `SELECT * WHERE {
-?subject ?property ?object
-} LIMIT 100`,
+  ?subject ?property ?object
+} 
+LIMIT 100`,
 
 
 
 'Find people':
 `#Find people
 PREFIX schema: <http://schema.org/>
-select ?person ?name where {
-?person a schema:Person ;
-schema:name ?name .
+SELECT ?person ?name WHERE {
+  ?person a schema:Person ;
+  		schema:name ?name .
 }
-limit 50`,
+LIMIT 50`,
 
 
 
@@ -47,10 +48,10 @@ limit 50`,
 'Find a specific person by name':
 `#Find a specific person by name
 PREFIX schema: <http://schema.org/>
-select ?s ?p ?o where {
-?s ?p ?o ;
-a schema:Person ;
-schema:name "George Gershwin" .
+SELECT ?s ?p ?o WHERE {
+  ?s ?p ?o ;
+     a schema:Person ;
+     schema:name "Duke Ellington" .
 }`,
 
 
@@ -58,11 +59,11 @@ schema:name "George Gershwin" .
 `#Find works
 PREFIX schema: <http://schema.org/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-select ?work ?title where {
-?work a schema:MusicComposition ;
-    rdfs:label ?title .
+SELECT ?work ?title WHERE {
+  ?work a schema:MusicComposition ;
+  		rdfs:label ?title .
 }
-limit 50`,
+LIMIT 50`,
 
 
 'Find works by string in the title (case-insensitive)':
@@ -70,92 +71,98 @@ limit 50`,
 PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX schema: <http://schema.org/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-select distinct ?work ?composer ?title where {
-?work a <http://schema.org/MusicComposition> ;
-      dcterms:creator ?creator ;
-      rdfs:label ?title .
-?creator schema:name ?composer
-      filter regex(?title, "Piano Sonata", "i")
+SELECT DISTINCT ?work ?composer ?title WHERE {
+  ?work a <http://schema.org/MusicComposition> ;
+  		dcterms:creator ?creator ;
+    	rdfs:label ?title .
+  ?creator schema:name ?composer
+  FILTER regex(?title, "piano sonata", "i")
 }
-limit 50
+LIMIT 50
 `,
 
 'Find performances of a specific work':
 `#Find performances of a specific work
 PREFIX schema: <http://schema.org/>
 PREFIX mo: <http://purl.org/ontology/mo/>
-select ?performanceID ?date ?performerID ?name where {
-?performanceID schema:subEvent ?workPerformance ;
-           schema:startDate ?date .
-?workPerformance schema:workPerformed <http://data.carnegiehall.org/works/25116> ;
-             mo:performer ?performerID .
-?performerID schema:name ?name .
-}`,
+SELECT DISTINCT ?performanceID ?performerID ?name (CONCAT(STR(MONTH(?date)),
+             '/',
+              STR(DAY(?date)),
+              '/',
+             STR(YEAR(?date))) as ?performanceDate)
+WHERE {
+  ?performanceID schema:subEvent ?workPerformance ;
+                 schema:startDate ?date .
+  ?workPerformance schema:workPerformed <http://data.carnegiehall.org/works/25116> ;
+                   mo:performer ?performerID .
+  ?performerID schema:name ?name .
+}
+ORDER BY ?date`,
 
 
 'Find events':
 `#Find events
 PREFIX schema: <http://schema.org/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-select ?event ?label where {
-?event a schema:Event ;
-     rdfs:label ?label .
+SELECT ?event ?label WHERE {
+  ?event a schema:Event ;
+  		rdfs:label ?label .
 }
-limit 50`,
+LIMIT 50`,
 
 'Find events from a specific year':
 `#Find events from a specific year
 PREFIX schema: <http://schema.org/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-select ?event ?date ?title where {
-?event a schema:Event ;
-schema:startDate ?date ;
-rdfs:label ?title .
-filter (year(?date) = 1900)
+SELECT ?event ?date ?title WHERE {
+  ?event a schema:Event ;
+  		 schema:startDate ?date ;
+     	 rdfs:label ?title .
+  FILTER (year(?date) = 1910)
 }
-limit 50
+LIMIT 50
 `,
 
 'Find venues':
 `#Find venues
 PREFIX schema: <http://schema.org/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-select ?venue ?label where {
-?venue a schema:EventVenue ;
-   rdfs:label ?label .
+SELECT ?venue ?label WHERE {
+  ?venue a schema:EventVenue ;
+  		rdfs:label ?label .
 }
-limit 50
+LIMIT 50
 `,
 
 'Find instruments':
 `#Find instruments
 PREFIX mo: <http://purl.org/ontology/mo/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-select ?instrument ?label where {
-?instrument a mo:Instrument ;
-   rdfs:label ?label .
+SELECT ?instrument ?label WHERE {
+  ?instrument a mo:Instrument ;
+  			rdfs:label ?label .
 }
-limit 50`,
+LIMIT 50`,
 
-'Find ensembles URIs':
+'Find ensembles':
 `#Find ensembles
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX schema: <http://schema.org/>
-select ?instrument ?label where {
-?instrument a schema:PerformingGroup ;
-   rdfs:label ?label .
+SELECT ?instrument ?label WHERE {
+  ?instrument a schema:PerformingGroup ;
+  			rdfs:label ?label .
 }
-limit 50`,
+LIMIT 50`,
 
 'Find roles':
 `#Find roles
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX schema: <http://schema.org/>
-select ?role ?label where {
-?role a schema:Role ;
-   rdfs:label ?label .
+SELECT ?role ?label WHERE {
+  ?role a schema:Role ;
+  		rdfs:label ?label .
 }
-limit 50`,
+LIMIT 50`,
 
 'Top 25 works at Carnegie Hall':
 `#Top 25 works at CH
@@ -164,13 +171,13 @@ PREFIX schema: <http://schema.org/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 SELECT DISTINCT ?composerName ?workTitle (COUNT(DISTINCT ?workPerf) AS ?numberOfPerformances)
 WHERE {
-?work a schema:MusicComposition .
-?work dcterms:creator ?composer ;
-  rdfs:label ?workTitle .
-?composer schema:name ?composerName .
-?event schema:subEvent ?workPerf .
-?workPerf schema:workPerformed ?work .
-MINUS { ?composer schema:name "Anonymous" . }
+  ?work a schema:MusicComposition ;
+  		dcterms:creator ?composer ;
+  		rdfs:label ?workTitle .
+  ?composer schema:name ?composerName .
+  ?event schema:subEvent ?workPerf .
+  ?workPerf schema:workPerformed ?work .
+  MINUS { ?composer schema:name "Anonymous" . }
 }
 GROUP BY ?composerName ?workTitle
 ORDER BY DESC(?numberOfPerformances)
@@ -217,65 +224,65 @@ LIMIT 25`,
 PREFIX schema: <http://schema.org/>
 PREFIX gndo: <http://d-nb.info/standards/elementset/gnd#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-
-select ?performer ?name ?birthPlace ?birthDate where {
-?performer schema:name ?name ;
-        schema:birthPlace ?birthPlace ;
-        schema:birthDate ?birthDate ;
-        gndo:playedInstrument ?instrument .
-?instrument rdfs:label "alto saxophone" .
-FILTER(month(?birthDate) = 11)
+SELECT ?performer ?name ?birthPlaceLabel ?birthDate WHERE {
+  ?performer schema:name ?name ;
+             schema:birthPlace ?birthPlace ;
+             schema:birthDate ?birthDate ;
+             gndo:playedInstrument ?instrument .
+  ?instrument rdfs:label "alto saxophone" .
+  ?birthPlace rdfs:label ?birthPlaceLabel .
+  FILTER(month(?birthDate) = 11)
 }
 ORDER BY ASC(?birthDate)`,
 
 'Find people by birth year':
 `#Find people by birth year
 PREFIX schema: <http://schema.org/>
-SELECT ?subject ?name ?date
+SELECT ?subject ?name ?birthDate
 WHERE {
-?subject schema:birthDate ?date;
-     schema:name ?name
-filter contains(str(?date), "1801")
-}`,
+  ?subject schema:birthDate ?date;
+           schema:name ?name
+  FILTER CONTAINS(str(?date), "1801")
+  BIND(str(?date) AS ?birthDate)
+}
+ORDER BY ?birthDate`,
 
 
 'How many composers die at certain age':
 `#How many composers die at certain age
-PREFIX marcRel: <http://id.loc.gov/vocabulary/relators/>
-PREFIX schema: <http://schema.org/>
-
 # Query to find all composers who have already died
 # calculate their age (full years) at death
 # count how many of them died at each age
-
+PREFIX marcRel: <http://id.loc.gov/vocabulary/relators/>
+PREFIX schema: <http://schema.org/>
 SELECT ?age  (COUNT (DISTINCT ?a) AS ?count) WHERE {
-?a schema:hasOccupation marcRel:cmp . #occupation of composer
-?a schema:birthDate ?birth_date .
-?a schema:deathDate ?death_date .
-FILTER(?age > 10 && ?age < 100) . #ignore outlyers, several of which are probably errors
-BIND( year(?death_date) - year(?birth_date) - if(month(?death_date)<month(?birth_date) || (month(?death_date)=month(?birth_date) && day(?death_date)<day(?birth_date)),1,0) as ?age )
-# calculate the age, precisely to the day (times and timezones ignored)
+  ?a schema:hasOccupation marcRel:cmp . #occupation of composer
+  ?a schema:birthDate ?birth_date .
+  ?a schema:deathDate ?death_date .
+  #ignore outlyers, several of which are probably errors
+  FILTER(?age > 10 && ?age < 100) .
+  # calculate the age, precisely to the day (times and timezones ignored)
+  BIND( year(?death_date) - year(?birth_date) - if(month(?death_date)<month(?birth_date) || (month(?death_date)=month(?birth_date) && day(?death_date)<day(?birth_date)),1,0) as ?age )
 }
 GROUP BY ?age
 ORDER BY ?age`,
 
 'How many pianists die at certain age':
 `#How many pianists die at certain age
-PREFIX chinstruments: <http://data.carnegiehall.org/instruments/>
-PREFIX gndo: <http://d-nb.info/standards/elementset/gnd#>
-PREFIX schema: <http://schema.org/>
-
 # Query to find all composers who have already died
 # calculate their age (full years) at death
 # count how many of them died at each age
-
+PREFIX chinstruments: <http://data.carnegiehall.org/instruments/>
+PREFIX gndo: <http://d-nb.info/standards/elementset/gnd#>
+PREFIX schema: <http://schema.org/>
 SELECT ?age  (COUNT (DISTINCT ?a) AS ?count) WHERE {
-?a gndo:playedInstrument chinstruments:783 . #pianist
-?a schema:birthDate ?birth_date .
-?a schema:deathDate ?death_date .
-FILTER(?age > 10 && ?age < 100) . #ignore outlyers, several of which are probably errors
-BIND( year(?death_date) - year(?birth_date) - if(month(?death_date)<month(?birth_date) || (month(?death_date)=month(?birth_date) && day(?death_date)<day(?birth_date)),1,0) as ?age )
-# calculate the age, precisely to the day (times and timezones ignored)
+  ?a gndo:playedInstrument chinstruments:783 . #pianist
+  ?a schema:birthDate ?birth_date .
+  ?a schema:deathDate ?death_date .
+  #ignore outlyers, several of which are probably errors
+  FILTER(?age > 10 && ?age < 100) . 
+  # calculate the age, precisely to the day (times and timezones ignored)
+  BIND( year(?death_date) - year(?birth_date) - if(month(?death_date)<month(?birth_date) || (month(?death_date)=month(?birth_date) && day(?death_date)<day(?birth_date)),1,0) as ?age )
 }
 GROUP BY ?age
 ORDER BY ?age`,
@@ -287,10 +294,10 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX schema: <http://schema.org/>
 SELECT ?yearOfEvent (COUNT(?event) AS ?numberOfWorks)
 WHERE {
-?event schema:subEvent ?workPerf .
-?event schema:startDate ?date BIND (str(YEAR(?date)) AS ?yearOfEvent)
-?workPerf schema:workPerformed ?work .
-?work dcterms:creator chnames:1003166 .
+  ?event schema:subEvent ?workPerf .
+  ?event schema:startDate ?date BIND (str(YEAR(?date)) AS ?yearOfEvent)
+  ?workPerf schema:workPerformed ?work .
+  ?work dcterms:creator chnames:1003166 .
 }
 GROUP BY ?yearOfEvent
 ORDER BY ?yearOfEvent`,
@@ -321,42 +328,40 @@ PREFIX p: <http://www.wikidata.org/prop/>
 PREFIX ps: <http://www.wikidata.org/prop/statement/>
 PREFIX pq: <http://www.wikidata.org/prop/qualifier/>
 PREFIX  wikibase:  <http://wikiba.se/ontology#>
-SELECT *
-{
-SERVICE <https://query.wikidata.org/sparql>
-{
-SELECT DISTINCT ?item ?ch_ID ?itemLabel (YEAR(?when) AS ?date) WHERE
-{
-  ?item wdt:P4104 ?chAgent_id.
-  ?item p:P166 ?awardStat.
-  ?awardStat ps:P166 wd:Q35637.
-  ?awardStat pq:P585 ?when.
-    wd:P4104 wdt:P1630 ?formatterurl .
-    BIND(IRI(REPLACE(?chAgent_id, '^(.+)$', ?formatterurl)) AS ?ch_ID).
-  SERVICE wikibase:label { bd:serviceParam wikibase:language 'en'. }
+SELECT * {
+  SERVICE <https://query.wikidata.org/sparql>
+  {
+    SELECT DISTINCT ?item ?ch_ID ?itemLabel (YEAR(?when) AS ?date) WHERE
+    {
+      ?item wdt:P4104 ?chAgent_id.
+      ?item p:P166 ?awardStat.
+      ?awardStat ps:P166 wd:Q35637.
+      ?awardStat pq:P585 ?when.
+      wd:P4104 wdt:P1630 ?formatterurl .
+      BIND(IRI(REPLACE(?chAgent_id, '^(.+)$', ?formatterurl)) AS ?ch_ID).
+      SERVICE wikibase:label { bd:serviceParam wikibase:language 'en'. }
+    }
+  }
 }
-}
-}
-ORDER BY asc(?date)`,
+ORDER BY ASC(?date)`,
 
 'This day in CH history':
 `#This day in CH history
 PREFIX schema: <http://schema.org/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-select ?event ?title (CONCAT(STR(MONTH(?date)),
+SELECT ?event ?title (CONCAT(STR(MONTH(?date)),
              '/',
               STR(DAY(?date)),
               '/',
              STR(YEAR(?date))) as ?displayDate)
-where
-{
-BIND(MONTH(NOW()) AS ?nowMonth)
-BIND(DAY(NOW()) AS ?nowDay)
-
-?event a schema:Event ;
-schema:startDate ?date ;
-rdfs:label ?title .
-FILTER (MONTH(?date) = ?nowMonth && DAY(?date) = ?nowDay)
+WHERE {
+  BIND(MONTH(NOW()) AS ?nowMonth)
+  BIND(DAY(NOW()) AS ?nowDay)
+  
+  ?event a schema:Event ;
+  schema:startDate ?date ;
+  rdfs:label ?title .
+  FILTER (MONTH(?date) = ?nowMonth && DAY(?date) = ?nowDay)
 }
 ORDER BY ?date`,
 
@@ -365,17 +370,15 @@ ORDER BY ?date`,
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX schema: <http://schema.org/>
 SELECT ?personID ?personName ?birthPlaceLabel (YEAR(?date) as ?year)
-WHERE
-{
-BIND(MONTH(NOW()) AS ?nowMonth)
-BIND(DAY(NOW()) AS ?nowDay)
-
-?personID schema:birthDate ?date ;
-    schema:name ?personName ;
-    schema:birthPlace ?birthPlace .
-?birthPlace rdfs:label ?birthPlaceLabel .
-FILTER (MONTH(?date) = ?nowMonth && DAY(?date) = ?nowDay)
-
+WHERE {
+  BIND(MONTH(NOW()) AS ?nowMonth)
+  BIND(DAY(NOW()) AS ?nowDay)
+  
+  ?personID schema:birthDate ?date ;
+            schema:name ?personName ;
+            schema:birthPlace ?birthPlace .
+  ?birthPlace rdfs:label ?birthPlaceLabel .
+  FILTER (MONTH(?date) = ?nowMonth && DAY(?date) = ?nowDay)
 }
 ORDER BY ?year
 LIMIT 100`,
@@ -389,16 +392,13 @@ SELECT ?personID ?personName ?birthPlaceLabel (CONCAT(STR(MONTH(?date)),
               STR(DAY(?date)),
               '/',
              STR(YEAR(?date))) as ?displayDate)
-WHERE
-{
-BIND(MONTH(NOW()) AS ?nowMonth)
-
-?personID schema:birthDate ?date ;
-    schema:name ?personName ;
-    schema:birthPlace ?birthPlace .
-?birthPlace rdfs:label ?birthPlaceLabel .
-FILTER (MONTH(?date) = ?nowMonth)
-
+WHERE {
+  BIND(MONTH(NOW()) AS ?nowMonth)
+  ?personID schema:birthDate ?date ;
+            schema:name ?personName ;
+            schema:birthPlace ?birthPlace .
+  ?birthPlace rdfs:label ?birthPlaceLabel .
+  FILTER (MONTH(?date) = ?nowMonth)
 }
 ORDER BY ?displayDate
 LIMIT 100`
