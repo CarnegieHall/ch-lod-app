@@ -129,23 +129,20 @@
             ">SPARQL endpoint</a> to retrieve the ID, title, and date for each event, along with a formatted link to our online Performance History Search, which provides a convenient means to view the details of each performance:</p>
           <div  class="bg-light text-dark" id="lab_report-query">
             <pre><code>
-              PREFIX chgenres: <http://data.carnegiehall.org/genres/>
-              PREFIX dcterms: <http://purl.org/dc/terms/>
-              PREFIX schema: <http://schema.org/>
-              PREFIX mo: <http://purl.org/ontology/mo/>
-              PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-              PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-              PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-
+              PREFIX chgenres: &lt;http://data.carnegiehall.org/genres/&gt;
+              PREFIX mo: &lt;http://purl.org/ontology/mo/&gt;
+              PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+              PREFIX schema: &lt;http://schema.org/&gt;
+              PREFIX xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
               SELECT DISTINCT (str(?label) AS ?eventTitle) ?date ?phsLink
               WHERE {
                 ?event rdfs:label ?label ;
-                mo:genre chgenres:39 ;
-                schema:startDate ?date ;
-                schema:location ?place .
+                       mo:genre chgenres:39 ;
+                       schema:startDate ?date ;
+                       schema:location ?place .
                 ?place rdfs:label ?venueLabel .
                 BIND(IRI(REPLACE(str(?event), "http://data.carnegiehall.org/events/", "https://www.carnegiehall.org/About/History/Performance-History-Search?q=&dex=prod_PHS&event=")) AS ?phsLink).
-                FILTER(?date >= xsd:dateTime("1971-09-01T00:00:00") && ?date <= xsd:dateTime("1972-09-01T00:00:00"))
+                FILTER(?date >= xsd:dateTime("1971-09-01T00:00:00") && ?date &lt;= xsd:dateTime("1972-09-01T00:00:00"))
               }
               ORDER BY ?date
             </code></pre>
