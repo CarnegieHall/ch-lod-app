@@ -288,16 +288,19 @@ GROUP BY ?age
 ORDER BY ?age`,
 
 'Number of works by Bach performed each year':
-`#Number of works by Bach performed each year
+`#Number of works by Beethoven performed each year
 PREFIX chnames: <http://data.carnegiehall.org/names/>
 PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX schema: <http://schema.org/>
 SELECT ?yearOfEvent (COUNT(?event) AS ?numberOfWorks)
 WHERE {
   ?event schema:subEvent ?workPerf .
   ?event schema:startDate ?date BIND (str(YEAR(?date)) AS ?yearOfEvent)
   ?workPerf schema:workPerformed ?work .
-  ?work dcterms:creator chnames:1003166 .
+  ?work dcterms:creator ?composer .
+  ?composer (schema:name|rdfs:label) ?composerName .
+  FILTER regex(?composerName, "Johann Sebastian Bach", "i")
 }
 GROUP BY ?yearOfEvent
 ORDER BY ?yearOfEvent`,
