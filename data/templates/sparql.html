@@ -213,7 +213,7 @@ SELECT DISTINCT ?work ?workTitle ?composerName ?event ?eventTitle (CONCAT(STR(YE
                      '-',
                       STR(MONTH(?date)),
                       '-',
-                     STR(DAY(?date))) as ?displayDate)
+                     STR(DAY(?date))) as ?eventDate)
 WHERE {
     ?event schema:startDate ?date ;
            rdfs:label ?title ;
@@ -365,7 +365,7 @@ SELECT ?event ?title (CONCAT(STR(MONTH(?date)),
              '/',
               STR(DAY(?date)),
               '/',
-             STR(YEAR(?date))) as ?displayDate)
+             STR(YEAR(?date))) as ?eventDate)
 WHERE {
   BIND(MONTH(NOW()) AS ?nowMonth)
   BIND(DAY(NOW()) AS ?nowDay)
@@ -403,7 +403,7 @@ SELECT ?personID ?personName ?birthPlaceLabel (CONCAT(STR(MONTH(?date)),
              '/',
               STR(DAY(?date)),
               '/',
-             STR(YEAR(?date))) as ?displayDate)
+             STR(YEAR(?date))) as ?birthDate)
 WHERE {
   BIND(MONTH(NOW()) AS ?nowMonth)
   ?personID schema:birthDate ?date ;
@@ -412,7 +412,7 @@ WHERE {
   ?birthPlace rdfs:label ?birthPlaceLabel .
   FILTER (MONTH(?date) = ?nowMonth)
 }
-ORDER BY ?displayDate
+ORDER BY ?birthDate
 LIMIT 100`
 }
 
