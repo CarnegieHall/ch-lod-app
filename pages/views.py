@@ -123,6 +123,8 @@ def button_chdl0011(request):
     return render(request, 'pages/experiments/chdl-0011.html')
 def suffrage(request):
     return render(request, 'pages/experiments/chdl-0012.html')
+def boulanger(request):
+    return render(request, 'pages/experiments/chdl-0013.html')
 
 
 @xframe_options_sameorigin
