@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}The Boulanger Effect | Carnegie Hall Data Lab{% endblock %}
+{% block meta_description %}An image grid of composers who studied with influential teacher Nadia Boulanger and whose music has been performed at Carnegie Hall.{% endblock meta_description %}
+{% block content %}
+<div class="container">
+  <div class="container-fluid pt-3 my-3">
+    <h1 class="display-3 p-3 my-3 bg-warning text-white">Experiments</h1><hr>
+  </div>
+  <!-- Experiment title goes in this section -->
+  <div class="card text-white bg-dark mx-2 mb-3">
+    <div class="card-body">
+      <h1 class="card-title h1 text-center">The Boulanger Effect</h1>
+      <h4 class="card-subtitle mb-2 text-muted text-center font-italic pb-4 px-2">chdl-0013</h4>
+      <p class="card-text lead">Composers who studied with influential teacher Nadia Boulanger and whose music has been performed at Carnegie Hall.</p>
+    </div>
+  </div>
+  <!-- Interal page link to lab report goes here -->
+  <!-- If experiment data/visualization covers a lot of page space, remove data-toggle="collapse" here and on id="lab_report" -->
+  <!-- Include return navigation to Experiments page -->
+  <div class="container-fluid" pt-2>
+    <a class="btn btn-light" href="#lab_report" role="button"><em>read lab report</em></a>
+    <a class="btn btn-light" href="{% url 'experiments' %}"><em>return to experiments</em></a>
+  </div>
+  <hr>
+  <!-- Experiment data/visualization goes in this section -->
+  <div class="container-fluid">
+    <div class="container-fluid">
+      <!-- data returned from query view goes here -->
+      <div class="embed-responsive embed-responsive-16by9">
+        <iframe
+        src="https://query.wikidata.org/embed.html#%23defaultView%3AImageGrid%0ASELECT%20DISTINCT%20%3Fcomposer%20%3FcomposerLabel%20%3FcomposerImage%20%3FchURL%20%28CONCAT%28str%28%3FbirthYear%29%2C%20%22-%22%2C%20str%28%3FdeathYear%29%29%20AS%20%3FlifeDates%29%0A%28IRI%28CONCAT%28%22https%3A%2F%2Fwww.carnegiehall.org%2FAbout%2FHistory%2FPerformance-History-Search%3Fq%3D%26dex%3Dprod_PHS%26cmp%3D%22%2C%0A%28STR%28ENCODE_FOR_URI%28%3FcomposerLabel%29%29%29%29%29%20AS%20%3FphsLink%29%0AWHERE%20%7B%0A%20%20%3Fcomposer%20wdt%3AP106%20wd%3AQ36834%20%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20wdt%3AP1066%20wd%3AQ140619%20%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20wdt%3AP569%20%3FbirthDate%20%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20wdt%3AP4104%20%3FchAgentID%20.%0A%20%20wd%3AP4104%20wdt%3AP1630%20%3Fformatterurl.%0A%20%20OPTIONAL%20%7B%20%3Fcomposer%20wdt%3AP570%20%3FdeathDate%20.%20%7D%0A%20%20OPTIONAL%20%7B%20%3Fcomposer%20wdt%3AP18%20%3FcomposerImage%20.%20%7D%0A%20%20BIND%28IRI%28REPLACE%28%3FchAgentID%2C%20%27%5E%28.%2B%29%24%27%2C%20%3Fformatterurl%29%29%20AS%20%3FchURL%29.%0A%20%20BIND%28YEAR%28%3FbirthDate%29%20AS%20%3FbirthYear%29%0A%20%20BIND%28YEAR%28%3FdeathDate%29%20AS%20%3FdeathYear%29%0A%20%20SERVICE%20wikibase%3Alabel%20%7B%20bd%3AserviceParam%20wikibase%3Alanguage%20%22%5BAUTO_LANGUAGE%5D%2Cen%22.%20%7D%0A%7D%0AORDER%20BY%20%3FbirthDate" referrerpolicy="origin" sandbox="allow-scripts allow-same-origin allow-popups" >
+      </iframe>
+      </div>
+    </div>
+  </div>
+  <!-- Lab report goes in this section -->
+  <!-- remove "collapse" from div class if lab report is below the fold -->
+  <div class="container-fluid pt-3" id="lab_report">
+    <div class="row">
+      <div class="col-lg-12" style="background-color:lavender;">
+        <h1 class="display-4">lab report</h1>
+      </div>
+    </div>
+    <!-- Lab report title goes here -->
+    <div class="container-fluid pt-3"id="lab_report-title">
+    <h2>EXPERIMENT LABEL/TITLE</h2>
+    <p>The Boulanger Effect</p>
+    </div>
+    <!-- Lab report content goes here -->
+    <div class="container-fluid pt-3"id="lab_report-content">
+      <h2>TL;DR</h2>
+      <p>Use Wikidata's <a href="https://query.wikidata.org/" target="_blank">query service</a> to create an image grid of composers whose music has been performed at Carnegie Hall who also studied with Nadia Boulanger, perhaps the most influential composition teacher of the 20th century.</p>
+      <button type="button" class="btn btn-light" data-toggle="collapse" data-target="#verbose"><h2>- verbose</h2></button>
+      <div id="verbose" class="collapse"><br>
+        <p>Conductor, composer, and teacher Nadia Boulanger (1887– 1979) was one of the most influential teachers of composition of the 20th century. Her impact on American music in particular was profound: her students include <a href="https://www.carnegiehall.org/About/History/Performance-History-Search?q=&dex=prod_PHS&cmp=Lennox%20Berkeley_" target="_blank">Lennox Berkeley</a>, <a href="https://www.carnegiehall.org/About/History/Performance-History-Search?q=&dex=prod_PHS&cmp=Elliott%20Carter_" target="_blank">Elliott Carter</a>, <a href="https://www.carnegiehall.org/About/History/Performance-History-Search?q=&dex=prod_PHS&cmp=Aaron%20Copland_" target="_blank">Aaron Copland</a>, <a href="https://www.carnegiehall.org/About/History/Performance-History-Search?q=&dex=prod_PHS&cmp=David%20Diamond_" target="_blank">David Diamond</a>, <a href="https://www.carnegiehall.org/About/History/Performance-History-Search?q=&dex=prod_PHS&cmp=Philip%20Glass_" target="_blank">Philip Glass</a>, <a href="https://www.carnegiehall.org/About/History/Performance-History-Search?q=&dex=prod_PHS&cmp=Roy%20Harris_" target="_blank">Roy Harris</a>, <a href="https://www.carnegiehall.org/About/History/Performance-History-Search?q=&dex=prod_PHS&cmp=Quincy%20Jones_" target="_blank">Quincy Jones</a>, <a href="https://www.carnegiehall.org/About/History/Performance-History-Search?q=&dex=prod_PHS&cmp=Julia%20Perry_" target="_blank">Julia Perry</a>, <a href="https://www.carnegiehall.org/About/History/Performance-History-Search?q=&dex=prod_PHS&cmp=Virgil%20Thomson_" target="_blank">Virgil Thomson</a>, and <a href="https://www.carnegiehall.org/About/History/Performance-History-Search?q=&dex=prod_PHS&cmp=George%20Walker_" target="_blank">George Walker</a>. Other notable students include <a href="https://www.carnegiehall.org/About/History/Performance-History-Search?q=&dex=prod_PHS&cmp=Burt%20Bacharach_" target="_blank">Burt Bacharach</a>, <a href="https://www.carnegiehall.org/About/History/Performance-History-Search?q=&dex=prod_PHS&cmp=Marc%20Blitzstein_" target="_blank">Marc Blitzstein</a>, <a href="https://www.carnegiehall.org/About/History/Performance-History-Search?q=&dex=prod_PHS&cmp=Michel%20Legrand_" target="_blank">Michel Legrand</a>, <a href="https://www.carnegiehall.org/About/History/Performance-History-Search?q=&dex=prod_PHS&cmp=Gian%20Carlo%20Menotti_" target="_blank">Gian Carlo Menotti</a>, <a href="https://www.carnegiehall.org/About/History/Performance-History-Search?q=&dex=prod_PHS&cmp=Astor%20Piazzolla_" target="_blank">Astor Piazzolla</a>, and many others. Works by these students have been featured in thousands of Carnegie Hall performances since the 1920s.</p>
+        <p>Boulanger was also the first woman to conduct many major symphony orchestras, including the London Philharmonic Orchestra, the Royal Philharmonic Orchestra, and the Boston Symphony Orchestra. She appeared at Carnegie Hall six times as a conductor between 1939 and 1962, primarily leading the New York Philharmonic.</p>
+        <div id="lab_report-methods">
+          <h2>METHODS</h2>
+          <p>We created a SPARQL query using Wikidata’s query service. Since composer identifiers from Carnegie Hall’s linked open dataset have their own official Wikidata property, Carnegie Hall Agent ID (<a href="http://www.wikidata.org/entity/P4104" target="_blank">P4104</a>), which has been mapped to nearly 22,000 Wikidata items, we can query for items with both Carnegie Hall identifier and the property "occupation" (<a href="http://www.wikidata.org/entity/P106" target="_blank">P106</a>) with the value "composer" (<a href="http://www.wikidata.org/entity/Q36834" target="_blank">Q36834</a>) and the property "student of" (<a href="http://www.wikidata.org/entity/P1066" target="_blank">P1066</a>) with the value "Nadia Boulanger" (<a href="http://www.wikidata.org/entity/Q140619" target="_blank">Q140619</a>). Additionally, the query asks for birth and death dates, and for an image of the composer, if there is one available (OPTIONAL { ?composer wdt:P18 ?composerImage . }). Since at least some of composers who studied with Boulanger are still alive, we made death date an optional statement (OPTIONAL { ?composer wdt:P570 ?deathDate . } ). The statement BIND(IRI(REPLACE(?chAgentID, '^(.+)$', ?formatterurl)) AS ?chURL)., together with the (IRI(CONCAT near the beginning of the query allows us to construct a link to each composer’s Carnegie Hall performance history. </p>
+          <p>Query:</p>
+          <!-- SPARQL query goes in this section -->
+          <!-- be sure to escape the "<http:" in prefixes with "&lt;http:" -->
+          <div  class="bg-light text-dark" id="lab_report-query">
+            <!-- Be careful, "<" and ">" may need to be escaped with "&lt;" and "&gt;" -->
+            <!-- Quotes may also need to be escaped with "&quot;" -->
+            <pre><code>
+              #defaultView:ImageGrid
+              SELECT DISTINCT ?composer ?composerLabel ?composerImage ?chURL (CONCAT(str(?birthYear), &quot;-&quot;, str(?deathYear)) AS ?lifeDates)
+              (IRI(CONCAT(&quot;https://www.carnegiehall.org/About/History/Performance-History-Search?q=&dex=prod_PHS&cmp=&quot;,
+              (STR(ENCODE_FOR_URI(?pianistLabel))))) AS ?phsLink)
+              WHERE {
+                ?composer wdt:P106 wd:Q36834 ;
+                          wdt:P1066 wd:Q140619 ;
+                          wdt:P569 ?birthDate ;
+                          wdt:P4104 ?chAgentID .
+                wd:P4104 wdt:P1630 ?formatterurl.
+                OPTIONAL { ?composer wdt:P570 ?deathDate . }
+                OPTIONAL { ?composer wdt:P18 ?composerImage . }
+                BIND(IRI(REPLACE(?chAgentID, '^(.+)$', ?formatterurl)) AS ?chURL).
+                BIND(YEAR(?birthDate) AS ?birthYear)
+                BIND(YEAR(?deathDate) AS ?deathYear)
+                SERVICE wikibase:label { bd:serviceParam wikibase:language &quot;[AUTO_LANGUAGE],en&quot;. }
+                ORDER BY ?birthDate
+              }
+            </code></pre>
+          </div>
+        </div>
+        <div id="lab_report-conclusions">
+          <h2>CONCLUSIONS</h2>
+          <p><strong>what we learned</strong></p>
+          <p>Wikidata’s out-of-the-box display templates are a wonderful way to easily create data visualizations, and do not require hosting your own dataset or creating your own visualization tools. They allow us to leverage the Carnegie Hall Agent ID property to surface interesting connections between CH’s named entities and external data/resources.</p>
+          <p><strong>further investigation</strong></p>
+          <p>It would be interesting to explore the legacies of other famous classical music pedagogues, such as <a href="http://www.wikidata.org/entity/Q368583" target="_blank">Leopold Auer</a> (violin) or <a href="http://www.wikidata.org/entity/Q77222" target="_blank">Julius Klengel</a> (cello), to see their impact on Carnegie Hall's history. In some cases this would offer the opportunity to improve the structured data in Wikidata to more fully express these teacher/student relationships.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr>
+  <!-- Return navigation to Experiments page -->
+  <div class="container-fluid py-2">
+    <a class="btn btn-light" href="{% url 'experiments' %}"><em>return to experiments</em></a>
+  </div>
+</div>
+{% endblock %}
