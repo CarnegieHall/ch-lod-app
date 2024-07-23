@@ -33,18 +33,6 @@ LIMIT 100`,
 
 
 
-'Find people':
-`#Find people
-PREFIX schema: <http://schema.org/>
-SELECT ?person ?name WHERE {
-  ?person a schema:Person ;
-  		schema:name ?name .
-}
-LIMIT 50`,
-
-
-
-
 'Find a specific person by name':
 `#Find a specific person by name
 PREFIX schema: <http://schema.org/>
@@ -53,17 +41,6 @@ SELECT ?s ?p ?o WHERE {
      a schema:Person ;
      schema:name "Duke Ellington" .
 }`,
-
-
-'Find works':
-`#Find works
-PREFIX schema: <http://schema.org/>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-SELECT ?work ?title WHERE {
-  ?work a schema:MusicComposition ;
-  		rdfs:label ?title .
-}
-LIMIT 50`,
 
 
 'Find works by string in the title (case-insensitive)':
@@ -99,16 +76,6 @@ WHERE {
 }
 ORDER BY ?date`,
 
-
-'Find events':
-`#Find events
-PREFIX schema: <http://schema.org/>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-SELECT ?event ?label WHERE {
-  ?event a schema:Event ;
-  		rdfs:label ?label .
-}
-LIMIT 50`,
 
 'Find events from a specific year':
 `#Find events from a specific year
@@ -219,6 +186,49 @@ GROUP BY ?performerID ?performerName
 ORDER BY DESC(?numberOfPerformances)
 LIMIT 25`,
 
+'Find performances with the most encores':
+`#Most encores
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX schema: <http://schema.org/>
+SELECT ?event ?eventTitle ?eventDate (COUNT (distinct ?workPerf) AS ?numberOfEncores)
+WHERE {
+  ?event schema:subEvent ?workPerf ;
+         rdfs:label ?title ;
+         schema:startDate ?date BIND (CONCAT(STR(YEAR(?date)),'-',STR(MONTH(?date)),'-',STR(DAY(?date))) as ?eventDate).
+  ?workPerf a <http://www.wikidata.org/entity/Q1363276> .
+  BIND (str(?title) as ?eventTitle)
+}
+GROUP BY ?event ?eventTitle ?eventDate ?numberOfEncores
+ORDER BY DESC(?numberOfEncores)
+LIMIT 50`,
+
+'Find world premiere performances':
+`#Find world premieres
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX mo: <http://purl.org/ontology/mo/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX schema: <http://schema.org/>
+SELECT DISTINCT ?work ?workTitle ?composerName ?event ?eventTitle (CONCAT(STR(YEAR(?date)),
+                     '-',
+                      STR(MONTH(?date)),
+                      '-',
+                     STR(DAY(?date))) as ?eventDate)
+WHERE {
+    ?event schema:startDate ?date ;
+           rdfs:label ?title ;
+           schema:subEvent ?workPerformance .
+    ?workPerformance a <http://www.wikidata.org/entity/Q204854> ;
+                     schema:workPerformed ?work ;
+                     rdfs:comment "world premiere" .
+    ?work rdfs:label ?workTitle ;
+          dcterms:creator ?composer .
+    ?composer (schema:name|rdfs:label) ?composerName .
+    BIND (str(?title) as ?eventTitle)
+}
+ORDER BY ?date
+LIMIT 25`,
+
 'Find alto saxophonists born in November':
 `#Find alto saxophonists born in November
 PREFIX schema: <http://schema.org/>
@@ -288,16 +298,18 @@ GROUP BY ?age
 ORDER BY ?age`,
 
 'Number of works by Bach performed each year':
-`#Number of works by Bach performed each year
-PREFIX chnames: <http://data.carnegiehall.org/names/>
+`#Number of works by Beethoven performed each year
 PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX schema: <http://schema.org/>
 SELECT ?yearOfEvent (COUNT(?event) AS ?numberOfWorks)
 WHERE {
   ?event schema:subEvent ?workPerf .
   ?event schema:startDate ?date BIND (str(YEAR(?date)) AS ?yearOfEvent)
   ?workPerf schema:workPerformed ?work .
-  ?work dcterms:creator chnames:1003166 .
+  ?work dcterms:creator ?composer .
+  ?composer (schema:name|rdfs:label) ?composerName .
+  FILTER regex(?composerName, "Johann Sebastian Bach", "i")
 }
 GROUP BY ?yearOfEvent
 ORDER BY ?yearOfEvent`,
@@ -353,7 +365,7 @@ SELECT ?event ?title (CONCAT(STR(MONTH(?date)),
              '/',
               STR(DAY(?date)),
               '/',
-             STR(YEAR(?date))) as ?displayDate)
+             STR(YEAR(?date))) as ?eventDate)
 WHERE {
   BIND(MONTH(NOW()) AS ?nowMonth)
   BIND(DAY(NOW()) AS ?nowDay)
@@ -391,7 +403,7 @@ SELECT ?personID ?personName ?birthPlaceLabel (CONCAT(STR(MONTH(?date)),
              '/',
               STR(DAY(?date)),
               '/',
-             STR(YEAR(?date))) as ?displayDate)
+             STR(YEAR(?date))) as ?birthDate)
 WHERE {
   BIND(MONTH(NOW()) AS ?nowMonth)
   ?personID schema:birthDate ?date ;
@@ -400,7 +412,7 @@ WHERE {
   ?birthPlace rdfs:label ?birthPlaceLabel .
   FILTER (MONTH(?date) = ?nowMonth)
 }
-ORDER BY ?displayDate
+ORDER BY ?birthDate
 LIMIT 100`
 }
 
