@@ -125,6 +125,8 @@ def suffrage(request):
     return render(request, 'pages/experiments/chdl-0012.html')
 def boulanger(request):
     return render(request, 'pages/experiments/chdl-0013.html')
+def comedians(request):
+    return render(request, 'pages/experiments/chdl-0014.html')
 
 
 @xframe_options_sameorigin
