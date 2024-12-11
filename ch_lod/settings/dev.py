@@ -26,19 +26,19 @@ COMPRESS_CSS_HASHING_METHOD = 'content'
 # you can develop on dev using sqlite or postsql, just un comment the one you want to use
 # if you use sqlite there are a couple things you need to comment out in base.py
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'ch_lod',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'ch_lod',
+#     }
+# }
 
 
 # you will probably need to run
