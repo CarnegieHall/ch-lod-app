@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}Comedians at Carnegie Hall | Carnegie Hall Data Lab{% endblock %}
+{% block meta_description %}An image grid of comedians that have appeared at Carnegie Hall.{% endblock meta_description %}
+{% block content %}
+<div class="container">
+  <div class="container-fluid pt-3 my-3">
+    <h1 class="display-3 p-3 my-3 bg-warning text-white">Experiments</h1><hr>
+  </div>
+  <!-- Experiment title goes in this section -->
+  <div class="card text-white bg-dark mx-2 mb-3">
+    <div class="card-body">
+      <h1 class="card-title h1 text-center">Comedians at CH</h1>
+      <h4 class="card-subtitle mb-2 text-muted text-center font-italic pb-4 px-2">chdl-0005</h4>
+      <p class="card-text lead">Comedians of all types have appeared at Carnegie Hall throughout the years.<br> Click on the top link on each image to view that artist's performance history.</p>
+    </div>
+  </div>
+  <!-- Interal page link to lab report goes here -->
+  <!-- If experiment data/visualization covers a lot of page space, remove data-toggle="collapse" here and on id="lab_report" -->
+  <!-- Include return navigation to Experiments page -->
+  <div class="container-fluid" pt-2>
+    <a class="btn btn-light" href="#lab_report" role="button"><em>read lab report</em></a>
+    <a class="btn btn-light" href="{% url 'experiments' %}"><em>return to experiments</em></a>
+  </div>
+  <hr>
+  <!-- Experiment data/visualization goes in this section -->
+  <div class="container-fluid">
+    <!-- data returned from query view goes here -->
+    <div class="embed-responsive embed-responsive-16by9">
+        <iframe src="https://query.wikidata.org/embed.html#%23defaultView%3AImageGrid%0ASELECT%20DISTINCT%20%3Fitem%20%3FitemLabel%20%3Fimage%20%28IRI%28CONCAT%28%22https%3A%2F%2Fwww.carnegiehall.org%2FAbout%2FHistory%2FPerformance-History-Search%3Fq%3D%26dex%3Dprod_PHS%26pf%3D%22%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%28STR%28ENCODE_FOR_URI%28%3FitemLabel%29%29%29%29%29%20AS%20%3FperfLink%29%28CONCAT%28STR%28YEAR%28%3FbirthDate%29%29%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%27%E2%80%93%27%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20STR%28YEAR%28%3FdeathDate%29%29%29%20as%20%3FlifeYears%20%29%0AWHERE%20%7B%0A%20%20%3Fitem%20wdt%3AP31%20wd%3AQ5%20%3B%0A%20%20%20%20%20%20%20%20wdt%3AP106%20wd%3AQ245068%20%3B%0A%20%20%20%20%20%20%20%20wdt%3AP569%20%3FbirthDate%20%3B%0A%20%20%20%20%20%20%20%20wdt%3AP4104%20%3FchAgent_id%20.%0A%20%20OPTIONAL%20%7B%3Fitem%20wdt%3AP18%20%3Fimage%20%3B%20wdt%3AP570%20%3FdeathDate%20.%7D%0A%20%20FILTER%20%28xsd%3Ainteger%28%3FchAgent_id%29%20%3C%201000000%29.%0A%20%20SERVICE%20wikibase%3Alabel%20%7B%20bd%3AserviceParam%20wikibase%3Alanguage%20%22%5BAUTO_LANGUAGE%5D%2Cmul%2Cen%22.%20%7D%0A%7D%0AORDER%20BY%20%3FbirthDate" referrerpolicy="origin" sandbox="allow-scripts allow-same-origin allow-popups" ></iframe>
+    </div>
+  </div>
+  <!-- Lab report goes in this section -->
+  <!-- remove "collapse" from div class if lab report is below the fold -->
+  <div class="container-fluid pt-3" id="lab_report">
+    <div class="row">
+      <div class="col-lg-12" style="background-color:lavender;">
+        <h1 class="display-4">lab report</h1>
+      </div>
+    </div>
+    <!-- Lab report title goes here -->
+    <div class="container-fluid pt-3"id="lab_report-title">
+    <h2>EXPERIMENT LABEL/TITLE</h2>
+    <p>Comedians at Carnegie Hall</p>
+    </div>
+    <!-- Lab report content goes here -->
+    <div class="container-fluid pt-3"id="lab_report-content">
+      <h2>TL;DR</h2>
+      <p>See which comedians have appeared at Carnegie Hall and show their image.</p>
+      <button type="button" class="btn btn-light" data-toggle="collapse" data-target="#verbose"><h2>- verbose</h2></button>
+      <div id="verbose" class="collapse"><br>
+        <p>Many comedians of all kinds have performed at Carnegie Hall. We do not have images of all of them, but Wikimedia Commons does, and since a great many of the names in our data have been aligned with Wikidata items (using the Wikidata <a href="https://www.wikidata.org/wiki/Property:P4104" target="_blank">Carnegie Hall Agent ID property</a>), we can leverage these connections to display images of these comedy artists.</p>
+        <div id="lab_report-methods">
+          <h2>METHODS</h2>
+          <p>We created a SPARQL query to find artists (items) in Wikidata that have the <a href="https://www.wikidata.org/wiki/Property:P106" target="_blank">occupation</a> of <a href="http://www.wikidata.org/entity/Q245068" target="_blank">comedian</a> :</p>
+          <!-- SPARQL query goes in this section -->
+          <!-- be sure to escape the "<http:" in prefixes with "&lt;http:" -->
+          <div  class="bg-light text-dark" id="lab_report-query">
+            <!-- Be careful, "<" and ">" may need to be escaped with "&lt;" and "&gt;" -->
+            <!-- Quotes may also need to be escaped with "&quot;" -->
+            <pre><code>
+                #defaultView:ImageGrid
+                SELECT DISTINCT ?item ?itemLabel ?image (IRI(CONCAT("https://www.carnegiehall.org/About/History/Performance-History-Search?q=&dex=prod_PHS&pf=",
+                                      (STR(ENCODE_FOR_URI(?itemLabel))))) AS ?perfLink)(CONCAT(STR(YEAR(?birthDate)),
+                             '–',
+                              STR(YEAR(?deathDate))) as ?lifeYears )
+                WHERE {
+                  ?item wdt:P31 wd:Q5 ;
+                        wdt:P106 wd:Q245068 ;
+                        wdt:P569 ?birthDate ;
+                        wdt:P4104 ?chAgent_id .
+                  OPTIONAL {?item wdt:P18 ?image ; wdt:P570 ?deathDate .}
+                  FILTER (xsd:integer(?chAgent_id) < 1000000).
+                  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],mul,en". }
+                }
+                ORDER BY ?birthDate
+            </code></pre>
+          </div>
+          <p>The following line in the query ensures we find only artists that have appeared onstage at Carnegie Hall (since numeric IDs with values greater than 1,000,000 represent composers who have not performed at the Hall, e.g., Beethoven):</p>
+          <div  class="bg-light text-dark" id="lab_report-query">
+            <!-- Be careful, "<" and ">" may need to be escaped with "&lt;" and "&gt;" -->
+            <!-- Quotes may also need to be escaped with "&quot;" -->
+            <pre><code>FILTER (xsd:integer(?chAgent_id) < 1000000).</code></pre>
+          </div>
+          <p>We added a link to each artist's Carnegie Hall performance history on our <a href="https://www.carnegiehall.org/About/History/Performance-History-Search" target="_blank">Performance History Search</a>:</p>
+          <div  class="bg-light text-dark" id="lab_report-query">
+            <!-- Be careful, "<" and ">" may need to be escaped with "&lt;" and "&gt;" -->
+            <!-- Quotes may also need to be escaped with "&quot;" -->
+            <pre><code>(IRI(CONCAT("https://www.carnegiehall.org/About/History/Performance-History-Search?q=&dex=prod_PHS&pf=",
+                (STR(ENCODE_FOR_URI(?itemLabel))))) AS ?perfLink)</code></pre>
+          </div>
+            <p>Finally, Wikidata's Image Grid template (<code>defaultView:ImageGrid</code>) provides the display.</p>
+        </div>
+        <div id="lab_report-conclusions">
+          <h2>CONCLUSIONS</h2>
+          <p><strong>what we learned</strong></p>
+          <p>Wikidata’s out-of-the-box display templates are a wonderful way to easily create data visualizations, and do not require hosting your own dataset or creating your own visualization tools. They allow us to leverage the Carnegie Hall Agent ID property to surface interesting connections between CH’s named entities and external data/resources.</p>
+          <p><strong>further investigation</strong></p>
+          <p>As a free knowledge base that anyone can edit, Wikidata is a powerful tool, but data quality can vary. When preparing this query, we discovered that the occupation "comedian" is sometimes applied very loosely or indiscriminately, which led to people in the result set one wouldn't normally think of as a comedian, e.g., Maya Angelou (??). Editing Wikidata items for ontological consistency (and adding more robust citations) is an ongoing task.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr>
+  <!-- Return navigation to Experiments page -->
+  <div class="container-fluid py-2">
+    <a class="btn btn-light" href="{% url 'experiments' %}"><em>return to experiments</em></a>
+  </div>
+</div>
+{% endblock %}
