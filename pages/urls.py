@@ -32,4 +32,5 @@ urlpatterns = [
     path('datalab/labReport/<int:pk>', views.LabReportDetailView.as_view(),
          name='labReport_detail'),
     path('datalab/yearForm/', views.yearForm, name='yearForm'),
+    path('api/', include('api.urls')),
 ]
