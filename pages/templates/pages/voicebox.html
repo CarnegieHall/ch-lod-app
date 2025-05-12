@@ -208,9 +208,48 @@
         
         // Function to format and display a CSV table
         function formatCSV(csvContent) {
-            // Parse the CSV content
+            console.log(csvContent);
+            
+            // Parse the CSV content properly handling quoted values
+            function parseCSVLine(line) {
+                const result = [];
+                let currentCell = "";
+                let insideQuotes = false;
+                
+                for (let i = 0; i < line.length; i++) {
+                    const char = line[i];
+                    
+                    if (char === '"') {
+                        // Toggle the insideQuotes flag when we encounter a quote
+                        insideQuotes = !insideQuotes;
+                        // Add the quote to the current cell
+                        currentCell += char;
+                    } else if (char === ',' && !insideQuotes) {
+                        // Only treat commas as cell separators when not inside quotes
+                        // Remove surrounding quotes if they exist
+                        if (currentCell.startsWith('"') && currentCell.endsWith('"') && currentCell.length >= 2) {
+                            currentCell = currentCell.substring(1, currentCell.length - 1);
+                        }
+                        result.push(currentCell);
+                        currentCell = "";
+                    } else {
+                        // Add the character to the current cell
+                        currentCell += char;
+                    }
+                }
+                
+                // Don't forget to add the last cell
+                if (currentCell.startsWith('"') && currentCell.endsWith('"') && currentCell.length >= 2) {
+                    currentCell = currentCell.substring(1, currentCell.length - 1);
+                }
+                result.push(currentCell);
+                
+                return result;
+            }
+            
+            // Split the content into rows
             const rows = csvContent.trim().split('\n');
-            const headerRow = rows[0].split(',');
+            const headerRow = parseCSVLine(rows[0]);
             
             // Create a table
             let tableHtml = '<div class="csv-container"><table class="table table-striped table-sm">';
@@ -225,7 +264,7 @@
             // Add data rows
             tableHtml += '<tbody>';
             for (let i = 1; i < rows.length; i++) {
-                const cells = rows[i].split(',');
+                const cells = parseCSVLine(rows[i]);
                 tableHtml += '<tr>';
                 cells.forEach(cell => {
                     tableHtml += `<td>${marked(cell)}</td>`;
