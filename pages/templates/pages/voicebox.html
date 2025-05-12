@@ -91,7 +91,7 @@
         overflow-x: auto;
     }
     .csv-container {
-        max-height: 300px;
+        max-height: 500px;
         overflow-y: auto;
         margin: 10px 0;
     }
@@ -110,6 +110,16 @@
     }
     .result-section {
         margin-bottom: 15px;
+    }
+    .download-csv-btn {
+        margin-bottom: 10px;
+    }
+    .pagination-container {
+        margin-top: 10px;
+    }
+    .page-info {
+        color: #6c757d;
+        font-size: 0.9rem;
     }
 </style>
 {% endblock %}
@@ -157,6 +167,74 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/1.1.1/marked.min.js"></script>
 
     <script>
+        // Global objects to store data
+        window.paginationData = {};
+        
+        // Function to handle pagination page changes with simplified controls
+        function changePage(csvId, tableId, direction) {
+            const paginationData = window.paginationData[csvId];
+            if (!paginationData) {
+                console.error('Pagination data not found for:', csvId);
+                return;
+            }
+            
+            // Calculate the new page
+            let newPage = paginationData.currentPage;
+            if (direction === 'prev') {
+                newPage = Math.max(1, paginationData.currentPage - 1);
+            } else if (direction === 'next') {
+                newPage = Math.min(paginationData.totalPages, paginationData.currentPage + 1);
+            }
+            
+            // If already on the requested page, do nothing
+            if (newPage === paginationData.currentPage) {
+                return;
+            }
+            
+            // Update current page
+            paginationData.currentPage = newPage;
+            
+            // Calculate the rows to display
+            const startIndex = (newPage - 1) * paginationData.rowsPerPage;
+            const endIndex = Math.min(startIndex + paginationData.rowsPerPage, paginationData.rows.length);
+            
+            // Get the table body
+            const tableBody = document.querySelector(`#${tableId} tbody`);
+            if (!tableBody) {
+                console.error('Table body not found for:', tableId);
+                return;
+            }
+            
+            // Clear the current rows
+            tableBody.innerHTML = '';
+            
+            // Add the rows for the current page
+            for (let i = startIndex; i < endIndex; i++) {
+                const cells = paginationData.parseCSVLine(paginationData.rows[i]);
+                const row = document.createElement('tr');
+                cells.forEach(cell => {
+                    const td = document.createElement('td');
+                    td.innerHTML = marked(cell);
+                    row.appendChild(td);
+                });
+                tableBody.appendChild(row);
+            }
+            
+            // Update the pagination UI
+            const paginationId = 'pagination-' + csvId;
+            const prevButton = document.getElementById(`prev-${paginationId}`);
+            const nextButton = document.getElementById(`next-${paginationId}`);
+            const currentPageSpan = document.getElementById(`current-page-${paginationId}`);
+            
+            if (prevButton && nextButton && currentPageSpan) {
+                // Update page number display
+                currentPageSpan.textContent = newPage;
+                
+                // Update button states
+                prevButton.disabled = (newPage === 1);
+                nextButton.disabled = (newPage === paginationData.totalPages);
+            }
+        }
 
         async function getResponse(userInput) {
             console.debug(`local storage voiceboxId: ${localStorage.getItem("voiceboxId")}`)
@@ -206,7 +284,7 @@
             scrollToBottom();
         }
         
-        // Function to format and display a CSV table
+        // Function to format and display a CSV table with a direct download button and simple pagination
         function formatCSV(csvContent) {
             console.log(csvContent);
             
@@ -250,28 +328,95 @@
             // Split the content into rows
             const rows = csvContent.trim().split('\n');
             const headerRow = parseCSVLine(rows[0]);
+            const dataRows = rows.slice(1);
             
-            // Create a table
-            let tableHtml = '<div class="csv-container"><table class="table table-striped table-sm">';
+            // Generate a unique ID for this CSV data and the pagination
+            const csvId = 'csv-data-' + Date.now();
+            const paginationId = 'pagination-' + csvId;
+            const tableId = 'table-' + csvId;
+            
+            // Create a download button for the CSV
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+            const fileName = `carnegie-hall-data-${timestamp}.csv`;
+            
+            // Create a data URI for the CSV content
+            const encodedCSV = encodeURIComponent(csvContent);
+            const dataURI = 'data:text/csv;charset=utf-8,' + encodedCSV;
+            
+            // Create the container that will hold both the download button and pagination controls
+            let tableHeader = `
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <a href="${dataURI}" download="${fileName}" class="btn btn-sm btn-outline-primary download-csv-btn">
+                    <i class="fas fa-download"></i> Download CSV
+                </a>`;
+                
+            // Calculate total pages for pagination
+            const rowsPerPage = 5;
+            const totalPages = Math.ceil(dataRows.length / rowsPerPage);
+            
+            // Add pagination controls if there are more than rowsPerPage rows
+            if (dataRows.length > rowsPerPage) {
+                tableHeader += `
+                <div class="pagination-container">
+                    <div class="d-flex align-items-center">
+                        <button id="prev-${paginationId}" onclick="changePage('${csvId}', '${tableId}', 'prev')" 
+                                class="btn btn-sm btn-outline-secondary mx-1" disabled>
+                            &laquo; Previous
+                        </button>
+                        <span class="page-info mx-2">Page <span id="current-page-${paginationId}">1</span> of ${totalPages}</span>
+                        <button id="next-${paginationId}" onclick="changePage('${csvId}', '${tableId}', 'next')"
+                                class="btn btn-sm btn-outline-secondary mx-1" ${totalPages <= 1 ? 'disabled' : ''}>
+                            Next &raquo;
+                        </button>
+                    </div>
+                </div>`;
+                
+                // Store pagination data
+                window.paginationData = window.paginationData || {};
+                window.paginationData[csvId] = {
+                    currentPage: 1,
+                    totalPages: totalPages,
+                    rows: dataRows,
+                    rowsPerPage: rowsPerPage,
+                    parseCSVLine: parseCSVLine // Store the parsing function
+                };
+            }
+            
+            tableHeader += `</div>`;
+            
+            // Create a table with the header we just built
+            let tableHtml = tableHeader + `
+            <div class="csv-container">
+                <table id="${tableId}" class="table table-striped table-sm">
+                    <thead>
+                        <tr>`;
             
             // Add header row
-            tableHtml += '<thead><tr>';
             headerRow.forEach(header => {
                 tableHtml += `<th>${header}</th>`;
             });
-            tableHtml += '</tr></thead>';
             
-            // Add data rows
-            tableHtml += '<tbody>';
-            for (let i = 1; i < rows.length; i++) {
-                const cells = parseCSVLine(rows[i]);
+            tableHtml += `
+                        </tr>
+                    </thead>
+                    <tbody>`;
+            
+            // Add data rows (only first page initially)
+            const initialRows = Math.min(rowsPerPage, dataRows.length);
+            
+            for (let i = 0; i < initialRows; i++) {
+                const cells = parseCSVLine(dataRows[i]);
                 tableHtml += '<tr>';
                 cells.forEach(cell => {
                     tableHtml += `<td>${marked(cell)}</td>`;
                 });
                 tableHtml += '</tr>';
             }
-            tableHtml += '</tbody></table></div>';
+            
+            tableHtml += `
+                    </tbody>
+                </table>
+            </div>`;
             
             return tableHtml;
         }
@@ -359,6 +504,13 @@
                 // get and process response
                 let voiceboxResponse = await getResponse(userInput);
                 
+            });
+            
+            // Also handle Enter key press in the input field
+            document.getElementById('userInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !sendButton.disabled) {
+                    sendButton.click();
+                }
             });
         });
     </script>
