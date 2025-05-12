@@ -82,6 +82,9 @@ def about(request):
 def contact(request):
     context = {"contact_page": "active"}
     return render(request, 'pages/contact.html', context)
+def voicebox(request):
+    context = {"voicebox_page": "active"}
+    return render(request, 'pages/voicebox.html', context)
 
 def yearForm(request):
     submitted = False

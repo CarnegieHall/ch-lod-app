@@ -1,0 +1,327 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Stardog VoiceBox | Carnegie Hall Data Lab{% endblock %}
+{% block meta_description %}The Data Lab is a learning space to expand Carnegie Hall's understanding of information innovation through experiments with linked open data.{% endblock meta_description %}
+{% block content %}
+
+{% block child_page_css %}
+<style>
+    #chat-container-parent {
+        height: 80vh;
+        display: flex;
+        flex-direction: column;
+        /* padding-top: 20px; */
+    }
+    .chat-container {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        height: calc(80vh - 40px);
+    }
+    .chat-box {
+        flex-grow: 1;
+        overflow-y: auto;
+        border-radius: 8px;
+        background-color: white;
+        border: 1px solid #dee2e6;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    .message {
+        margin-bottom: 15px;
+        max-width: 100%;
+    }
+    .user-message {
+        align-self: flex-end;
+        background-color: #e6f2ff;
+        border-radius: 18px 18px 0 18px;
+        padding: 10px 15px;
+        margin-left: auto;
+    }
+    .bot-message {
+        align-self: flex-start;
+        background-color: #f1f1f1;
+        border-radius: 18px 18px 18px 0;
+        padding: 10px 15px;
+        width: 100%;
+    }
+    .chat-input-container {
+        background-color: white;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+        padding: 15px;
+    }
+    .loading {
+        text-align: center;
+        margin: 20px 0;
+        display: none;
+    }
+    .spinner-border {
+        width: 3rem;
+        height: 3rem;
+    }
+    table {
+        width: 100%;
+        margin-bottom: 1rem;
+        color: #212529;
+        border-collapse: collapse;
+    }
+    table th, table td {
+        padding: 0.75rem;
+        vertical-align: top;
+        border-top: 1px solid #dee2e6;
+    }
+    table thead th {
+        vertical-align: bottom;
+        border-bottom: 2px solid #dee2e6;
+    }
+    .result-block {
+        margin-bottom: 15px;
+    }
+    .action-title {
+        font-weight: bold;
+        margin-top: 10px;
+        margin-bottom: 5px;
+        color: #6c757d;
+    }
+    pre {
+        background-color: #f8f9fa;
+        padding: 10px;
+        border-radius: 4px;
+        overflow-x: auto;
+    }
+    .csv-container {
+        max-height: 300px;
+        overflow-y: auto;
+        margin: 10px 0;
+    }
+    a {
+        color: #007bff;
+    }
+    .accordion {
+        margin-top: 15px;
+    }
+    .card-header {
+        padding: 10px 15px;
+        background-color: #f8f9fa;
+    }
+    .card-body {
+        padding: 15px;
+    }
+    .result-section {
+        margin-bottom: 15px;
+    }
+</style>
+{% endblock %}
+
+<div class="container">
+  <div class="container-fluid pt-3 my-3">
+    <h1 class="display-3 p-3 my-3 bg-success text-white">Stardog VoiceBox</h1><hr>
+    <p class="p-3 my-3 h5"> Chat with our archives data  </p>
+    <p><emp>*********(all of this text will absolutely need be replaced)</emp></p>
+    <p>  Explore the more than 60,000 Carnegie Hall events that have helped shape our culture since 1891. Find people, ensembles, and creative works covering nearly all musical genres, as well as theatrical, dance and spoken word events, meetings, lectures, civic rallies, and political conventions. </p>
+    <p> Read our <a href="#this-is-a-fake-link-sorry"> blog post about this </a></p>
+  </div>
+</div>
+
+
+<div id="chat-container-parent">
+    <div class="container chat-container">
+        <div class="chat-box" id="chatBox">
+            <div class="message bot-message">
+                Type to get started, and other instructions may go here.
+            </div>
+        </div>
+
+        <div class="loading" id="loadingIndicator">
+            <div class="spinner-border text-primary" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <p class="mt-2">Loading...</p>
+        </div>
+
+        <div class="chat-input-container">
+            <div class="input-group">
+                <input type="text" id="userInput" class="form-control" 
+                       placeholder="What would you like to research?" >
+                <div class="input-group-append">
+                    <button class="btn btn-primary" id="sendButton">
+                        <i class="fas fa-paper-plane"></i> Send
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Marked.js for Markdown -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/1.1.1/marked.min.js"></script>
+
+    <script>
+
+        async function getResponse(userInput) {
+            console.debug(`local storage voiceboxId: ${localStorage.getItem("voiceboxId")}`)
+            let voiceboxId = localStorage.getItem("voiceboxId"); // is null on first run
+            let request = fetch("/api/voicebox-data/", {
+                method: "POST",
+                body: JSON.stringify({
+                    "query": userInput,
+                    "conversation_id": voiceboxId,
+                }),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            .then(resp => resp.json())
+            .then(json => {
+                console.log(JSON.stringify(json));
+                try {
+                    localStorage.setItem("voiceboxId", json.conversation_id)
+                } catch(e) {
+                    console.warn("Could not set voiceboxId in local storage. Clearing voiceboxId.");
+                    console.error(e);
+                    localStorage.removeItem("voiceboxId"); // clearing it so it will treat next run as a first run
+                }
+                // Enable send button
+                sendButton.disabled = false;
+                // Hide loading indicator
+                document.getElementById('loadingIndicator').style.display = 'none';
+                // Process the response for display
+                processResponse(json);
+                
+            });            
+        }
+
+        // Function to scroll to the bottom of the chat
+        function scrollToBottom() {
+            const chatBox = document.getElementById('chatBox');
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+        
+        // Function to add a message to the chat
+        function addMessage(message, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+            messageDiv.innerHTML = message;
+            document.getElementById('chatBox').appendChild(messageDiv);
+            scrollToBottom();
+        }
+        
+        // Function to format and display a CSV table
+        function formatCSV(csvContent) {
+            // Parse the CSV content
+            const rows = csvContent.trim().split('\n');
+            const headerRow = rows[0].split(',');
+            
+            // Create a table
+            let tableHtml = '<div class="csv-container"><table class="table table-striped table-sm">';
+            
+            // Add header row
+            tableHtml += '<thead><tr>';
+            headerRow.forEach(header => {
+                tableHtml += `<th>${header}</th>`;
+            });
+            tableHtml += '</tr></thead>';
+            
+            // Add data rows
+            tableHtml += '<tbody>';
+            for (let i = 1; i < rows.length; i++) {
+                const cells = rows[i].split(',');
+                tableHtml += '<tr>';
+                cells.forEach(cell => {
+                    tableHtml += `<td>${marked(cell)}</td>`;
+                });
+                tableHtml += '</tr>';
+            }
+            tableHtml += '</tbody></table></div>';
+            
+            return tableHtml;
+        }
+        
+        // Function to process the API response
+        function processResponse(data) {
+            let resultContent = '';
+            
+            // Display the main result first
+            if (data.result) {
+                resultContent += `<div class="result-section">${marked(data.result)}</div>`;
+            }
+            
+            // First display CSV content if available (directly under the result)
+            if (data.actions && data.actions.length > 0) {
+                const csvAction = data.actions.find(action => action.type === 'csv');
+                if (csvAction) {
+                    resultContent += `<div class="result-section">`;
+                    resultContent += formatCSV(csvAction.value);
+                    resultContent += `</div>`;
+                }
+                
+                // Then create an accordion for SPARQL and Provenance
+                const sparqlAction = data.actions.find(action => action.type === 'sparql');
+                const provenanceAction = data.actions.find(action => action.type === 'provenance');
+                
+                if (sparqlAction || provenanceAction) {
+                    resultContent += `
+                    <div class="accordion" id="moreInfoAccordion">
+                        <div class="card">
+                            <div class="card-header" id="moreInfoHeading">
+                                <h2 class="mb-0">
+                                    <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#moreInfoCollapse" aria-expanded="false" aria-controls="moreInfoCollapse">
+                                        More Info
+                                    </button>
+                                </h2>
+                            </div>
+                            <div id="moreInfoCollapse" class="collapse" aria-labelledby="moreInfoHeading" data-parent="#moreInfoAccordion">
+                                <div class="card-body">`;
+                    
+                    // Add SPARQL content
+                    if (sparqlAction) {
+                        resultContent += `<div class="result-section">
+                            <div class="action-title">SPARQL</div>
+                            <pre>${sparqlAction.value}</pre>
+                        </div>`;
+                    }
+                    
+                    // Add Provenance content (prettified JSON)
+                    if (provenanceAction) {
+                        const prettyJson = JSON.stringify(JSON.parse(provenanceAction.value), null, 2);
+                        resultContent += `<div class="result-section">
+                            <div class="action-title">PROVENANCE</div>
+                            <pre><code>${prettyJson}</code></pre>
+                        </div>`;
+                    }
+                    
+                    resultContent += `</div>
+                            </div>
+                        </div>
+                    </div>`;
+                }
+            }
+            
+            // Add the entire formatted response as a bot message
+            addMessage(resultContent);
+        }
+        
+        // Initialize the page when loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle send button click
+            const sendButton = document.getElementById('sendButton');
+            sendButton.addEventListener('click', async function() {
+                const userInput = document.getElementById('userInput').value.trim();
+                // Disable the send button to prevent multiple clicks
+                sendButton.disabled = true;
+                if (!userInput) return;
+                
+                // Display user message
+                addMessage(userInput, true);
+                
+                // Show loading indicator
+                document.getElementById('loadingIndicator').style.display = 'block';
+                
+                // get and process response
+                let voiceboxResponse = await getResponse(userInput);
+                
+            });
+        });
+    </script>
+</div>
+{% endblock %}
