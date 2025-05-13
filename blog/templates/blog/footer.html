@@ -1,7 +1,10 @@
 <!-- Footer -->
 <footer class="py-5 bg-light">
     <div class="container-fluid">
-        <p class="m-0 text-center text-dark">Copyright &copy; 2020 The Carnegie Hall Corporation | 57th Street and Seventh Avenue, New York City</p>
+        <p class="m-0 text-center text-dark">Copyright &copy; <span id="copyright">2020</span> The Carnegie Hall Corporation | 57th Street and Seventh Avenue, New York City</p>
     </div>
  <!-- /.container -->
+  <script>
+    document.getElementById("copyright").innerHTML = new Date().getFullYear();
+  </script>
 </footer>
