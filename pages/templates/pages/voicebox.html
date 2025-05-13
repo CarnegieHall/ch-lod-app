@@ -6,6 +6,9 @@
 
 {% block child_page_css %}
 <style>
+    html {
+        --light-gray: #dee2e6;
+    }
     .app-container {
         display: flex;
         height: 62vh;
@@ -15,9 +18,9 @@
     
     .details-pane {
         flex: 1;
-        background-color: white;
+        background-color: var(--white);
         border-radius: 8px;
-        border: 1px solid #dee2e6;
+        border: 1px solid var(--light-gray);
         overflow-y: auto;
         display: flex;
         flex-direction: column;
@@ -35,7 +38,7 @@
         justify-content: center;
         align-items: center;
         height: 100%;
-        color: #6c757d;
+        color: var(--gray);
     }
     
     .chat-container-parent {
@@ -55,7 +58,7 @@
         overflow-y: auto;
         border-radius: 8px;
         background-color: white;
-        border: 1px solid #dee2e6;
+        border: 1px solid var(--light-gray);
         padding: 20px;
         margin-bottom: 20px;
     }
@@ -72,7 +75,7 @@
     
     .user-message {
         align-self: flex-end;
-        background-color: #e6f2ff;
+        background-color: var(--light-gray);
         border-radius: 18px 18px 0 18px;
         padding: 10px 15px;
         margin-left: auto;
@@ -80,21 +83,21 @@
     
     .bot-message {
         align-self: flex-start;
-        background-color: #f1f1f1;
-        border-radius: 0;
+        border: 1px solid var(--light-gray);
+        border-radius: 8px;
         padding: 10px 15px;
         width: 100%;
         cursor: pointer;
     }
     
     .bot-message.selected {
-        border: 2px solid #007bff;
+        border: 2px solid var(--blue);
     }
     
     .chat-input-container {
         background-color: white;
         border-radius: 8px;
-        border: 1px solid #dee2e6;
+        border: 1px solid var(--light-gray);
         padding: 15px;
     }
     
@@ -120,19 +123,19 @@
     table {
         width: 100%;
         margin-bottom: 1rem;
-        color: #212529;
+        color: var(--gray-dark);
         border-collapse: collapse;
     }
     
     table th, table td {
         padding: 0.75rem;
         vertical-align: top;
-        border-top: 1px solid #dee2e6;
+        border-top: 1px solid var(--light-gray);
     }
     
     table thead th {
         vertical-align: bottom;
-        border-bottom: 2px solid #dee2e6;
+        border-bottom: 2px solid var(--light-gray);
     }
     
     .result-block {
@@ -143,11 +146,11 @@
         font-weight: bold;
         margin-top: 10px;
         margin-bottom: 5px;
-        color: #6c757d;
+        color: var(--gray);
     }
     
     pre {
-        background-color: #f8f9fa;
+        background-color: var(--light-gray);
         padding: 10px;
         border-radius: 4px;
         overflow-x: auto;
@@ -159,13 +162,9 @@
         margin: 10px 0;
     }
     
-    a {
-        color: #007bff;
-    }
-    
     .card-header {
         padding: 10px 15px;
-        background-color: #f8f9fa;
+        background-color: var(--light-gray);
         cursor: pointer;
     }
     
@@ -174,7 +173,7 @@
     }
 
     .page-info {
-        color: #6c757d;
+        color: var(--gray);
         font-size: 0.9rem;
     }
     
@@ -188,7 +187,7 @@
         font-weight: bold;
         margin-top: 20px;
         margin-bottom: 10px;
-        color: #343a40;
+        color: var(--gray);
     }
     
     .query-explanation {
@@ -198,15 +197,15 @@
     .collapse-header {
         cursor: pointer;
         padding: 10px;
-        background-color: #f8f9fa;
-        border: 1px solid #dee2e6;
+        background-color: var(--light-gray);
+        border: 1px solid var(--light-gray);
         border-radius: 4px;
         margin-bottom: 5px;
     }
     
     .collapse-content {
         padding: 15px;
-        border: 1px solid #dee2e6;
+        border: 1px solid var(--light-gray);
         border-radius: 4px;
         display: none;
     }
@@ -257,7 +256,7 @@
             <div class="chat-container">
                 <div class="chat-box" id="chatBox">
                     <div class="message bot-message">
-                        <p class="p-3 my-3 h5"> Chat with our archives data  </p>
+                        <p class="h5"> Chat with our archives data  </p>
                         <p><emp>*********(all of this text will absolutely need be replaced)</emp></p>
                         <p>  Explore the more than 60,000 Carnegie Hall events that have helped shape our culture since 1891. Find people, ensembles, and creative works covering nearly all musical genres, as well as theatrical, dance and spoken word events, meetings, lectures, civic rallies, and political conventions. </p>
                         <p> Read our <a href="#this-is-a-fake-link-sorry"> blog post about this </a></p>
@@ -272,9 +271,10 @@
                 </div>
                 
                 <div class="chat-input-container">
+                    <label for="userInput">Ask Voicebox a question.</label>
                     <div class="input-group">
-                        <input type="text" id="userInput" class="form-control" 
-                               placeholder="What would you like to research?" >
+                        <input type="text" name="userInput" id="userInput" class="form-control" 
+                                placeholder="What would you like to research?" >
                         <div class="input-group-append">
                             <button class="btn btn-primary" id="sendButton">
                                 Send
