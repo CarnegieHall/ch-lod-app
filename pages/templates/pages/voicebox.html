@@ -8,7 +8,13 @@
 <style>
     html {
         --light-gray: #dee2e6;
+        --stardog-darkest-cyan: #002733;
     }
+
+    .bg-stardog {
+        background-color: var(--stardog-darkest-cyan) !important;
+    }
+
     .app-container {
         display: flex;
         height: 62vh;
@@ -229,13 +235,41 @@
         border-radius: 4px;
         display: none;
     }
+
+    #voicebox-header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    @media only screen and (max-width: 770px) {
+        .display-3 {
+            font-size: 2rem;
+        }
+        #stardog-logo {
+            max-width: 75px !important;
+        }
+    }
+    @media only screen and (max-width: 600px) {
+        #detailsPane {
+            display: none;
+        }
+        
+    }
+    
 </style>
 {% endblock %}
 
-<div class="container">
-  <div class="container-fluid pt-3 my-3">
-    <h1 class="display-3 p-3 my-3 bg-success text-white">Stardog VoiceBox</h1><hr>
+<div class="container bg-stardog">
+  <div id="voicebox-header" class="container-fluid pt-3 mt-5">
+    <h1 class="display-3 text-white">VoiceBox</h1>
+    <a href="https://www.stardog.com/voicebox/" target="_blank">
+        {% load static %}
+        <img id="stardog-logo" alt="Stardog" src="{% static 'img/stardog-logo-optimized.svg' %}" style="max-width: 100px">
+    </a>
   </div>
+  <hr>
 </div>
 
 <div class="container-lg">
