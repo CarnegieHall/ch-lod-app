@@ -17,7 +17,7 @@
 
     .app-container {
         display: flex;
-        height: 62vh;
+        height: 65vh;
         width: 100%;
         gap: 20px;
     }
@@ -27,7 +27,6 @@
         background-color: var(--white);
         border-radius: 8px;
         border: 1px solid var(--light-gray);
-        overflow-y: auto;
         display: flex;
         flex-direction: column;
     }
@@ -183,8 +182,6 @@
     }
     
     .csv-container {
-        max-height: 500px;
-        overflow-y: auto;
         margin: 10px 0;
     }
     
@@ -204,8 +201,6 @@
     }
     
     .clean-message {
-        max-height: 300px;
-        overflow-y: auto;
         margin-bottom: 15px;
     }
     
@@ -263,7 +258,7 @@
 
 <div class="container bg-stardog">
   <div id="voicebox-header" class="container-fluid pt-3 mt-5">
-    <h1 class="display-3 text-white">VoiceBox</h1>
+    <h1 class="display-3 text-white">Voicebox</h1>
     <a href="https://www.stardog.com/voicebox/" target="_blank">
         {% load static %}
         <img id="stardog-logo" alt="Stardog" src="{% static 'img/stardog-logo-optimized.svg' %}" style="max-width: 100px">
@@ -278,7 +273,7 @@
         <div class="details-pane" id="detailsPane">
             <div class="details-placeholder" id="detailsPlaceholder">
                 <h4>Details Panel</h4>
-                <p>Click on a response in the chat to view details</p>
+                <p>Response details will appear here.</p>
             </div>
             <div class="details-content" id="detailsContent" style="display: none;" tabindex="-1">
                 <!-- Result Section -->
@@ -310,10 +305,10 @@
             <div class="chat-container">
                 <div class="chat-box" id="chatBox">
                     <div class="message bot-message">
-                        <p class="h5"> Chat with our archives data  </p>
-                        <p><emp>*********(all of this text will absolutely need be replaced)</emp></p>
+                        <p class="h5"> Chat with Carnegie Hall's Performance History Data  </p>
                         <p>  Explore the more than 60,000 Carnegie Hall events that have helped shape our culture since 1891. Find people, ensembles, and creative works covering nearly all musical genres, as well as theatrical, dance and spoken word events, meetings, lectures, civic rallies, and political conventions. </p>
-                        <p> Read our <a href="#this-is-a-fake-link-sorry"> blog post about this </a></p>
+                        <p><em> Read our <a href="#this-is-a-fake-link-sorry">blog post</a> to learn about our collaboration with Stardog to set up our instance of Voicebox, </em><b>or other CTA.</b></p>
+                        <p> Questions? Write to us at archives@carnegiehall.org </p>
                     </div>
                 </div>
                 
@@ -328,7 +323,7 @@
                     <label for="userInput">Ask Voicebox a question.</label>
                     <div class="input-group">
                         <input type="text" name="userInput" id="userInput" class="form-control" 
-                                placeholder="What would you like to research?" >
+                                placeholder="Which composer is performed most often at Carnegie Hall?" >
                         <div class="input-group-append">
                             <button class="btn btn-primary" id="sendButton">
                                 Send
