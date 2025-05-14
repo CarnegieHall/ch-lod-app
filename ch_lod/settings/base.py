@@ -30,6 +30,8 @@ INSTALLED_APPS = [
     'pages',
     'search',
     'blog',
+    'rest_framework',
+    'api',
     'wagtail',
     'wagtail.contrib.forms',
     'wagtail.contrib.redirects',

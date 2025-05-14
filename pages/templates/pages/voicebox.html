@@ -1,0 +1,809 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Stardog VoiceBox | Carnegie Hall Data Lab{% endblock %}
+{% block meta_description %}The Data Lab is a learning space to expand Carnegie Hall's understanding of information innovation through experiments with linked open data.{% endblock meta_description %}
+{% block content %}
+
+{% block child_page_css %}
+<style>
+    html {
+        --light-gray: #dee2e6;
+        --stardog-darkest-cyan: #002733;
+    }
+
+    .bg-stardog {
+        background-color: var(--stardog-darkest-cyan) !important;
+    }
+
+    .app-container {
+        display: flex;
+        height: 62vh;
+        width: 100%;
+        gap: 20px;
+    }
+    
+    .details-pane {
+        flex: 1;
+        background-color: var(--white);
+        border-radius: 8px;
+        border: 1px solid var(--light-gray);
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .details-content {
+        overflow-y: auto;
+        flex-grow: 1;
+        padding: 20px
+    }
+    
+    .details-placeholder {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        color: var(--gray);
+    }
+    
+    .chat-container-parent {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .chat-container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+    
+    .chat-box {
+        flex-grow: 1;
+        overflow-y: auto;
+        border-radius: 8px;
+        background-color: white;
+        border: 1px solid var(--light-gray);
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .message {
+        margin-bottom: 15px;
+        max-width: 100%;
+        transition: background-color 0.2s;
+    }
+    
+    .message:hover {
+        opacity: 0.9;
+    }
+    
+    .user-message {
+        align-self: flex-end;
+        background-color: var(--light-gray);
+        border-radius: 18px 18px 0 18px;
+        padding: 10px 15px;
+        margin-left: auto;
+    }
+    
+    .bot-message {
+        align-self: flex-start;
+        border: 1px solid var(--light-gray);
+        border-radius: 8px;
+        padding: 10px 15px;
+        width: 100%;
+    }
+    
+    .bot-message.selected {
+        border: 2px solid var(--blue);
+    }
+    
+    .view-details-btn {
+        display: block;
+        margin-top: 10px;
+        padding: 5px 10px;
+        background-color: var(--light-gray);
+        border: none;
+        border-radius: 4px;
+        color: var(--dark);
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+    
+    .view-details-btn:hover, .view-details-btn:focus {
+        background-color: #c8cfd6;
+    }
+    
+    .view-details-btn:focus {
+        outline: 2px solid var(--blue);
+    }
+    
+    .chat-input-container {
+        background-color: white;
+        border-radius: 8px;
+        border: 1px solid var(--light-gray);
+        padding: 15px;
+    }
+    
+    .loading {
+        text-align: center;
+        margin: 20px 0;
+        display: none;
+    }
+    
+    .spinner-border {
+        width: 3rem;
+        height: 3rem;
+    }
+    
+    .tab-content {
+        display: none;
+    }
+    
+    .tab-content.active {
+        display: block;
+    }
+    
+    table {
+        width: 100%;
+        margin-bottom: 1rem;
+        color: var(--gray-dark);
+        border-collapse: collapse;
+    }
+    
+    table th, table td {
+        padding: 0.75rem;
+        vertical-align: top;
+        border-top: 1px solid var(--light-gray);
+    }
+    
+    table thead th {
+        vertical-align: bottom;
+        border-bottom: 2px solid var(--light-gray);
+    }
+    
+    .result-block {
+        margin-bottom: 15px;
+    }
+    
+    .action-title {
+        font-weight: bold;
+        margin-top: 10px;
+        margin-bottom: 5px;
+        color: var(--gray);
+    }
+    
+    pre {
+        background-color: var(--light-gray);
+        padding: 10px;
+        border-radius: 4px;
+        overflow-x: auto;
+    }
+    
+    .csv-container {
+        max-height: 500px;
+        overflow-y: auto;
+        margin: 10px 0;
+    }
+    
+    .card-header {
+        padding: 10px 15px;
+        background-color: var(--light-gray);
+        cursor: pointer;
+    }
+    
+    .card-body {
+        padding: 15px;
+    }
+
+    .page-info {
+        color: var(--gray);
+        font-size: 0.9rem;
+    }
+    
+    .clean-message {
+        max-height: 300px;
+        overflow-y: auto;
+        margin-bottom: 15px;
+    }
+    
+    .section-title {
+        font-weight: bold;
+        margin-top: 20px;
+        margin-bottom: 10px;
+        color: var(--gray);
+    }
+    
+    .query-explanation {
+        margin-top: 20px;
+    }
+    
+    .collapse-header {
+        cursor: pointer;
+        padding: 10px;
+        background-color: var(--light-gray);
+        border: 1px solid var(--light-gray);
+        border-radius: 4px;
+        margin-bottom: 5px;
+    }
+    
+    .collapse-content {
+        padding: 15px;
+        border: 1px solid var(--light-gray);
+        border-radius: 4px;
+        display: none;
+    }
+
+    #voicebox-header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    @media only screen and (max-width: 770px) {
+        .display-3 {
+            font-size: 2rem;
+        }
+        #stardog-logo {
+            max-width: 75px !important;
+        }
+    }
+    @media only screen and (max-width: 600px) {
+        #detailsPane {
+            display: none;
+        }
+        
+    }
+    
+</style>
+{% endblock %}
+
+<div class="container bg-stardog">
+  <div id="voicebox-header" class="container-fluid pt-3 mt-5">
+    <h1 class="display-3 text-white">VoiceBox</h1>
+    <a href="https://www.stardog.com/voicebox/" target="_blank">
+        {% load static %}
+        <img id="stardog-logo" alt="Stardog" src="{% static 'img/stardog-logo-optimized.svg' %}" style="max-width: 100px">
+    </a>
+  </div>
+  <hr>
+</div>
+
+<div class="container-lg">
+    <div class="app-container">
+        <!-- Details Pane (Left) -->
+        <div class="details-pane" id="detailsPane">
+            <div class="details-placeholder" id="detailsPlaceholder">
+                <h4>Details Panel</h4>
+                <p>Click on a response in the chat to view details</p>
+            </div>
+            <div class="details-content" id="detailsContent" style="display: none;" tabindex="-1">
+                <!-- Result Section -->
+                <div id="resultContent" class="mb-4"></div>
+                
+                <!-- Data Section -->
+                <div id="dataContent" class="mb-4"></div>
+                
+                <!-- Query Explanation Accordion -->
+                <div class="query-explanation">
+                    <div class="collapse-header" id="queryExplanationHeader">
+                        <span class="mr-2">▶</span> Query Explanation
+                    </div>
+                    <div class="collapse-content" id="queryExplanationContent">
+                        <!-- SPARQL Section -->
+                        <h5 class="section-title">SPARQL</h5>
+                        <pre id="sparqlContent"></pre>
+                        
+                        <!-- Provenance Section -->
+                        <h5 class="section-title">Provenance</h5>
+                        <pre id="provenanceContent"></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Chat Pane (Right) -->
+        <div class="chat-container-parent">
+            <div class="chat-container">
+                <div class="chat-box" id="chatBox">
+                    <div class="message bot-message">
+                        <p class="h5"> Chat with our archives data  </p>
+                        <p><emp>*********(all of this text will absolutely need be replaced)</emp></p>
+                        <p>  Explore the more than 60,000 Carnegie Hall events that have helped shape our culture since 1891. Find people, ensembles, and creative works covering nearly all musical genres, as well as theatrical, dance and spoken word events, meetings, lectures, civic rallies, and political conventions. </p>
+                        <p> Read our <a href="#this-is-a-fake-link-sorry"> blog post about this </a></p>
+                    </div>
+                </div>
+                
+                <div class="loading" id="loadingIndicator">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <p class="mt-2">Loading...</p>
+                </div>
+                
+                <div class="chat-input-container">
+                    <label for="userInput">Ask Voicebox a question.</label>
+                    <div class="input-group">
+                        <input type="text" name="userInput" id="userInput" class="form-control" 
+                                placeholder="What would you like to research?" >
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" id="sendButton">
+                                Send
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Marked.js for Markdown -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/1.1.1/marked.min.js"></script>
+
+<script>
+    // Global objects to store data
+    window.paginationData = {};
+    window.responseCache = {};
+    window.selectedMessageId = null;
+    window.lastMessageId = null;
+    
+    // Function to handle pagination page changes with simplified controls
+    function changePage(csvId, tableId, direction) {
+        const paginationData = window.paginationData[csvId];
+        if (!paginationData) {
+            console.error('Pagination data not found for:', csvId);
+            return;
+        }
+        
+        // Calculate the new page
+        let newPage = paginationData.currentPage;
+        if (direction === 'prev') {
+            newPage = Math.max(1, paginationData.currentPage - 1);
+        } else if (direction === 'next') {
+            newPage = Math.min(paginationData.totalPages, paginationData.currentPage + 1);
+        }
+        
+        // If already on the requested page, do nothing
+        if (newPage === paginationData.currentPage) {
+            return;
+        }
+        
+        // Update current page
+        paginationData.currentPage = newPage;
+        
+        // Calculate the rows to display
+        const startIndex = (newPage - 1) * paginationData.rowsPerPage;
+        const endIndex = Math.min(startIndex + paginationData.rowsPerPage, paginationData.rows.length);
+        
+        // Get the table body
+        const tableBody = document.querySelector(`#${tableId} tbody`);
+        if (!tableBody) {
+            console.error('Table body not found for:', tableId);
+            return;
+        }
+        
+        // Clear the current rows
+        tableBody.innerHTML = '';
+        
+        // Add the rows for the current page
+        for (let i = startIndex; i < endIndex; i++) {
+            const cells = paginationData.parseCSVLine(paginationData.rows[i]);
+            const row = document.createElement('tr');
+            cells.forEach(cell => {
+                const td = document.createElement('td');
+                td.innerHTML = marked(cell);
+                row.appendChild(td);
+            });
+            tableBody.appendChild(row);
+        }
+        
+        // Update the pagination UI
+        const paginationId = 'pagination-' + csvId;
+        const prevButton = document.getElementById(`prev-${paginationId}`);
+        const nextButton = document.getElementById(`next-${paginationId}`);
+        const currentPageSpan = document.getElementById(`current-page-${paginationId}`);
+        
+        if (prevButton && nextButton && currentPageSpan) {
+            // Update page number display
+            currentPageSpan.textContent = newPage;
+            
+            // Update button states
+            prevButton.disabled = (newPage === 1);
+            nextButton.disabled = (newPage === paginationData.totalPages);
+        }
+    }
+
+    async function getResponse(userInput) {
+        console.debug(`local storage voiceboxId: ${localStorage.getItem("voiceboxId")}`)
+        let voiceboxId = localStorage.getItem("voiceboxId"); // is null on first run
+        let response = await fetch("/api/voicebox-data/", {
+            method: "POST",
+            body: JSON.stringify({
+                "query": userInput,
+                "conversation_id": voiceboxId,
+            }),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        
+        let json = await response.json();
+        console.log(JSON.stringify(json));
+        
+        return json;
+    }
+
+    // Function to scroll to the bottom of the chat
+    function scrollToBottom() {
+        const chatBox = document.getElementById('chatBox');
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+    
+    // Function to add a message to the chat
+    function addMessage(message, isUser = false, responseData = null) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+        
+        if (!isUser) {
+            // Generate a unique ID for this bot message
+            const messageId = 'msg-' + Date.now();
+            messageDiv.id = messageId;
+            
+            // Store the message ID as the last message ID for later reference
+            window.lastMessageId = messageId;
+            
+            // Store the response data for this message
+            if (responseData) {
+                window.responseCache[messageId] = responseData;
+            }
+            
+            // Create a clean version of the message without detailed data
+            const cleanMessage = document.createElement('div');
+            cleanMessage.className = 'clean-message';
+            
+            // If there's a result, display it
+            if (responseData && responseData.result) {
+                cleanMessage.innerHTML = marked(responseData.result);
+            } else {
+                cleanMessage.innerHTML = message;
+            }
+            
+            messageDiv.appendChild(cleanMessage);
+            
+            // Add "View Details" button
+            const viewDetailsBtn = document.createElement('button');
+            viewDetailsBtn.className = 'view-details-btn';
+            viewDetailsBtn.textContent = 'View Details';
+            viewDetailsBtn.setAttribute('aria-label', 'View details for this message');
+            viewDetailsBtn.addEventListener('click', function() {
+                showMessageDetails(messageId);
+            });
+            
+            messageDiv.appendChild(viewDetailsBtn);
+        } else {
+            messageDiv.innerHTML = message;
+        }
+        
+        document.getElementById('chatBox').appendChild(messageDiv);
+        scrollToBottom();
+    }
+    
+    // Function to show message details in the details pane
+    function showMessageDetails(messageId) {
+        // Get all bot messages and remove 'selected' class
+        const allBotMessages = document.querySelectorAll('.bot-message');
+        allBotMessages.forEach(msg => msg.classList.remove('selected'));
+        
+        // Add 'selected' class to the clicked message
+        const selectedMessage = document.getElementById(messageId);
+        if (selectedMessage) {
+            selectedMessage.classList.add('selected');
+        }
+        
+        // Save the selected message ID
+        window.selectedMessageId = messageId;
+        
+        // Get the response data for this message
+        const responseData = window.responseCache[messageId];
+        if (!responseData) {
+            console.error('No response data found for message:', messageId);
+            return;
+        }
+        
+        // Hide placeholder and show content
+        document.getElementById('detailsPlaceholder').style.display = 'none';
+        document.getElementById('detailsContent').style.display = 'block';
+        
+        // Populate the result content
+        if (responseData.result) {
+            document.getElementById('resultContent').innerHTML = marked(responseData.result);
+        } else {
+            document.getElementById('resultContent').innerHTML = '<p>No result data available</p>';
+        }
+        
+        // Populate the data section with CSV data if available
+        if (responseData.actions) {
+            const csvAction = responseData.actions.find(action => action.type === 'csv');
+            if (csvAction) {
+                document.getElementById('dataContent').innerHTML = formatCSV(csvAction.value);
+            } else {
+                document.getElementById('dataContent').innerHTML = '';
+            }
+            
+            // Populate the SPARQL section
+            const sparqlAction = responseData.actions.find(action => action.type === 'sparql');
+            if (sparqlAction) {
+                document.getElementById('sparqlContent').textContent = sparqlAction.value;
+            } else {
+                document.getElementById('sparqlContent').textContent = 'No SPARQL query available';
+            }
+            
+            // Populate the Provenance section
+            const provenanceAction = responseData.actions.find(action => action.type === 'provenance');
+            if (provenanceAction) {
+                document.getElementById('provenanceContent').textContent = JSON.stringify(JSON.parse(provenanceAction.value), null, 2);
+            } else {
+                document.getElementById('provenanceContent').textContent = 'No provenance data available';
+            }
+        } else {
+            // Clear sections if no actions available
+            document.getElementById('dataContent').innerHTML = '';
+            document.getElementById('sparqlContent').textContent = 'No SPARQL query available';
+            document.getElementById('provenanceContent').textContent = 'No provenance data available';
+        }
+        
+        // Set focus to the details pane for accessibility
+        const detailsContent = document.getElementById('detailsContent');
+        detailsContent.focus();
+        
+        // Announce to screen readers that details are now shown
+        const ariaLiveRegion = document.createElement('div');
+        ariaLiveRegion.setAttribute('aria-live', 'polite');
+        ariaLiveRegion.setAttribute('class', 'sr-only');
+        ariaLiveRegion.textContent = 'Details panel updated with new information';
+        document.body.appendChild(ariaLiveRegion);
+        
+        // Remove the live region after announcement
+        setTimeout(() => {
+            document.body.removeChild(ariaLiveRegion);
+        }, 1000);
+    }
+    
+    // Function to format and display a CSV table with a direct download button and simple pagination
+    function formatCSV(csvContent) {
+        console.log(csvContent);
+        
+        // Parse the CSV content properly handling quoted values
+        function parseCSVLine(line) {
+            const result = [];
+            let currentCell = "";
+            let insideQuotes = false;
+            
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                
+                if (char === '"') {
+                    // Toggle the insideQuotes flag when we encounter a quote
+                    insideQuotes = !insideQuotes;
+                    // Add the quote to the current cell
+                    currentCell += char;
+                } else if (char === ',' && !insideQuotes) {
+                    // Only treat commas as cell separators when not inside quotes
+                    // Remove surrounding quotes if they exist
+                    if (currentCell.startsWith('"') && currentCell.endsWith('"') && currentCell.length >= 2) {
+                        currentCell = currentCell.substring(1, currentCell.length - 1);
+                    }
+                    result.push(currentCell);
+                    currentCell = "";
+                } else {
+                    // Add the character to the current cell
+                    currentCell += char;
+                }
+            }
+            
+            // Don't forget to add the last cell
+            if (currentCell.startsWith('"') && currentCell.endsWith('"') && currentCell.length >= 2) {
+                currentCell = currentCell.substring(1, currentCell.length - 1);
+            }
+            result.push(currentCell);
+            
+            return result;
+        }
+        
+        // Split the content into rows
+        const rows = csvContent.trim().split('\n');
+        const headerRow = parseCSVLine(rows[0]);
+        const dataRows = rows.slice(1);
+        
+        // Generate a unique ID for this CSV data and the pagination
+        const csvId = 'csv-data-' + Date.now();
+        const paginationId = 'pagination-' + csvId;
+        const tableId = 'table-' + csvId;
+        
+        // Create a download button for the CSV
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        const fileName = `carnegie-hall-data-${timestamp}.csv`;
+        
+        // Create a data URI for the CSV content
+        const encodedCSV = encodeURIComponent(csvContent);
+        const dataURI = 'data:text/csv;charset=utf-8,' + encodedCSV;
+        
+        // Create the container that will hold both the download button and pagination controls
+        let tableHeader = `
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <a href="${dataURI}" download="${fileName}" class="btn btn-sm btn-outline-primary download-csv-btn">
+                Download CSV
+            </a>`;
+            
+        // Calculate total pages for pagination
+        const rowsPerPage = 5;
+        const totalPages = Math.ceil(dataRows.length / rowsPerPage);
+        
+        // Add pagination controls if there are more than rowsPerPage rows
+        if (dataRows.length > rowsPerPage) {
+            tableHeader += `
+            <div class="pagination-container">
+                <div class="d-flex align-items-center">
+                    <button id="prev-${paginationId}" onclick="changePage('${csvId}', '${tableId}', 'prev')" 
+                            class="btn btn-sm btn-outline-secondary mx-1" disabled aria-label="Previous page">
+                        « Previous
+                    </button>
+                    <span class="page-info mx-2">Page <span id="current-page-${paginationId}">1</span> of ${totalPages}</span>
+                    <button id="next-${paginationId}" onclick="changePage('${csvId}', '${tableId}', 'next')"
+                            class="btn btn-sm btn-outline-secondary mx-1" ${totalPages <= 1 ? 'disabled' : ''} aria-label="Next page">
+                        Next »
+                    </button>
+                </div>
+            </div>`;
+            
+            // Store pagination data
+            window.paginationData = window.paginationData || {};
+            window.paginationData[csvId] = {
+                currentPage: 1,
+                totalPages: totalPages,
+                rows: dataRows,
+                rowsPerPage: rowsPerPage,
+                parseCSVLine: parseCSVLine // Store the parsing function
+            };
+        }
+        
+        tableHeader += `</div>`;
+        
+        // Create a table with the header we just built
+        let tableHtml = tableHeader + `
+        <div class="csv-container">
+            <table id="${tableId}" class="table table-striped table-sm">
+                <caption>CSV data from Carnegie Hall Archives</caption>
+                <thead>
+                    <tr>`;
+        
+        // Add header row
+        headerRow.forEach(header => {
+            tableHtml += `<th scope="col">${header}</th>`;
+        });
+        
+        tableHtml += `
+                    </tr>
+                </thead>
+                <tbody>`;
+        
+        // Add data rows (only first page initially)
+        const initialRows = Math.min(rowsPerPage, dataRows.length);
+        
+        for (let i = 0; i < initialRows; i++) {
+            const cells = parseCSVLine(dataRows[i]);
+            tableHtml += '<tr>';
+            cells.forEach((cell, cellIndex) => {
+                if (cellIndex === 0) {
+                    tableHtml += `<th scope="row">${marked(cell)}</th>`;
+                } else {
+                    tableHtml += `<td>${marked(cell)}</td>`;
+                }
+            });
+            tableHtml += '</tr>';
+        }
+        
+        tableHtml += `
+                </tbody>
+            </table>
+        </div>`;
+        
+        return tableHtml;
+    }
+    
+    // Function to process the API response
+    function processResponse(data) {
+        // Add the message to the chat
+        addMessage('', false, data);
+    }
+    
+    // Initialize the page when loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set up Query Explanation accordion toggling
+        const queryExplanationHeader = document.getElementById('queryExplanationHeader');
+        const queryExplanationContent = document.getElementById('queryExplanationContent');
+        
+        queryExplanationHeader.addEventListener('click', function() {
+            // Toggle the display of the content
+            if (queryExplanationContent.style.display === 'block') {
+                queryExplanationContent.style.display = 'none';
+                this.innerHTML = '<span class="mr-2">▶</span> Query Explanation';
+            } else {
+                queryExplanationContent.style.display = 'block';
+                this.innerHTML = '<span class="mr-2">▼</span> Query Explanation';
+            }
+        });
+
+        // Clear the id so the chat starts fresh on reload
+        localStorage.removeItem("voiceboxId");
+        
+        // Handle send button click
+        const sendButton = document.getElementById('sendButton');
+        sendButton.addEventListener('click', async function() {
+            const userInput = document.getElementById('userInput').value.trim();
+            // Disable the send button to prevent multiple clicks
+            sendButton.disabled = true;
+            if (!userInput) return;
+            
+            // Display user message
+            addMessage(userInput, true);
+            
+            // Show loading indicator
+            document.getElementById('loadingIndicator').style.display = 'block';
+            
+            // Clear the input field
+            document.getElementById('userInput').value = '';
+            
+            try {
+                // Get response from API
+                let json = await getResponse(userInput);
+                
+                // Handle conversation ID storage
+                try {
+                    localStorage.setItem("voiceboxId", json.conversation_id);
+                } catch(e) {
+                    console.warn("Could not set voiceboxId in local storage. Clearing voiceboxId.");
+                    console.error(e);
+                    localStorage.removeItem("voiceboxId"); // clearing it so it will treat next run as a first run
+                }
+                
+                // Process the response for display
+                processResponse(json);
+                
+                // After adding the message to the chat, directly show its details
+                if (window.lastMessageId) {
+                    showMessageDetails(window.lastMessageId);
+                }
+            } finally {
+                // Enable send button and hide loading indicator regardless of success/failure
+                sendButton.disabled = false;
+                document.getElementById('loadingIndicator').style.display = 'none';
+
+                // Convert all links to open in a new page
+                links = document.querySelectorAll(".app-container a");
+                links.forEach(link => {
+                    if (!link.hasAttribute('download')) {
+                        link.target = '_blank';
+                        link.setAttribute('rel', 'noopener noreferrer');
+                    }
+                });
+            }
+        });
+        
+        // Also handle Enter key press in the input field
+        document.getElementById('userInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !sendButton.disabled) {
+                sendButton.click();
+            }
+        });
+        
+        // Make details pane focusable for accessibility
+        document.getElementById('detailsContent').setAttribute('tabindex', '-1');
+        
+    });
+</script>
+{% endblock %}

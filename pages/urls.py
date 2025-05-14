@@ -10,6 +10,7 @@ urlpatterns = [
     path('datalab/search/', views.search, name='search-blog'),
     path('datalab/about/', views.about, name='about'),
     path('datalab/contact/', views.contact, name='contact'),
+    path('datalab/voicebox/', views.voicebox, name="voicebox"),
     path('datalab/experiments/chdl-0007/', views.chdl0007, name='chdl-0007'),
     path('datalab/experiments/chdl-0001-d/', views.chdl0001d, name='chdl-0001-d'),
     path('datalab/experiments/chdl-0001-c/', views.chdl0001c, name='chdl-0001-c'),
@@ -32,4 +33,5 @@ urlpatterns = [
     path('datalab/labReport/<int:pk>', views.LabReportDetailView.as_view(),
          name='labReport_detail'),
     path('datalab/yearForm/', views.yearForm, name='yearForm'),
+    path('api/', include('api.urls')),
 ]

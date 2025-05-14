@@ -36,6 +36,9 @@
    {% leaflet_js %}
    {% leaflet_css %}
 
+   <!-- set styles at descendent pages -->
+   {% block child_page_css %}
+
 </head>
 <body>
     {% include 'pages/layouts/navbar.html' %}
