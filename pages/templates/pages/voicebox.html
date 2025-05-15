@@ -7,7 +7,6 @@
 {% block child_page_css %}
 <style>
     html {
-        --light-gray: #dee2e6;
         --stardog-darkest-cyan: #002733;
     }
 
@@ -26,7 +25,7 @@
         flex: 1;
         background-color: var(--white);
         border-radius: 8px;
-        border: 1px solid var(--light-gray);
+        border: 1px solid var(--bs-border-color);
         display: flex;
         flex-direction: column;
     }
@@ -63,7 +62,7 @@
         overflow-y: auto;
         border-radius: 8px;
         background-color: white;
-        border: 1px solid var(--light-gray);
+        border: 1px solid var(--bs-border-color);
         padding: 20px;
         margin-bottom: 20px;
     }
@@ -71,16 +70,11 @@
     .message {
         margin-bottom: 15px;
         max-width: 100%;
-        transition: background-color 0.2s;
     }
-    
-    .message:hover {
-        opacity: 0.9;
-    }
-    
+
     .user-message {
         align-self: flex-end;
-        background-color: var(--light-gray);
+        background-color: var(--bs-border-color);
         border-radius: 18px 18px 0 18px;
         padding: 10px 15px;
         margin-left: auto;
@@ -88,21 +82,25 @@
     
     .bot-message {
         align-self: flex-start;
-        border: 1px solid var(--light-gray);
+        border: 1px solid var(--bs-border-color);
         border-radius: 8px;
         padding: 10px 15px;
         width: 100%;
     }
     
     .bot-message.selected {
-        border: 2px solid var(--blue);
+        border: 2px solid var(--bs-primary);
+    }
+
+    .bot-message.selected .view-details-btn {
+        display: none;
     }
     
     .view-details-btn {
         display: block;
         margin-top: 10px;
         padding: 5px 10px;
-        background-color: var(--light-gray);
+        background-color: var(--bs-border-color);
         border: none;
         border-radius: 4px;
         color: var(--dark);
@@ -116,13 +114,13 @@
     }
     
     .view-details-btn:focus {
-        outline: 2px solid var(--blue);
+        outline: 2px solid var(--bs-primary);
     }
     
     .chat-input-container {
         background-color: white;
         border-radius: 8px;
-        border: 1px solid var(--light-gray);
+        border: 1px solid var(--bs-border-color);
         padding: 15px;
     }
     
@@ -155,12 +153,12 @@
     table th, table td {
         padding: 0.75rem;
         vertical-align: top;
-        border-top: 1px solid var(--light-gray);
+        border-top: 1px solid var(--bs-border-color);
     }
     
     table thead th {
         vertical-align: bottom;
-        border-bottom: 2px solid var(--light-gray);
+        border-bottom: 2px solid var(--bs-border-color);
     }
     
     .result-block {
@@ -175,7 +173,7 @@
     }
     
     pre {
-        background-color: var(--light-gray);
+        background-color: var(--bs-border-color);
         padding: 10px;
         border-radius: 4px;
         overflow-x: auto;
@@ -187,7 +185,7 @@
     
     .card-header {
         padding: 10px 15px;
-        background-color: var(--light-gray);
+        background-color: var(--bs-border-color);
         cursor: pointer;
     }
     
@@ -218,15 +216,15 @@
     .collapse-header {
         cursor: pointer;
         padding: 10px;
-        background-color: var(--light-gray);
-        border: 1px solid var(--light-gray);
+        background-color: var(--bs-border-color);
+        border: 1px solid var(--bs-border-color);
         border-radius: 4px;
         margin-bottom: 5px;
     }
     
     .collapse-content {
         padding: 15px;
-        border: 1px solid var(--light-gray);
+        border: 1px solid var(--bs-border-color);
         border-radius: 4px;
         display: none;
     }
@@ -243,18 +241,12 @@
         font-weight: 500;
         margin-bottom: 15px;
         padding-bottom: 10px;
-        border-bottom: 1px solid var(--light-gray);
+        border-bottom: 1px solid var(--bs-border-color);
     }
 
     .suggested-prompt-btn {
         margin: 5px 5px 5px 0;
         white-space: wrap;
-        transition: all 0.2s;
-    }
-    
-    .suggested-prompt-btn:hover {
-        background-color: var(--blue);
-        color: white;
     }
     
     .gap-2 {
@@ -268,12 +260,14 @@
         #stardog-logo {
             max-width: 75px !important;
         }
+        .app-container {
+            gap: 2px;
+        }
     }
     @media only screen and (max-width: 600px) {
         #detailsPane {
             display: none;
         }
-        
     }
     
 </style>
