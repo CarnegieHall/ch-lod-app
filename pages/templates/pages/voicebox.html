@@ -372,6 +372,12 @@
                     </div>
                     <p class="mt-2">Loading...</p>
                 </div>
+
+                <div class="error-message" id="errorIndicator" style="display: none; text-align: center; margin: 20px 0; color: #dc3545;">
+                    <div class="h2">Cannot connect</div>
+                    <p>We're sorry, the page is having trouble receiving data. Please refresh and try again, or write to us at archives@carnegiehall.org if the issue persists.</p>
+                    <button class="btn btn-outline-primary mt-3" id="retryButton">Try Again</button>
+                </div>
                 
                 <div class="chat-input-container">
                     <label for="userInput">Ask Voicebox a question.</label>
@@ -466,21 +472,30 @@
     async function getResponse(userInput) {
         console.debug(`local storage voiceboxId: ${localStorage.getItem("voiceboxId")}`)
         let voiceboxId = localStorage.getItem("voiceboxId"); // is null on first run
-        let response = await fetch("/api/voicebox-data/", {
-            method: "POST",
-            body: JSON.stringify({
-                "query": userInput,
-                "conversation_id": voiceboxId,
-            }),
-            headers: {
-                "Content-Type": "application/json"
+        try {
+            let response = await fetch("/api/voicebox-data/", {
+                method: "POST",
+                body: JSON.stringify({
+                    "query": userInput,
+                    "conversation_id": voiceboxId,
+                }),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Server responded with status: ${response.status}`);
             }
-        });
-        
-        let json = await response.json();
-        console.log(JSON.stringify(json));
-        
-        return json;
+            
+            let json = await response.json();
+            console.log(JSON.stringify(json));
+            
+            return json;
+        } catch (error) {
+            console.error("Network or parsing error:", error);
+            throw error; // Re-throw to be caught by the caller
+        }
     }
 
     // Function to scroll to the bottom of the chat
@@ -825,6 +840,8 @@
             
             // Show loading indicator
             document.getElementById('loadingIndicator').style.display = 'block';
+            // Hide error indicator if it was previously shown
+            document.getElementById('errorIndicator').style.display = 'none';
             
             // Clear the input field
             document.getElementById('userInput').value = '';
@@ -849,10 +866,18 @@
                 if (window.lastMessageId) {
                     showMessageDetails(window.lastMessageId);
                 }
+            } catch(error) {
+                // Hide loading indicator
+                document.getElementById('loadingIndicator').style.display = 'none';
+                // Show error indicator
+                document.getElementById('errorIndicator').style.display = 'block';
+                console.error("Error fetching response:", error);
             } finally {
                 // Enable send button and hide loading indicator regardless of success/failure
                 sendButton.disabled = false;
-                document.getElementById('loadingIndicator').style.display = 'none';
+                if (document.getElementById('errorIndicator').style.display !== 'block') {
+                    document.getElementById('loadingIndicator').style.display = 'none';
+                }
 
                 // Convert all links to open in a new page
                 links = document.querySelectorAll(".app-container a");
@@ -865,6 +890,16 @@
             }
         });
         
+        // Add event listener for retry button in error handler
+        document.getElementById('retryButton').addEventListener('click', function() {
+            // Hide error message
+            document.getElementById('errorIndicator').style.display = 'none';
+            // Re-enable the send button if disabled
+            document.getElementById('sendButton').disabled = false;
+            // Focus on the input field
+            document.getElementById('userInput').focus();
+        });
+
         // Also handle Enter key press in the input field
         document.getElementById('userInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter' && !sendButton.disabled) {
