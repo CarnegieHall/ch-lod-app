@@ -332,7 +332,7 @@
                     <div class="message bot-message">
                         <p class="h5"> Ask about Carnegie Hall's Performance History  </p>
                         <p> Explore more than 60,000 Carnegie Hall events that have helped shape our culture since 1891. Find people, ensembles, and works from nearly all musical genres, and events including concerts, theatre, meetings, lectures, civic rallies, and political conventions. </p>
-                        <p> This is an experimental project and results may vary.<em> Read our <a href="#this-is-a-fake-link-sorry">blog post</a> to learn about our collaboration with Stardog to set up our instance of Voicebox. </em></p>
+                        <p> <b>This is an experimental project and results may vary.</b><em> Read our <a href="#this-is-a-fake-link-sorry">blog post</a> to learn about our collaboration with Stardog to set up our instance of Voicebox. </em></p>
                         <p> Questions? Write to us at archives@carnegiehall.org </p>
                         <hr/> 
                         <div id="suggested-prompts">
@@ -376,7 +376,6 @@
                 <div class="error-message" id="errorIndicator" style="display: none; text-align: center; margin: 20px 0; color: #dc3545;">
                     <div class="h2">Cannot connect</div>
                     <p>We're sorry, the page is having trouble receiving data. Please refresh and try again, or write to us at archives@carnegiehall.org if the issue persists.</p>
-                    <button class="btn btn-outline-primary mt-3" id="retryButton">Try Again</button>
                 </div>
                 
                 <div class="chat-input-container">
@@ -888,16 +887,6 @@
                     }
                 });
             }
-        });
-        
-        // Add event listener for retry button in error handler
-        document.getElementById('retryButton').addEventListener('click', function() {
-            // Hide error message
-            document.getElementById('errorIndicator').style.display = 'none';
-            // Re-enable the send button if disabled
-            document.getElementById('sendButton').disabled = false;
-            // Focus on the input field
-            document.getElementById('userInput').focus();
         });
 
         // Also handle Enter key press in the input field
