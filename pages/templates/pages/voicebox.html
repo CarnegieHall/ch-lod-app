@@ -17,7 +17,7 @@
 
     .app-container {
         display: flex;
-        height: 65vh;
+        height: 64vh;
         width: 100%;
         gap: 20px;
     }
@@ -238,6 +238,29 @@
         justify-content: space-between;
     }
 
+    .query-title {
+        font-size: 1.25rem;
+        font-weight: 500;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--light-gray);
+    }
+
+    .suggested-prompt-btn {
+        margin: 5px 5px 5px 0;
+        white-space: wrap;
+        transition: all 0.2s;
+    }
+    
+    .suggested-prompt-btn:hover {
+        background-color: var(--blue);
+        color: white;
+    }
+    
+    .gap-2 {
+        gap: 0.5rem;
+    }
+
     @media only screen and (max-width: 770px) {
         .display-3 {
             font-size: 2rem;
@@ -276,6 +299,8 @@
                 <p>Response details will appear here.</p>
             </div>
             <div class="details-content" id="detailsContent" style="display: none;" tabindex="-1">
+
+                <div id="queryTitle" class="query-title"></div>
                 <!-- Result Section -->
                 <div id="resultContent" class="mb-4"></div>
                 
@@ -305,10 +330,39 @@
             <div class="chat-container">
                 <div class="chat-box" id="chatBox">
                     <div class="message bot-message">
-                        <p class="h5"> Chat with Carnegie Hall's Performance History Data  </p>
-                        <p>  Explore the more than 60,000 Carnegie Hall events that have helped shape our culture since 1891. Find people, ensembles, and creative works covering nearly all musical genres, as well as theatrical, dance and spoken word events, meetings, lectures, civic rallies, and political conventions. </p>
-                        <p><em> Read our <a href="#this-is-a-fake-link-sorry">blog post</a> to learn about our collaboration with Stardog to set up our instance of Voicebox, </em><b>or other CTA.</b></p>
+                        <p class="h5"> Ask about Carnegie Hall's Performance History  </p>
+                        <p> Explore more than 60,000 Carnegie Hall events that have helped shape our culture since 1891. Find people, ensembles, and works from nearly all musical genres, and events including concerts, theatre, meetings, lectures, civic rallies, and political conventions. </p>
+                        <p> This is an experimental project and results may vary.<em> Read our <a href="#this-is-a-fake-link-sorry">blog post</a> to learn about our collaboration with Stardog to set up our instance of Voicebox. </em></p>
                         <p> Questions? Write to us at archives@carnegiehall.org </p>
+                        <hr/> 
+                        <div id="suggested-prompts">
+                            <div class="mt-3">
+                                <h6>Prompt examples:</h6>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <button class="btn btn-sm btn-outline-primary suggested-prompt-btn">
+                                        Which composer is performed most often at Carnegie Hall?
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-primary suggested-prompt-btn">
+                                        Which works have been given world premieres at Carnegie Hall?
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-primary suggested-prompt-btn">
+                                        Show me all of the solo piano recitals from 2020
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-primary suggested-prompt-btn">
+                                        Tell me about Duke Ellington
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-primary suggested-prompt-btn">
+                                        What was the first rap concert at Carnegie Hall?
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-primary suggested-prompt-btn">
+                                        What occurred on this day at Carnegie Hall ten years ago?
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-primary suggested-prompt-btn">
+                                        Show the total number of performances for each year in reverse chronological order
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
@@ -318,16 +372,19 @@
                     </div>
                     <p class="mt-2">Loading...</p>
                 </div>
+
+                <div class="error-message" id="errorIndicator" style="display: none; text-align: center; margin: 20px 0; color: #dc3545;">
+                    <div class="h2">Cannot connect</div>
+                    <p>We're sorry, the page is having trouble receiving data. Please refresh and try again, or write to us at archives@carnegiehall.org if the issue persists.</p>
+                    <button class="btn btn-outline-primary mt-3" id="retryButton">Try Again</button>
+                </div>
                 
                 <div class="chat-input-container">
                     <label for="userInput">Ask Voicebox a question.</label>
                     <div class="input-group">
-                        <input type="text" name="userInput" id="userInput" class="form-control" 
-                                placeholder="Which composer is performed most often at Carnegie Hall?" >
+                        <input type="text" name="userInput" id="userInput" class="form-control"/>
                         <div class="input-group-append">
-                            <button class="btn btn-primary" id="sendButton">
-                                Send
-                            </button>
+                            <button class="btn btn-primary" id="sendButton">Send </button>
                         </div>
                     </div>
                 </div>
@@ -415,21 +472,30 @@
     async function getResponse(userInput) {
         console.debug(`local storage voiceboxId: ${localStorage.getItem("voiceboxId")}`)
         let voiceboxId = localStorage.getItem("voiceboxId"); // is null on first run
-        let response = await fetch("/api/voicebox-data/", {
-            method: "POST",
-            body: JSON.stringify({
-                "query": userInput,
-                "conversation_id": voiceboxId,
-            }),
-            headers: {
-                "Content-Type": "application/json"
+        try {
+            let response = await fetch("/api/voicebox-data/", {
+                method: "POST",
+                body: JSON.stringify({
+                    "query": userInput,
+                    "conversation_id": voiceboxId,
+                }),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Server responded with status: ${response.status}`);
             }
-        });
-        
-        let json = await response.json();
-        console.log(JSON.stringify(json));
-        
-        return json;
+            
+            let json = await response.json();
+            console.log(JSON.stringify(json));
+            
+            return json;
+        } catch (error) {
+            console.error("Network or parsing error:", error);
+            throw error; // Re-throw to be caught by the caller
+        }
     }
 
     // Function to scroll to the bottom of the chat
@@ -512,6 +578,21 @@
         // Hide placeholder and show content
         document.getElementById('detailsPlaceholder').style.display = 'none';
         document.getElementById('detailsContent').style.display = 'block';
+
+        // Populate the query title if rewritten_query exists
+        const queryTitleElement = document.getElementById('queryTitle');
+        if (responseData.actions) {
+            const rewrittenQueryAction = responseData.actions.find(action => action.type === 'rewritten_query');
+            if (rewrittenQueryAction) {
+                const rewrittenQuery = rewrittenQueryAction.value;
+                queryTitleElement.textContent = rewrittenQuery;
+                queryTitleElement.style.display = 'block';
+            } else {
+                queryTitleElement.style.display = 'none';
+            }
+        } else {
+            queryTitleElement.style.display = 'none';
+        }
         
         // Populate the result content
         if (responseData.result) {
@@ -736,6 +817,16 @@
         // Clear the id so the chat starts fresh on reload
         localStorage.removeItem("voiceboxId");
         
+        // Set up suggested prompts functionality
+        document.querySelectorAll('.suggested-prompt-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const prompt = this.textContent.trim();
+                const userInput = document.getElementById('userInput');
+                userInput.value = prompt;
+                document.getElementById('sendButton').click();
+            });
+        });
+        
         // Handle send button click
         const sendButton = document.getElementById('sendButton');
         sendButton.addEventListener('click', async function() {
@@ -749,6 +840,8 @@
             
             // Show loading indicator
             document.getElementById('loadingIndicator').style.display = 'block';
+            // Hide error indicator if it was previously shown
+            document.getElementById('errorIndicator').style.display = 'none';
             
             // Clear the input field
             document.getElementById('userInput').value = '';
@@ -773,10 +866,18 @@
                 if (window.lastMessageId) {
                     showMessageDetails(window.lastMessageId);
                 }
+            } catch(error) {
+                // Hide loading indicator
+                document.getElementById('loadingIndicator').style.display = 'none';
+                // Show error indicator
+                document.getElementById('errorIndicator').style.display = 'block';
+                console.error("Error fetching response:", error);
             } finally {
                 // Enable send button and hide loading indicator regardless of success/failure
                 sendButton.disabled = false;
-                document.getElementById('loadingIndicator').style.display = 'none';
+                if (document.getElementById('errorIndicator').style.display !== 'block') {
+                    document.getElementById('loadingIndicator').style.display = 'none';
+                }
 
                 // Convert all links to open in a new page
                 links = document.querySelectorAll(".app-container a");
@@ -789,6 +890,16 @@
             }
         });
         
+        // Add event listener for retry button in error handler
+        document.getElementById('retryButton').addEventListener('click', function() {
+            // Hide error message
+            document.getElementById('errorIndicator').style.display = 'none';
+            // Re-enable the send button if disabled
+            document.getElementById('sendButton').disabled = false;
+            // Focus on the input field
+            document.getElementById('userInput').focus();
+        });
+
         // Also handle Enter key press in the input field
         document.getElementById('userInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter' && !sendButton.disabled) {
