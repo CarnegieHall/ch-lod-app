@@ -334,7 +334,7 @@
                     <div class="message bot-message">
                         <p class="h5"> Ask about Carnegie Hall's Performance History  </p>
                         <p> Explore more than 60,000 Carnegie Hall events that have helped shape our culture since 1891.</p>
-                        <p> <b>This is an experimental project and results may vary.</b><em> Read our <a href="#this-is-a-fake-link-sorry">blog post</a> to learn about our collaboration with Stardog to set up our instance of Voicebox. </em></p>
+                        <p> <b>This is an experimental project and results may vary.</b><em> Read our <a href="#this-is-a-fake-link-sorry" target="_blank">blog post</a> to learn about our collaboration with Stardog to set up our instance of Voicebox. </em></p>
                         <p> Questions? Write to us at archives@carnegiehall.org </p>
                         <hr/> 
                         <div id="suggested-prompts">
@@ -466,6 +466,15 @@
             prevButton.disabled = (newPage === 1);
             nextButton.disabled = (newPage === paginationData.totalPages);
         }
+        // make sure table links open in a new tab after prev/next is called
+        csvLinks = document.querySelectorAll(".csv-container a");
+        if (!!csvLinks) {
+            csvLinks.forEach(link => {
+                link.target = '_blank';
+                link.setAttribute('rel', 'noopener noreferrer');
+            });
+        }
+        
     }
 
     async function getResponse(userInput) {
@@ -817,14 +826,18 @@
         localStorage.removeItem("voiceboxId");
         
         // Set up suggested prompts functionality
-        document.querySelectorAll('.suggested-prompt-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const prompt = this.textContent.trim();
-                const userInput = document.getElementById('userInput');
-                userInput.value = prompt;
-                document.getElementById('sendButton').click();
+        let suggestedPromptButtons = document.querySelectorAll('.suggested-prompt-btn');
+        if (!!suggestedPromptButtons) {
+            suggestedPromptButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const prompt = this.textContent.trim();
+                    const userInput = document.getElementById('userInput');
+                    userInput.value = prompt;
+                    document.getElementById('sendButton').click();
+                });
             });
-        });
+        }
+        
         
         // Handle send button click
         const sendButton = document.getElementById('sendButton');
@@ -880,12 +893,14 @@
 
                 // Convert all links to open in a new page
                 links = document.querySelectorAll(".app-container a");
-                links.forEach(link => {
-                    if (!link.hasAttribute('download')) {
-                        link.target = '_blank';
-                        link.setAttribute('rel', 'noopener noreferrer');
-                    }
-                });
+                if (!!links) {
+                    links.forEach(link => {
+                        if (!link.hasAttribute('download')) {
+                            link.target = '_blank';
+                            link.setAttribute('rel', 'noopener noreferrer');
+                        }
+                    });
+                }
             }
         });
 
