@@ -647,7 +647,7 @@
         // Announce to screen readers that details are now shown
         const ariaLiveRegion = document.createElement('div');
         ariaLiveRegion.setAttribute('aria-live', 'polite');
-        ariaLiveRegion.setAttribute('class', 'sr-only');
+        ariaLiveRegion.setAttribute('class', 'visually-hidden');
         ariaLiveRegion.textContent = 'Details panel updated with new information';
         document.body.appendChild(ariaLiveRegion);
         
