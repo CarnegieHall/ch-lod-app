@@ -20,7 +20,7 @@
     <!-- Blog Post -->
     {% for post in posts %}
       <div class="card mb-4">
-          {% image post.header_image fill-750x300 as header_image %}
+          {% image post.header_image fill-1500x600 as header_image %}
           <img class="card-img-top" src="{{ header_image.url }}" alt="Card image cap">
           <div class="card-body">
               <h2 class="card-title">{{ post.title }}</h2>
