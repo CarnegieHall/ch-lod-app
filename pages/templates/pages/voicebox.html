@@ -281,12 +281,12 @@
 </style>
 {% endblock %}
 
-<div class="container bg-stardog">
-  <div id="voicebox-header" class="container-fluid pt-3 mt-5">
-    <h1 class="display-3 text-white">Voicebox</h1>
-    <a href="https://www.stardog.com/voicebox/" target="_blank">
+<div class="container bg-stardog mt-5 mb-2 pt-4 pb-3 d-flex align-items-center">
+  <div id="voicebox-header" class="container-fluid">
+    <h1 class="display-3 text-white">Ask About Our History</h1>
+    <a href="https://stardog.ai" target="_blank">
         {% load static %}
-        <img id="stardog-logo" alt="Stardog" src="{% static 'img/stardog-logo-optimized.svg' %}" style="max-width: 100px">
+        <img id="stardog-logo" alt="Powered by Stardog Voicebox" src="{% static 'img/poweredby-SDVB.png' %}" style="width: auto; max-height: 4rem">
     </a>
   </div>
   <hr>
@@ -339,7 +339,7 @@
                         <hr/> 
                         <div id="suggested-prompts">
                             <div class="mt-3">
-                                <h6>Prompt examples:</h6>
+                                <p class="h6">Get started with an example prompt:</p>
                                 <div class="d-flex flex-wrap gap-2">
                                     <button class="btn btn-sm btn-outline-primary suggested-prompt-btn">
                                         Which composer is performed most often at Carnegie Hall?
@@ -379,11 +379,14 @@
                 </div>
                 
                 <div class="chat-input-container">
-                    <label for="userInput">Ask Voicebox a question.</label>
-                    <div class="input-group">
-                        <input type="text" name="userInput" id="userInput" class="form-control"/>
-                        <div class="input-group-append">
-                            <button class="btn btn-primary" id="sendButton">Send </button>
+                    <label class="mb-1" for="userInput">Ask Voicebox a question.</label>
+                    <div class="d-flex gap-2">
+                        <img alt="Voicebox Icon" src="{% static 'img/vb-icon.svg' %}" style="width: 2rem; height: auto;">
+                        <div class="input-group">
+                            <input type="text" name="userInput" id="userInput" class="form-control"/>
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" id="sendButton">Send </button>
+                            </div>
                         </div>
                     </div>
                 </div>
