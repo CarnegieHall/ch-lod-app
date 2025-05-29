@@ -266,7 +266,7 @@
             font-size: 2rem;
         }
         #stardog-logo {
-            max-width: 75px !important;
+            max-width: 90px !important;
         }
         .app-container {
             gap: 2px;
@@ -381,7 +381,8 @@
                 <div class="chat-input-container">
                     <label class="mb-1" for="userInput">Ask Voicebox a question.</label>
                     <div class="d-flex gap-2">
-                        <img alt="Voicebox Icon" src="{% static 'img/vb-icon.svg' %}" style="width: 2rem; height: auto;">
+                        {% load static %}
+                        <img alt="Voicebox Icon" src="{% static 'img/VB-icon.svg' %}" style="width: 2rem; height: auto;">
                         <div class="input-group">
                             <input type="text" name="userInput" id="userInput" class="form-control"/>
                             <div class="input-group-append">
