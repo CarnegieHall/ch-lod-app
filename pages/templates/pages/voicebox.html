@@ -257,13 +257,27 @@
         max-width: 50%;
     }
 
+    .backToChatBtn {
+        display: none;
+        width: 100%;
+    }
+    .backToChatBtn:focus {
+        outline: 2px solid var(--bs-primary);
+    }
+
     #queryExplanationHeader {
         font-family: system-ui;
     }
 
     @media only screen and (max-width: 770px) {
         .display-3 {
-            font-size: 2rem;
+            font-size: 3rem;
+        }
+    }
+
+    @media only screen and (max-width: 770px) {
+        .display-3 {
+            font-size: 1.5rem;
         }
         #stardog-logo {
             max-width: 90px !important;
@@ -273,8 +287,46 @@
         }
     }
     @media only screen and (max-width: 600px) {
+        .display-3 {
+            font-size: 1.2rem;
+        }
+        #stardog-logo {
+            max-width: 70px !important;
+        }
+        .app-container {
+            height: 78vh;
+        }
         #detailsPane {
+            padding-top: 2.5rem;
             display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1000;
+            background: white;
+            overflow-y: auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            max-width: 100%;
+        }
+        .chat-container-parent {
+            display: block;
+        }
+        #detailsPane.show-mobile {
+            display: block !important;
+        }
+        .chat-container-parent.hide-mobile {
+            display: none !important;
+        }
+        .bot-message.selected .view-details-btn {
+            display: block;
+        }
+        .backToChatBtn {
+            display: block;
+        }
+        .chat-box {
+            padding: 0;
         }
     }
     
@@ -294,14 +346,13 @@
 
 <div class="container-lg">
     <div class="app-container">
-        <!-- Details Pane (Left) -->
         <div class="details-pane" id="detailsPane">
             <div class="details-placeholder" id="detailsPlaceholder">
                 <h4>Details Panel</h4>
                 <p>Response details will appear here.</p>
             </div>
             <div class="details-content" id="detailsContent" style="display: none;" tabindex="-1">
-
+                <button class="backToChatBtn btn btn-primary" aria-label="Return to chat">← Back to Chat</button>
                 <div id="queryTitle" class="query-title"></div>
                 <!-- Result Section -->
                 <div id="resultContent" class="mb-4"></div>
@@ -590,6 +641,12 @@
             return;
         }
         
+        // Responsive behavior: On mobile, show details pane and hide chat
+        if (window.innerWidth <= 600) {
+            document.getElementById('detailsPane').classList.add('show-mobile');
+            document.querySelector('.chat-container-parent').classList.add('hide-mobile');
+        }
+        
         // Hide placeholder and show content
         document.getElementById('detailsPlaceholder').style.display = 'none';
         document.getElementById('detailsContent').style.display = 'block';
@@ -828,6 +885,23 @@
                 this.innerHTML = '<span class="mr-2">▼</span> Query Explanation';
             }
         });
+        
+        // Mobile: Close details pane and return to chat
+        const backToChatBtns = document.querySelectorAll('.backToChatBtn');
+        backToChatBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.getElementById('detailsPane').classList.remove('show-mobile');
+                document.querySelector('.chat-container-parent').classList.remove('hide-mobile');
+            });
+        });
+
+        // Hide details pane if window resizes above 600px
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 600) {
+                document.getElementById('detailsPane').classList.remove('show-mobile');
+                document.querySelector('.chat-container-parent').classList.remove('hide-mobile');
+            }
+        });
 
         // Clear the id so the chat starts fresh on reload
         localStorage.removeItem("voiceboxId");
@@ -880,10 +954,13 @@
                 
                 // Process the response for display
                 processResponse(json);
-                
+
                 // After adding the message to the chat, directly show its details
                 if (window.lastMessageId) {
-                    showMessageDetails(window.lastMessageId);
+                    // On desktop, automatically show details; on mobile, don't
+                    if (window.innerWidth > 600) {
+                        showMessageDetails(window.lastMessageId);
+                    }
                 }
             } catch(error) {
                 // Hide loading indicator
@@ -920,7 +997,7 @@
         
         // Make details pane focusable for accessibility
         document.getElementById('detailsContent').setAttribute('tabindex', '-1');
-        
+
     });
 </script>
 {% endblock %}
