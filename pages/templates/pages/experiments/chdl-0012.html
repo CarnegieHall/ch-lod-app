@@ -17,16 +17,16 @@
   <!-- Interal page link to lab report goes here -->
   <!-- If experiment data/visualization covers a lot of page space, remove data-toggle="collapse" here and on id="lab_report" -->
   <!-- Include return navigation to Experiments page -->
-  <div class="container-fluid" pt-2>
+  <div class="container-fluid pt-2">
     <a class="btn btn-light" href="#lab_report" role="button"><em>read lab report</em></a>
     <a class="btn btn-light" href="{% url 'experiments' %}"><em>return to experiments</em></a>
   </div>
   <hr>
   <!-- Experiment data/visualization goes in this section -->
-  <div class="container-fluid">
+  <div>
     <!-- data returned from query view goes here -->
-    <div class="embed-responsive embed-responsive-16by9">
-      <iframe src="https://cdn.knightlab.com/libs/timeline3/latest/embed/index.html?source=1_5BL77Y2Fhidc1GFPlEnhEDJaO2wZHAxKPD08ANTlHU&font=Default&lang=en&initial_zoom=2&height=600& width=650 frameborder="0"></iframe>
+    <div>
+      <iframe style="width: 100%; height: 65vh;" src="https://cdn.knightlab.com/libs/timeline3/latest/embed/index.html?source=1_5BL77Y2Fhidc1GFPlEnhEDJaO2wZHAxKPD08ANTlHU&font=Default&lang=en&initial_zoom=2&height=600& width=650 frameborder="0"></iframe>
     </div>
   </div>
   <!-- Lab report goes in this section -->
