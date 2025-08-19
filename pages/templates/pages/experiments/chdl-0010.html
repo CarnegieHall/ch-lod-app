@@ -23,13 +23,13 @@
   </div>
   <hr>
   <!-- Experiment data/visualization goes in this section -->
-  <div class="container-fluid">
-    <div class="container-fluid">
+  <div>
+    <div>
       <!-- data returned from query view goes here -->
-      <div class="embed-responsive embed-responsive-16by9">
-        <iframe
-        src="https://query.wikidata.org/embed.html#%23defaultView%3AImageGrid%0ASELECT%20DISTINCT%20%3Fpianist%20%3FpianistLabel%20%3FpianistImage%20%3FchURL%20%28CONCAT%28str%28%3FbirthYear%29%2C%20%22-%22%2C%20str%28%3FdeathYear%29%29%20AS%20%3FlifeDates%29%0A%28IRI%28CONCAT%28%22https%3A%2F%2Fwww.carnegiehall.org%2FAbout%2FHistory%2FPerformance-History-Search%3Fq%3D%26dex%3Dprod_PHS%26pf%3D%22%2C%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%28STR%28ENCODE_FOR_URI%28%3FpianistLabel%29%29%29%29%29%20AS%20%3FphsLink%29%0AWHERE%20%7B%0A%20%20%3Fpianist%20wdt%3AP1303%20wd%3AQ5994%20%3B%0A%20%20%20%20%20%20%20%20%20%20%20wdt%3AP1066%20wd%3AQ362340%20%3B%0A%20%20%20%20%20%20%20%20%20%20%20wdt%3AP569%20%3FbirthDate%20%3B%0A%20%20%20%20%20%20%20%20%20%20%20wdt%3AP570%20%3FdeathDate%20%3B%0A%20%20%20%20%20%20%20%20%20%20%20wdt%3AP4104%20%3FchAgentID%20.%0A%20%20wd%3AP4104%20wdt%3AP1630%20%3Fformatterurl.%0A%20%20OPTIONAL%20%7B%20%3Fpianist%20wdt%3AP18%20%3FpianistImage%20.%20%7D%0A%20%20BIND%28IRI%28REPLACE%28%3FchAgentID%2C%20%27%5E%28.%2B%29%24%27%2C%20%3Fformatterurl%29%29%20AS%20%3FchURL%29.%0A%20%20BIND%28YEAR%28%3FbirthDate%29%20AS%20%3FbirthYear%29%0A%20%20BIND%28YEAR%28%3FdeathDate%29%20AS%20%3FdeathYear%29%0A%20%20SERVICE%20wikibase%3Alabel%20%7B%20bd%3AserviceParam%20wikibase%3Alanguage%20%22%5BAUTO_LANGUAGE%5D%2Cen%22.%20%7D%0A%20%20%7D" referrerpolicy="origin" sandbox="allow-scripts allow-same-origin allow-popups" >
-      </iframe>
+      <div>
+        <iframe style="width: 100%; height: 65vh;"
+          src="https://query.wikidata.org/embed.html#%23defaultView%3AImageGrid%0ASELECT%20DISTINCT%20%3Fpianist%20%3FpianistLabel%20%3FpianistImage%20%3FchURL%20%28CONCAT%28str%28%3FbirthYear%29%2C%20%22-%22%2C%20str%28%3FdeathYear%29%29%20AS%20%3FlifeDates%29%0A%28IRI%28CONCAT%28%22https%3A%2F%2Fwww.carnegiehall.org%2FAbout%2FHistory%2FPerformance-History-Search%3Fq%3D%26dex%3Dprod_PHS%26pf%3D%22%2C%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%28STR%28ENCODE_FOR_URI%28%3FpianistLabel%29%29%29%29%29%20AS%20%3FphsLink%29%0AWHERE%20%7B%0A%20%20%3Fpianist%20wdt%3AP1303%20wd%3AQ5994%20%3B%0A%20%20%20%20%20%20%20%20%20%20%20wdt%3AP1066%20wd%3AQ362340%20%3B%0A%20%20%20%20%20%20%20%20%20%20%20wdt%3AP569%20%3FbirthDate%20%3B%0A%20%20%20%20%20%20%20%20%20%20%20wdt%3AP570%20%3FdeathDate%20%3B%0A%20%20%20%20%20%20%20%20%20%20%20wdt%3AP4104%20%3FchAgentID%20.%0A%20%20wd%3AP4104%20wdt%3AP1630%20%3Fformatterurl.%0A%20%20OPTIONAL%20%7B%20%3Fpianist%20wdt%3AP18%20%3FpianistImage%20.%20%7D%0A%20%20BIND%28IRI%28REPLACE%28%3FchAgentID%2C%20%27%5E%28.%2B%29%24%27%2C%20%3Fformatterurl%29%29%20AS%20%3FchURL%29.%0A%20%20BIND%28YEAR%28%3FbirthDate%29%20AS%20%3FbirthYear%29%0A%20%20BIND%28YEAR%28%3FdeathDate%29%20AS%20%3FdeathYear%29%0A%20%20SERVICE%20wikibase%3Alabel%20%7B%20bd%3AserviceParam%20wikibase%3Alanguage%20%22%5BAUTO_LANGUAGE%5D%2Cen%22.%20%7D%0A%20%20%7D" referrerpolicy="origin" sandbox="allow-scripts allow-same-origin allow-popups" >
+        </iframe>
       </div>
     </div>
   </div>
