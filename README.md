@@ -18,6 +18,14 @@ You can use SQLite or Postgres, Postgres is configured by default.
 It needs to be PostgreSQL 12 or later. Make sure the database is running and
 the "ch_lod" database is created.
 
+### Upgrading the database
+After db upgrades, these commands need to run in the console
+`./manage.py migrate`
+`./manage.py update_index` // load wagtail users
+
 ## SPARQL endpoint
 
 You need to set the environment variable "SPARQL_ENDPOINT", "SPARQL_PASSWORD", and "SPARQL_USERNAME".
+
+## Datadog Voicebox authentication
+environment variable VOICEBOX_BEARER_TOKEN needs to be set for voicebox functionality
