@@ -390,6 +390,9 @@
                             <!-- <em> Read our <a href="#this-is-a-fake-link-sorry" target="_blank">blog post</a> to learn about our collaboration with Stardog to set up our instance of Voicebox. </em> -->
                         </p>
                         <p> Questions? Write to us at archives@carnegiehall.org </p>
+                        <p class="text-muted small">
+                            <em>Database last updated: <span id="lastUpdatedDate">Loading...</span></em>
+                        </p>
                         <hr/> 
                         <div id="suggested-prompts">
                             <div class="mt-3">
@@ -564,6 +567,41 @@
         }
     }
 
+    async function fetchLastUpdated() {
+        try {
+            const response = await fetch("/api/stardog-last-updated/", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Server responded with status: ${response.status}`);
+            }
+            
+            const json = await response.json();
+            
+            if (json.last_modified) {
+                // Parse and format the date
+                const date = new Date(json.last_modified);
+                const formattedDate = date.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                document.getElementById('lastUpdatedDate').textContent = formattedDate;
+            } else {
+                document.getElementById('lastUpdatedDate').textContent = 'Unknown';
+            }
+        } catch (error) {
+            console.error("Error fetching last updated date:", error);
+            document.getElementById('lastUpdatedDate').textContent = 'Unavailable';
+        }
+    }
     // Function to scroll to the bottom of the chat
     function scrollToBottom() {
         const chatBox = document.getElementById('chatBox');
@@ -905,6 +943,9 @@
 
         // Clear the id so the chat starts fresh on reload
         localStorage.removeItem("voiceboxId");
+
+        // Fetch and display the last updated date
+        fetchLastUpdated();
         
         // Set up suggested prompts functionality
         let suggestedPromptButtons = document.querySelectorAll('.suggested-prompt-btn');
