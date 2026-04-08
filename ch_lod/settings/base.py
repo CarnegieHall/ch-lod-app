@@ -14,14 +14,17 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 env = os.environ.copy()
 
-SPARQL_ENDPOINT = env['SPARQL_ENDPOINT']
-
-
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
+
+import environ
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+
+env = os.environ.copy()
+SPARQL_ENDPOINT = env['SPARQL_ENDPOINT']
 
 
 # Application definition
