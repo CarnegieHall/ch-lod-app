@@ -12,7 +12,7 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 CSRF_TRUSTED_ORIGINS = ['https://data.carnegiehall.org']
 USE_X_FORWARDED_HOST = True
-
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
 
 env = os.environ.copy()
 SECRET_KEY = env['SECRET_KEY']
