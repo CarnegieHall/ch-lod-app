@@ -43,13 +43,13 @@ class VoiceboxAPIView(APIView):
 class StardogGetLastUpdatedAPIView(APIView):
     def get(self, request):
         try:
-            base_url = env['STARDOG_SANDBOXDB_BASEURL']
-            db_name = env['STARDOG_SANDBOXDB_NAME']
+            base_url = env['SPARQL_BASEURL']
+            db_name = env['SPARQL_DB_NAME']
             url = f"{base_url}/admin/databases/{db_name}/options"
             
             response = requests.put(
                 url,
-                auth=(env['STARDOG_SANDBOXDB_USERNAME'], env['STARDOG_SANDBOXDB_PASSWORD']),
+                auth=(env['SPARQL_USERNAME'], env['SPARQL_PASSWORD']),
                 json={"database.time.modification": ""}
             )
             

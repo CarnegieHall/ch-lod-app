@@ -24,7 +24,7 @@ import environ
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 env = os.environ.copy()
-SPARQL_ENDPOINT = env['SPARQL_ENDPOINT']
+SPARQL_ENDPOINT = env['SPARQL_BASEURL'] + "/chlod/query"
 
 
 # Application definition
