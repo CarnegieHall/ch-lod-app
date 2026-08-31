@@ -7,11 +7,13 @@ import requests
 from requests.auth import HTTPBasicAuth
 import re
 import os
+import logging
+import time
 
 from . import utils
 
 limit_re = re.compile('LIMIT\s([0-9]+)', re.IGNORECASE)
-
+logger = logging.getLogger(__name__)
 
 content_type_map = {
 	'xml' : 'text/xml',
@@ -72,12 +74,32 @@ def route_sparql(request):
 			if int(re_match.group(1)) > 10000:
 				query = query.replace(re_match.group(),'LIMIT 10000')
 
-		r = requests.post(
-			settings.SPARQL_ENDPOINT,
-			auth=HTTPBasicAuth(os.environ['SPARQL_USERNAME'], os.environ['SPARQL_PASSWORD']),
-			headers={"Accept":"application/sparql-results+json"},
-			data = {'query':query},
-			timeout=10)
+		started_at = time.perf_counter()
+
+		try:
+			r = requests.post(
+				settings.SPARQL_ENDPOINT,
+				auth=HTTPBasicAuth(os.environ['SPARQL_USERNAME'],os.environ['SPARQL_PASSWORD']),
+				headers={"Accept":"application/sparql-results+json"},
+				data = {'query':query},
+				timeout=10)
+		except requests.Timeout:
+			elapsed = time.perf_counter() - started_at
+			logger.warning(
+				"SPARQL timeout elapsed=%.2fs path=%s",
+				elapsed,
+				request.path,
+			)
+			return HttpResponse("SPARQL endpoint timed out", status=504)
+		except requests.RequestException:
+			elapsed = time.perf_counter() - started_at
+			logger.exception(
+				"SPARQL request failed elapsed=%.2fs path=%s",
+				elapsed,
+				request.path,
+			)
+			return HttpResponse("SPARQL endpoint unavailable", status=502)
+		
 		# print(request.body.decode('utf-8'))
 		if "MALFORMED QUERY: Encountered " in r.text:
 			return HttpResponse(content=r.text, status=500)

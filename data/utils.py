@@ -2,15 +2,31 @@ from SPARQLWrapper import SPARQLWrapper, JSON
 from rdflib import URIRef, Graph, Literal, plugin, Namespace
 from rdflib.serializer import Serializer
 from django.conf import settings
+import logging
 import operator
 import sys
+import time
 import os
+
+logger = logging.getLogger(__name__)
 
 def chunks(l, n):
     """Yield successive n-sized chunks from l."""
     for i in range(0, len(l), n):
         yield l[i:i + n]
 
+def execute_sparql_query(sparql, operation):
+	started_at = time.perf_counter()
+
+	try:
+		return sparql.query().convert()
+	except Exception:
+		logger.exception(
+			"SPARQL query failed operation=%s elapsed=%.2fs",
+			operation,
+			time.perf_counter() - started_at,
+		)
+		raise
 
 def return_objects(uri):
 	sparql = SPARQLWrapper(settings.SPARQL_ENDPOINT)
@@ -21,7 +37,7 @@ def return_objects(uri):
 	    LIMIT 9000
 	""" % (uri))
 	sparql.setReturnFormat(JSON)
-	results = sparql.query().convert()
+	results = execute_sparql_query(sparql, "return_objects")
 
 	return results
 	# for result in results["results"]["bindings"]:
@@ -36,7 +52,7 @@ def return_subjects(uri):
 	    LIMIT 9000
 	""" % (uri))
 	sparql.setReturnFormat(JSON)
-	results = sparql.query().convert()
+	results = execute_sparql_query(sparql, "return_subjects")
 
 	return results
 	# for result in results["results"]["bindings"]:
@@ -64,7 +80,7 @@ def return_label_date(uris):
 
 		sparql.setQuery(query)
 		sparql.setReturnFormat(JSON)
-		results = sparql.query().convert()
+		results = execute_sparql_query(sparql, "return_label_date")
 
 		for result in results["results"]["bindings"]:
 			all_results['results']['bindings'].append(result)
@@ -93,7 +109,7 @@ def return_name(uris):
 
 		sparql.setQuery(query)
 		sparql.setReturnFormat(JSON)
-		results = sparql.query().convert()
+		results = execute_sparql_query(sparql, "return_name")
 
 		for result in results["results"]["bindings"]:
 			all_results['results']['bindings'].append(result)
@@ -118,7 +134,7 @@ def return_works_from_event(uris):
 
 	sparql.setQuery(query)
 	sparql.setReturnFormat(JSON)
-	results = sparql.query().convert()
+	results = execute_sparql_query(sparql, "return_works_from_event")
 	event_work_map = {}
 	work_uris = []
 
@@ -160,7 +176,7 @@ def return_serialized_subjects(uri,type):
 	g = Graph()
 
 	sparql.setReturnFormat(JSON)
-	results = sparql.query().convert()
+	results = execute_sparql_query(sparql, "return_serialized_subjects")
 
 	for result in results["results"]["bindings"]:
 		if (result['o']['type'] == 'uri'):
@@ -865,7 +881,7 @@ def return_serialized_void(type):
 	g.bind('foaf', foaf)
 
 	sparql.setReturnFormat(JSON)
-	results = sparql.query().convert()
+	results = execute_sparql_query(sparql, "return_serialized_void")
 
 	for result in results["results"]["bindings"]:
 		if (result['o']['type'] == 'uri'):
@@ -887,7 +903,7 @@ def return_serialized_void(type):
 	"""
 	sparql.setQuery(query)
 	sparql.setReturnFormat(JSON)
-	results = sparql.query().convert()
+	results = execute_sparql_query(sparql, "return_serialized_void")
 
 
 	for result in results["results"]["bindings"]:
@@ -956,7 +972,7 @@ def return_serialized_vocabulary_role(type):
 	"""
 	sparql.setQuery(query)
 	sparql.setReturnFormat(JSON)
-	results = sparql.query().convert()
+	results = execute_sparql_query(sparql, "return_serialized_vocabulary_role")
 
 	object_data['roles'] = results["results"]["bindings"]
 	for result in results["results"]["bindings"]:
@@ -984,7 +1000,7 @@ def return_serialized_vocabulary_role(type):
 
 	sparql.setQuery(query)
 	sparql.setReturnFormat(JSON)
-	results = sparql.query().convert()
+	results = execute_sparql_query(sparql, "return_serialized_vocabulary_role")
 
 	object_data['vocab'] = results["results"]["bindings"]
 
