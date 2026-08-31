@@ -1,6 +1,24 @@
 from .base import *
 
-# SECURITY WARNING: don't run with debug turned on in production!
+import os
+
+# ---- Windows GDAL setup (uncomment if you need geo features locally) ----
+# Requires OSGeo4W installed to C:\OSGeo4W
+# Also remove 'djgeojson' and 'leaflet' from _REMOVE_APPS below
+#
+# if os.name == 'nt':
+#     OSGEO4W = r"C:\OSGeo4W"
+#     assert os.path.isdir(OSGEO4W), "Directory does not exist: " + OSGEO4W
+#     os.environ['OSGEO4W_ROOT'] = OSGEO4W
+#     os.environ['GDAL_DATA'] = OSGEO4W + r"\share\gdal"
+#     os.environ['PROJ_LIB'] = OSGEO4W + r"\share\proj"
+#     os.environ['PATH'] = OSGEO4W + r"\bin;" + os.environ['PATH']
+
+# ---- Django / Wagtail fixes ----
+WAGTAILADMIN_BASE_URL = "/"
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+# ---- Dev basics ----
 DEBUG = True
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -11,7 +29,6 @@ ALLOWED_HOSTS = ['*']
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 COMPRESS_OFFLINE = True
@@ -21,33 +38,40 @@ COMPRESS_CSS_FILTERS = [
 ]
 COMPRESS_CSS_HASHING_METHOD = 'content'
 
-
-
-# you can develop on dev using sqlite or postsql, just un comment the one you want to use
-# if you use sqlite there are a couple things you need to comment out in base.py
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
-
+# ---- Database ----
+# SQLite for local dev - no Postgres setup needed.
+# Switch to Postgres if you need production-like data locally,
+# it's only used for the wagtail blog posts though so not needed for dev most likely.
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'ch_lod',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'ch_lod',
+#     }
+# }
 
-# you will probably need to run
-#  python3 manage.py migrate
-#  python3 manage.py createsuperuser
-# if you switch between or create a clean slate (like delete the sqlite file)
+# ---- Remove apps that need Postgres or GDAL for SQLite local dev ----
+# If you enable geo features above, remove 'djgeojson' and 'leaflet' from this list.
+_REMOVE_APPS = [
+    'wagtail.search.backends.database',  # not a real Django app, only in INSTALLED_APPS as legacy
+    'djgeojson',                          # needs GDAL
+    'leaflet',                            # needs GDAL
+]
+INSTALLED_APPS = [app for app in INSTALLED_APPS if app not in _REMOVE_APPS]
 
+# Clear the postgres search backend config from base.py.
+# Wagtail falls back to its built-in default which works with SQLite.
+WAGTAILSEARCH_BACKENDS = {}
 
-
+# After switching databases or creating a clean slate, run:
+#   python manage.py migrate --settings=ch_lod.settings.dev
+#   python manage.py createsuperuser --settings=ch_lod.settings.dev
 
 try:
     from .local import *
