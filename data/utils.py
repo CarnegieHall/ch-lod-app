@@ -15,8 +15,9 @@ def chunks(l, n):
     for i in range(0, len(l), n):
         yield l[i:i + n]
 
-def execute_sparql_query(sparql, operation):
+def execute_sparql_query(sparql, operation, timeout=10):
 	started_at = time.perf_counter()
+	sparql.setTimeout(timeout)
 
 	try:
 		return sparql.query().convert()
