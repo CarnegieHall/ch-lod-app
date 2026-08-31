@@ -72,7 +72,12 @@ def route_sparql(request):
 			if int(re_match.group(1)) > 10000:
 				query = query.replace(re_match.group(),'LIMIT 10000')
 
-		r = requests.post(settings.SPARQL_ENDPOINT, auth=HTTPBasicAuth(os.environ['SPARQL_USERNAME'], os.environ['SPARQL_PASSWORD']), headers={"Accept":"application/sparql-results+json"}, data = {'query':query})
+		r = requests.post(
+			settings.SPARQL_ENDPOINT,
+			auth=HTTPBasicAuth(os.environ['SPARQL_USERNAME'], os.environ['SPARQL_PASSWORD']),
+			headers={"Accept":"application/sparql-results+json"},
+			data = {'query':query},
+			timeout=10)
 		# print(request.body.decode('utf-8'))
 		if "MALFORMED QUERY: Encountered " in r.text:
 			return HttpResponse(content=r.text, status=500)
