@@ -1,1 +1,1 @@
-web: gunicorn ch_lod.wsgi --log-file -
+web: gunicorn ch_lod.wsgi --log-file - --max-requests 1200 --max-requests-jitter 150 --preload
