@@ -1,15 +1,47 @@
 from django.conf import settings
 from django.urls import include, path
 from django.contrib import admin
+from django.http import HttpResponse
 
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail import urls as wagtail_urls
 from wagtail.documents import urls as wagtaildocs_urls
 
+def robots_txt(request):
+    lines = [
+        "User-agent: *",
+        "Crawl-delay: 10",
+        "",
+        "# Allow human-readable pages",
+        "Allow: /events/*/about",
+        "Allow: /names/*/about",
+        "Allow: /works/*/about",
+        "",
+        "# Block RDF serialization formats",
+        "Disallow: /events/*/xml",
+        "Disallow: /events/*/n3",
+        "Disallow: /events/*/nt",
+        "Disallow: /events/*/turtle",
+        "Disallow: /events/*/jsonld",
+        "Disallow: /names/*/xml",
+        "Disallow: /names/*/n3",
+        "Disallow: /names/*/nt",
+        "Disallow: /names/*/turtle",
+        "Disallow: /names/*/jsonld",
+        "Disallow: /works/*/xml",
+        "Disallow: /works/*/n3",
+        "Disallow: /works/*/nt",
+        "Disallow: /works/*/turtle",
+        "Disallow: /works/*/jsonld",
+    ]
+    return HttpResponse("\n".join(lines), content_type="text/plain")
+
 # I think this django serach or something, not using it
 # from search import views as search_views
 
 urlpatterns = [
+
+    path('robots.txt', robots_txt),
 
     path('', include('data.urls')),
 
