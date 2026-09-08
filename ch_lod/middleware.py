@@ -6,6 +6,7 @@ No requests allowed to the app through the heroku app url.
 import logging
 from django.http import HttpResponseForbidden
 
+logger = logging.getLogger(__name__)
 class CloudFrontOnlyMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
