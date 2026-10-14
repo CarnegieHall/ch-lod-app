@@ -16,18 +16,12 @@ SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
 
 env = os.environ.copy()
 SECRET_KEY = env['SECRET_KEY']
-AWS_STORAGE_BUCKET_NAME = env['AWS_STORAGE_BUCKET_NAME']
-AWS_ACCESS_KEY_ID = env['AWS_ACCESS_KEY_ID']
-AWS_SECRET_ACCESS_KEY = env['AWS_SECRET_ACCESS_KEY']
-AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
-
+AZURE_CONNECTION_STRING = env['AZURE_CONNECTION_STRING']
 
 # Allow all host headers
 ALLOWED_HOSTS = ['*']
 
 DEBUG = False
-
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 COMPRESS_OFFLINE = True
 COMPRESS_CSS_FILTERS = [
@@ -36,18 +30,33 @@ COMPRESS_CSS_FILTERS = [
 ]
 COMPRESS_CSS_HASHING_METHOD = 'content'
 
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.secrets import SecretClient
 
-MEDIA_URL = "https://%s/" % AWS_S3_CUSTOM_DOMAIN
+env = os.environ.copy()
+SECRET_KEY = env['SECRET_KEY']
+
+_credential = DefaultAzureCredential()
+_vault_client = SecretClient(
+    vault_url=env['AZURE_VAULT_URL'],
+    credential=_credential,
+)
+AZURE_CONNECTION_STRING = _vault_client.get_secret(
+    env['AZURE_STORAGE_SECRET_NAME']
+).value
 
 STORAGES = {
     "default": {
-        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        "BACKEND": "storages.backends.azure_storage.AzureStorage",
+        "OPTIONS": {
+            "connection_string": AZURE_CONNECTION_STRING,
+            "azure_container": "media",
+        },
     },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
-
 
 try:
     from .local import *
