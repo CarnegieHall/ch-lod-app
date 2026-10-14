@@ -73,6 +73,19 @@ WAGTAILSEARCH_BACKENDS = {}
 #   python manage.py migrate --settings=ch_lod.settings.dev
 #   python manage.py createsuperuser --settings=ch_lod.settings.dev
 
+# ---- Azure Blob Storage for Wagtail media ----
+AZURE_CONNECTION_STRING = os.environ.get('AZURE_CONNECTION_STRING', '')
+if AZURE_CONNECTION_STRING:
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.azure_storage.AzureStorage",
+            "OPTIONS": {
+                "connection_string": AZURE_CONNECTION_STRING,
+                "azure_container": "media",
+            },
+        },
+    }
+
 try:
     from .local import *
 except ImportError:
