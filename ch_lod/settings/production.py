@@ -3,7 +3,10 @@ from __future__ import absolute_import, unicode_literals
 from .base import *
 import os
 import dj_database_url
-DATABASES['default'] =  dj_database_url.config()
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.secrets import SecretClient
+
+DATABASES['default'] = dj_database_url.config()
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -16,7 +19,6 @@ SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
 
 env = os.environ.copy()
 SECRET_KEY = env['SECRET_KEY']
-AZURE_CONNECTION_STRING = env['AZURE_CONNECTION_STRING']
 
 # Allow all host headers
 ALLOWED_HOSTS = ['*']
@@ -30,12 +32,7 @@ COMPRESS_CSS_FILTERS = [
 ]
 COMPRESS_CSS_HASHING_METHOD = 'content'
 
-from azure.identity import DefaultAzureCredential
-from azure.keyvault.secrets import SecretClient
-
-env = os.environ.copy()
-SECRET_KEY = env['SECRET_KEY']
-
+# Pull storage connection string from Key Vault
 _credential = DefaultAzureCredential()
 _vault_client = SecretClient(
     vault_url=env['AZURE_VAULT_URL'],
@@ -45,12 +42,15 @@ AZURE_CONNECTION_STRING = _vault_client.get_secret(
     env['AZURE_STORAGE_SECRET_NAME']
 ).value
 
+_fixie_url = os.environ.get('FIXIE_URL', '')
+_client_options = {"proxies": {"https": _fixie_url}} if _fixie_url else {}
 STORAGES = {
     "default": {
         "BACKEND": "storages.backends.azure_storage.AzureStorage",
         "OPTIONS": {
             "connection_string": AZURE_CONNECTION_STRING,
             "azure_container": "media",
+            "client_options": _client_options,
         },
     },
     "staticfiles": {
