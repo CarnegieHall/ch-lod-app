@@ -32,18 +32,21 @@ COMPRESS_CSS_FILTERS = [
 ]
 COMPRESS_CSS_HASHING_METHOD = 'content'
 
+_fixie_url = os.environ.get('FIXIE_URL', '')
+_proxy_config = {"https": _fixie_url} if _fixie_url else {}
+
 # Pull storage connection string from Key Vault
-_credential = DefaultAzureCredential()
+_credential = DefaultAzureCredential(proxies=_proxy_config)
 _vault_client = SecretClient(
     vault_url=env['AZURE_VAULT_URL'],
     credential=_credential,
+    proxies=_proxy_config,
 )
 AZURE_CONNECTION_STRING = _vault_client.get_secret(
     env['AZURE_STORAGE_SECRET_NAME']
 ).value
 
-_fixie_url = os.environ.get('FIXIE_URL', '')
-_client_options = {"proxies": {"https": _fixie_url}} if _fixie_url else {}
+_client_options = {"proxies": _proxy_config} if _fixie_url else {}
 STORAGES = {
     "default": {
         "BACKEND": "storages.backends.azure_storage.AzureStorage",
