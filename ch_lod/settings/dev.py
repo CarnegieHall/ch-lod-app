@@ -73,6 +73,34 @@ WAGTAILSEARCH_BACKENDS = {}
 #   python manage.py migrate --settings=ch_lod.settings.dev
 #   python manage.py createsuperuser --settings=ch_lod.settings.dev
 
+# ---- Azure Blob Storage for Wagtail media (via Key Vault) ----
+AZURE_VAULT_URL = os.environ.get('AZURE_VAULT_URL', '')
+if AZURE_VAULT_URL:
+    from azure.identity import DefaultAzureCredential
+    from azure.keyvault.secrets import SecretClient
+
+    _credential = DefaultAzureCredential()
+    _vault_client = SecretClient(
+        vault_url=AZURE_VAULT_URL,
+        credential=_credential,
+    )
+    _connection_string = _vault_client.get_secret(
+        os.environ['AZURE_STORAGE_SECRET_NAME']
+    ).value
+
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.azure_storage.AzureStorage",
+            "OPTIONS": {
+                "connection_string": _connection_string,
+                "azure_container": "media",
+            },
+        },
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        },
+    }
+
 try:
     from .local import *
 except ImportError:

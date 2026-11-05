@@ -3,7 +3,10 @@ from __future__ import absolute_import, unicode_literals
 from .base import *
 import os
 import dj_database_url
-DATABASES['default'] =  dj_database_url.config()
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.secrets import SecretClient
+
+DATABASES['default'] = dj_database_url.config()
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -16,18 +19,11 @@ SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
 
 env = os.environ.copy()
 SECRET_KEY = env['SECRET_KEY']
-AWS_STORAGE_BUCKET_NAME = env['AWS_STORAGE_BUCKET_NAME']
-AWS_ACCESS_KEY_ID = env['AWS_ACCESS_KEY_ID']
-AWS_SECRET_ACCESS_KEY = env['AWS_SECRET_ACCESS_KEY']
-AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
-
 
 # Allow all host headers
 ALLOWED_HOSTS = ['*']
 
 DEBUG = False
-
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 COMPRESS_OFFLINE = True
 COMPRESS_CSS_FILTERS = [
@@ -36,18 +32,34 @@ COMPRESS_CSS_FILTERS = [
 ]
 COMPRESS_CSS_HASHING_METHOD = 'content'
 
+_fixie_url = os.environ.get('FIXIE_URL', '')
+_proxy_config = {"https": _fixie_url} if _fixie_url else {}
 
-MEDIA_URL = "https://%s/" % AWS_S3_CUSTOM_DOMAIN
+# Pull storage connection string from Key Vault
+_credential = DefaultAzureCredential(proxies=_proxy_config)
+_vault_client = SecretClient(
+    vault_url=env['AZURE_VAULT_URL'],
+    credential=_credential,
+    proxies=_proxy_config,
+)
+AZURE_CONNECTION_STRING = _vault_client.get_secret(
+    env['AZURE_STORAGE_SECRET_NAME']
+).value
 
+_client_options = {"proxies": _proxy_config} if _fixie_url else {}
 STORAGES = {
     "default": {
-        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        "BACKEND": "storages.backends.azure_storage.AzureStorage",
+        "OPTIONS": {
+            "connection_string": AZURE_CONNECTION_STRING,
+            "azure_container": "media",
+            "client_options": _client_options,
+        },
     },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
-
 
 try:
     from .local import *
