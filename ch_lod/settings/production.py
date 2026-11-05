@@ -33,27 +33,26 @@ COMPRESS_CSS_FILTERS = [
 COMPRESS_CSS_HASHING_METHOD = 'content'
 
 _fixie_url = os.environ.get('FIXIE_URL', '')
-_proxy_config = {"https": _fixie_url} if _fixie_url else {}
+if _fixie_url:
+    os.environ['HTTPS_PROXY'] = _fixie_url
+    os.environ['NO_PROXY'] = 'carnegie-hall.stardog.cloud,herokuapp.com'
 
 # Pull storage connection string from Key Vault
-_credential = DefaultAzureCredential(proxies=_proxy_config)
+_credential = DefaultAzureCredential()
 _vault_client = SecretClient(
     vault_url=env['AZURE_VAULT_URL'],
     credential=_credential,
-    proxies=_proxy_config,
 )
 AZURE_CONNECTION_STRING = _vault_client.get_secret(
     env['AZURE_STORAGE_SECRET_NAME']
 ).value
 
-_client_options = {"proxies": _proxy_config} if _fixie_url else {}
 STORAGES = {
     "default": {
         "BACKEND": "storages.backends.azure_storage.AzureStorage",
         "OPTIONS": {
             "connection_string": AZURE_CONNECTION_STRING,
             "azure_container": "media",
-            "client_options": _client_options,
         },
     },
     "staticfiles": {
