@@ -77,10 +77,15 @@ def route_sparql(request):
 		started_at = time.perf_counter()
 
 		try:
+			forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR', '')
+			client_ip = forwarded_for.split(',')[0].strip() if forwarded_for else request.META.get('REMOTE_ADDR', '')
 			r = requests.post(
 				settings.SPARQL_ENDPOINT,
 				auth=HTTPBasicAuth(os.environ['SPARQL_USERNAME'],os.environ['SPARQL_PASSWORD']),
-				headers={"Accept":"application/sparql-results+json"},
+				headers={
+					"Accept": "application/sparql-results+json",
+					"X-Forwarded-For": client_ip,
+				},
 				data = {'query':query},
 				timeout=10)
 		except requests.Timeout:

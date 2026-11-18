@@ -12,6 +12,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView
 from django.conf import settings
 from django.views.decorators.clickjacking import xframe_options_sameorigin
+from data.utils import get_sparql_client
 
 from wagtail.models import Page
 #from wagtail.search.models import Query
@@ -134,8 +135,7 @@ def boulanger(request):
 def chdl0001d(request):
     chBdays_GeoJSON = {}
 
-    sparql = SPARQLWrapper(env['SPARQL_ENDPOINT'])
-    sparql.setCredentials(env['SPARQL_USERNAME'], env['SPARQL_PASSWORD'])
+    sparql = get_sparql_client()
     sparql.setQuery("""
         #Whose birthday is today? (for map)
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -249,8 +249,7 @@ def chdl0001d(request):
 def chdl0001c(request):
     chBdays_GeoJSON = {}
 
-    sparql = SPARQLWrapper(env['SPARQL_ENDPOINT'])
-    sparql.setCredentials(env['SPARQL_USERNAME'], env['SPARQL_PASSWORD'])
+    sparql = get_sparql_client()
     sparql.setQuery("""
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
         PREFIX schema: <http://schema.org/>
@@ -346,8 +345,7 @@ def chdl0007(request):
     query = query + '''BIND(IRI(REPLACE(str(?event), 'http://data.carnegiehall.org/events/', 'https://www.carnegiehall.org/About/History/Performance-History-Search?q=&dex=prod_PHS&event=')) AS ?eventURL).}'''
     query = query + 'ORDER BY ?date'
 
-    sparql = SPARQLWrapper(env['SPARQL_ENDPOINT'])
-    sparql.setCredentials(env['SPARQL_USERNAME'], env['SPARQL_PASSWORD'])
+    sparql = get_sparql_client()
     sparql.setQuery(query)
     sparql.setReturnFormat(JSON)
     results = sparql.query().convert()
@@ -410,8 +408,7 @@ def chdl0011(request):
     query = query + '''FILTER(?date >= xsd:dateTime("1971-09-01T00:00:00") && ?date <= xsd:dateTime("1972-09-01T00:00:00"))}'''
     query = query + 'ORDER BY ?date'
 
-    sparql = SPARQLWrapper(env['SPARQL_ENDPOINT'])
-    sparql.setCredentials(env['SPARQL_USERNAME'], env['SPARQL_PASSWORD'])
+    sparql = get_sparql_client()
     sparql.setQuery(query)
     sparql.setReturnFormat(JSON)
     results = sparql.query().convert()

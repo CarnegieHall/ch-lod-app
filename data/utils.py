@@ -7,6 +7,15 @@ import operator
 import sys
 import time
 import os
+from .middleware import get_client_ip
+
+def get_sparql_client():
+    sparql = SPARQLWrapper(settings.SPARQL_ENDPOINT)
+    sparql.setCredentials(os.environ['SPARQL_USERNAME'], os.environ['SPARQL_PASSWORD'])
+    client_ip = get_client_ip()
+    if client_ip:
+        sparql.addCustomHttpHeader('X-Forwarded-For', client_ip)
+    return sparql
 
 logger = logging.getLogger(__name__)
 
@@ -30,8 +39,7 @@ def execute_sparql_query(sparql, operation, timeout=10):
 		raise
 
 def return_objects(uri):
-	sparql = SPARQLWrapper(settings.SPARQL_ENDPOINT)
-	sparql.setCredentials(os.environ['SPARQL_USERNAME'], os.environ['SPARQL_PASSWORD'])
+	sparql = get_sparql_client()
 	sparql.setQuery("""
 	    SELECT *
 	    WHERE { %s ?p ?o }
@@ -45,8 +53,7 @@ def return_objects(uri):
 	#     print(result)
 
 def return_subjects(uri):
-	sparql = SPARQLWrapper(settings.SPARQL_ENDPOINT)
-	sparql.setCredentials(os.environ['SPARQL_USERNAME'], os.environ['SPARQL_PASSWORD'])
+	sparql = get_sparql_client()
 	sparql.setQuery("""
 	    SELECT *
 	    WHERE { ?s ?p %s }
@@ -68,8 +75,7 @@ def return_label_date(uris):
 	all_results = {'head': {'vars': ['uri', 'o', 'p']}, 'results': {'bindings': [] } }
 
 	for chunk in uri_chunks:
-		sparql = SPARQLWrapper(settings.SPARQL_ENDPOINT)
-		sparql.setCredentials(os.environ['SPARQL_USERNAME'], os.environ['SPARQL_PASSWORD'])
+		sparql = get_sparql_client()
 
 		query = 'PREFIX schema: <http://schema.org/>'
 		query = query + 'SELECT * WHERE{'
@@ -100,8 +106,7 @@ def return_name(uris):
 	for chunk in uri_chunks:
 
 
-		sparql = SPARQLWrapper(settings.SPARQL_ENDPOINT)
-		sparql.setCredentials(os.environ['SPARQL_USERNAME'], os.environ['SPARQL_PASSWORD'])
+		sparql = get_sparql_client()
 		query = 'PREFIX schema: <http://schema.org/>'
 		query = query + 'SELECT DISTINCT * WHERE{'
 		query = query + '{?uri rdfs:label ?o .}'
@@ -123,8 +128,7 @@ Returns the work URIs for a work event id
 """
 def return_works_from_event(uris):
 
-	sparql = SPARQLWrapper(settings.SPARQL_ENDPOINT)
-	sparql.setCredentials(os.environ['SPARQL_USERNAME'], os.environ['SPARQL_PASSWORD'])
+	sparql = get_sparql_client()
 
 	query = 'PREFIX dcterms: <http://purl.org/dc/terms/>'
 	query = query + 'SELECT * WHERE{'
@@ -157,8 +161,7 @@ def return_works_from_event(uris):
 Returns the work URIs for a work event id
 """
 def return_serialized_subjects(uri,type):
-	sparql = SPARQLWrapper(settings.SPARQL_ENDPOINT)
-	sparql.setCredentials(os.environ['SPARQL_USERNAME'], os.environ['SPARQL_PASSWORD'])
+	sparql = get_sparql_client()
 
 	if uri[0] != '<':
 		uri_no_bracket = uri
@@ -859,9 +862,7 @@ def format_vocabulary_role_dict():
 Returns the void
 """
 def return_serialized_void(type):
-	sparql = SPARQLWrapper(settings.SPARQL_ENDPOINT)
-	
-	sparql.setCredentials(os.environ['SPARQL_USERNAME'], os.environ['SPARQL_PASSWORD'])
+	sparql = get_sparql_client()
 
 	query = """
 	    SELECT * WHERE
@@ -943,8 +944,7 @@ Returns entire roles vocab
 """
 def return_serialized_vocabulary_role(type):
 
-	sparql = SPARQLWrapper(settings.SPARQL_ENDPOINT)
-	sparql.setCredentials(os.environ['SPARQL_USERNAME'], os.environ['SPARQL_PASSWORD'])
+	sparql = get_sparql_client()
 
 
 	object_data = {'roles':[],'vocab':[]}
